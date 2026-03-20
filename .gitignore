@@ -1,0 +1,10 @@
+# Build outputs
+_build/
+__pycache__/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
