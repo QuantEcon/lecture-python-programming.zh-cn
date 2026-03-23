@@ -8,31 +8,49 @@ kernelspec:
   language: python
   name: python3
 heading-map:
+  More Language Features: 更多语言特性
   Overview: 概述
-  Iterables and Iterators: 可迭代对象与迭代器
-  Iterables and Iterators::Iterators: 迭代器
-  Iterables and Iterators::Iterators in For Loops: For 循环中的迭代器
-  Iterables and Iterators::Iterables: 可迭代对象
-  Iterables and Iterators::Iterators and built-ins: 迭代器与内置函数
-  '`*` and `**` Operators': '`*` 和 `**` 运算符'
-  '`*` and `**` Operators::Unpacking Arguments': 解包参数
-  '`*` and `**` Operators::Arbitrary Arguments': 任意数量的参数
-  Decorators and Descriptors: 装饰器与描述符
-  Decorators and Descriptors::Decorators: 装饰器
-  Decorators and Descriptors::Decorators::An Example: 一个示例
-  Decorators and Descriptors::Decorators::Enter Decorators: 引入装饰器
-  Decorators and Descriptors::Descriptors: 描述符
-  Decorators and Descriptors::Descriptors::A Solution: 解决方案
-  Decorators and Descriptors::Descriptors::How it Works: 工作原理
-  Decorators and Descriptors::Descriptors::Decorators and Properties: 装饰器与属性
+  Iterables and iterators: 可迭代对象与迭代器
+  Iterables and iterators::Iterators: 迭代器
+  Iterables and iterators::Iterators in for loops: for 循环中的迭代器
+  Iterables and iterators::Iterables: 可迭代对象
+  Iterables and iterators::Iterators and built-ins: 迭代器与内置函数
+  '`*` and `**` operators': '`*` 和 `**` 运算符'
+  '`*` and `**` operators::Unpacking arguments': 解包参数
+  '`*` and `**` operators::Arbitrary arguments': 任意参数
+  Type hints: 类型提示
+  Type hints::Basic syntax: 基本语法
+  Type hints::Common types: 常用类型
+  Type hints::Hints don't enforce types: 提示不强制类型检查
+  Type hints::Why use type hints?: 为什么使用类型提示？
+  Type hints::Type hints in scientific Python: 科学 Python 中的类型提示
+  Decorators and descriptors: 装饰器与描述符
+  Decorators and descriptors::Decorators: 装饰器
+  Decorators and descriptors::Decorators::An example: 一个示例
+  Decorators and descriptors::Decorators::Enter decorators: 装饰器登场
+  Decorators and descriptors::Descriptors: 描述符
+  Decorators and descriptors::Descriptors::A solution: 解决方案
+  Decorators and descriptors::Descriptors::How it works: 工作原理
+  Decorators and descriptors::Descriptors::Decorators and properties: 装饰器与属性
   Generators: 生成器
-  Generators::Generator Expressions: 生成器表达式
-  Generators::Generator Functions: 生成器函数
-  Generators::Generator Functions::Example 1: 示例 1
-  Generators::Generator Functions::Example 2: 示例 2
-  Generators::Advantages of Iterators: 迭代器的优势
+  Generators::Generator expressions: 生成器表达式
+  Generators::Generator functions: 生成器函数
+  Generators::Generator functions::Example 1: 示例 1
+  Generators::Generator functions::Example 2: 示例 2
+  Generators::Advantages of iterators: 迭代器的优势
   Exercises: 练习
 ---
+
+(python_advanced_features)=
+```{raw} jupyter
+<div id="qe-notebook-header" align="right" style="text-align:right;">
+        <a href="https://quantecon.org/" title="quantecon.org">
+                <img style="width:250px;display:inline;" width="250px" src="https://assets.quantecon.org/img/qe-menubar-logo.svg" alt="QuantEcon">
+        </a>
+</div>
+```
+
+# 更多语言特性
 
 (python_advanced_features)=
 ```{raw} jupyter
@@ -61,11 +79,12 @@ heading-map:
 ```{index} single: Python; Iteration
 ```
 
-我们{ref}`已经提到过 <iterating_version_1>` Python 中的迭代。
+我们{ref}`已经介绍过 <iterating_version_1>` Python 中的迭代。
 
-现在让我们更仔细地了解它的工作原理，重点关注 Python 中 `for` 循环的实现。
+现在让我们更仔细地了解其工作原理，重点关注 Python 中 `for` 循环的实现方式。
 
 (iterators)=
+
 ### 迭代器
 
 ```{index} single: Python; Iterators
@@ -75,12 +94,11 @@ heading-map:
 
 这里我们将讨论如何使用迭代器——稍后我们将学习如何构建自己的迭代器。
 
-正式地说，*迭代器*是一个具有 `__next__` 方法的对象。
+从形式上看，*迭代器*是一个具有 `__next__` 方法的对象。
 
 例如，文件对象就是迭代器。
 
-为了验证这一点，让我们再来看看{ref}`美国城市数据 <us_cities_data>`，
-该数据在以下单元格中被写入当前工作目录：
+为了说明这一点，让我们再看一下{ref}`美国城市数据 <us_cities_data>`，该数据通过以下单元格写入当前工作目录
 
 ```{code-cell} ipython
 %%file us_cities.txt
@@ -104,16 +122,15 @@ f.__next__()
 f.__next__()
 ```
 
-我们看到文件对象确实有一个 `__next__` 方法，调用该方法会返回文件中的下一行。
+我们可以看到，文件对象确实具有 `__next__` 方法，调用该方法会返回文件中的下一行。
 
-`next` 方法也可以通过内置函数 `next()` 访问，
-该函数直接调用此方法：
+也可以通过内置函数 `next()` 来访问该方法，它会直接调用此方法
 
 ```{code-cell} python3
 next(f)
 ```
 
-`enumerate()` 返回的对象也是迭代器：
+`enumerate()` 返回的对象也是迭代器
 
 ```{code-cell} python3
 e = enumerate(['foo', 'bar'])
@@ -124,9 +141,9 @@ next(e)
 next(e)
 ```
 
-`csv` 模块中的 reader 对象也是迭代器。
+`csv` 模块中的 reader 对象也是如此。
 
-让我们创建一个小的 csv 文件，其中包含日经指数的数据：
+让我们创建一个包含日经指数数据的小型 csv 文件
 
 ```{code-cell} ipython
 %%file test_table.csv
@@ -155,7 +172,7 @@ next(nikkei_data)
 next(nikkei_data)
 ```
 
-### For 循环中的迭代器
+### for 循环中的迭代器
 
 ```{index} single: Python; Iterators
 ```
@@ -171,13 +188,13 @@ for x in iterator:
     <code block>
 ```
 
-那么解释器会
+那么解释器将
 
-* 调用 `iterator.___next___()` 并将 `x` 绑定到结果
+* 调用 `iterator.___next___()` 并将 `x` 绑定到返回结果
 * 执行代码块
-* 重复直到发生 `StopIteration` 错误
+* 重复上述过程，直到出现 `StopIteration` 错误
 
-所以现在你明白了这种看起来很神奇的语法是如何工作的：
+现在你了解了这个看似神奇的语法是如何工作的
 
 ```{code-block} python3
 :class: no-execute
@@ -189,26 +206,26 @@ for line in f:
 
 解释器只是不断地
 
-1. 调用 `f.__next__()` 并将 `line` 绑定到结果
+1. 调用 `f.__next__()` 并将 `line` 绑定到返回结果
 1. 执行循环体
 
-这一过程持续到发生 `StopIteration` 错误为止。
+这个过程持续进行，直到出现 `StopIteration` 错误为止。
 
 ### 可迭代对象
 
 ```{index} single: Python; Iterables
 ```
 
-你已经知道我们可以将 Python 列表放在 `for` 循环中 `in` 的右侧：
+你已经知道可以在 `for` 循环中将 Python 列表放在 `in` 的右侧
 
 ```{code-cell} python3
 for i in ['spam', 'eggs']:
     print(i)
 ```
 
-那么这是否意味着列表就是迭代器呢？
+那么，这是否意味着列表是一个迭代器呢？
 
-答案是否定的：
+答案是否定的
 
 ```{code-cell} python3
 x = ['foo', 'bar']
@@ -224,11 +241,11 @@ next(x)
 
 那么为什么我们可以在 `for` 循环中遍历列表呢？
 
-原因是列表是*可迭代的*（而不是迭代器）。
+原因在于列表是*可迭代的*（而不是迭代器）。
 
-正式地说，如果一个对象可以使用内置函数 `iter()` 转换为迭代器，则该对象是可迭代的。
+从形式上看，如果一个对象可以通过内置函数 `iter()` 转换为迭代器，那么它就是可迭代的。
 
-列表就是这样一种对象：
+列表就是这样一种对象
 
 ```{code-cell} python3
 x = ['foo', 'bar']
@@ -257,7 +274,7 @@ next(y)
 
 许多其他对象也是可迭代的，例如字典和元组。
 
-当然，并非所有对象都是可迭代的：
+当然，并非所有对象都是可迭代的
 
 ```{code-cell} python3
 ---
@@ -266,21 +283,21 @@ tags: [raises-exception]
 iter(42)
 ```
 
-总结我们对 `for` 循环的讨论：
+总结我们对 `for` 循环的讨论
 
-* `for` 循环适用于迭代器或可迭代对象。
-* 在第二种情况下，可迭代对象在循环开始之前被转换为迭代器。
+* `for` 循环既可以作用于迭代器，也可以作用于可迭代对象。
+* 对于后一种情况，可迭代对象在循环开始前会被转换为迭代器。
 
 ### 迭代器与内置函数
 
 ```{index} single: Python; Iterators
 ```
 
-一些作用于序列的内置函数也适用于可迭代对象：
+一些作用于序列的内置函数也适用于可迭代对象
 
 * `max()`、`min()`、`sum()`、`all()`、`any()`
 
-例如：
+例如
 
 ```{code-cell} python3
 x = [10, -10]
@@ -296,7 +313,7 @@ type(y)
 max(y)
 ```
 
-关于迭代器，有一点需要记住，那就是它们会因使用而耗尽：
+关于迭代器，有一点需要注意，那就是迭代器在使用后会被耗尽
 
 ```{code-cell} python3
 x = [10, -10]
@@ -313,19 +330,19 @@ max(y)
 
 ## `*` 和 `**` 运算符
 
-`*` 和 `**` 是方便且广泛使用的工具，用于解包列表和元组，以及允许用户定义可以接受任意数量参数的函数。
+`*` 和 `**` 是方便且广泛使用的工具，用于解包列表和元组，并允许用户定义可接受任意数量参数的函数。
 
-在本节中，我们将探讨如何使用它们并区分它们的使用场景。
+在本节中，我们将探讨如何使用它们并区分其使用场景。
 
 ### 解包参数
 
-当我们操作一个参数列表时，我们通常需要在将参数传递给函数时，将列表的内容提取为单独的参数，而不是作为一个集合。
+当我们操作参数列表时，在将其传入函数时，通常需要将列表的内容提取为单独的参数，而不是作为集合传入。
 
-幸运的是，`*` 运算符可以帮助我们在函数调用中将列表和元组解包为[*位置参数*](pos_args)。
+幸运的是，`*` 运算符可以帮助我们将列表和元组解包为函数调用中的[*位置参数*](pos_args)。
 
 为了具体说明，请看以下示例：
 
-不使用 `*` 时，`print` 函数打印一个列表：
+不使用 `*` 时，`print` 函数打印一个列表
 
 ```{code-cell} python3
 l1 = ['a', 'b', 'c']
@@ -333,19 +350,19 @@ l1 = ['a', 'b', 'c']
 print(l1)
 ```
 
-而使用 `*` 时，`print` 函数打印单个元素，因为 `*` 将列表解包为单独的参数：
+而使用 `*` 时，`print` 函数打印单独的元素，因为 `*` 将列表解包为单独的参数
 
 ```{code-cell} python3
 print(*l1)
 ```
 
-使用 `*` 将列表解包为位置参数，等同于在调用函数时单独定义它们：
+使用 `*` 将列表解包为位置参数，等价于在调用函数时逐个定义它们
 
 ```{code-cell} python3
 print('a', 'b', 'c')
 ```
 
-但是，如果我们想要再次重用它们，`*` 运算符会更加方便：
+但是，如果我们想再次重复使用，`*` 运算符会更加方便
 
 ```{code-cell} python3
 l1.append('d')
@@ -353,37 +370,33 @@ l1.append('d')
 print(*l1)
 ```
 
-类似地，`**` 也用于解包参数。
+类似地，`**` 用于解包参数。
 
 区别在于 `**` 将*字典*解包为*关键字参数*。
 
-当我们有许多想要重用的关键字参数时，通常会使用 `**`。
+`**` 通常在我们想要重复使用许多关键字参数时使用。
 
-例如，假设我们想使用相同的图形设置绘制多个图表，这可能涉及反复设置许多图形参数，这些参数通常使用关键字参数来定义。
+例如，假设我们想使用相同的图形设置绘制多个图表，这可能需要反复设置许多图形参数，这些参数通常使用关键字参数定义。
 
 在这种情况下，我们可以使用字典来存储这些参数，并在需要时使用 `**` 将字典解包为关键字参数。
 
-让我们一起通过一个简单的示例，来区分 `*` 和 `**` 的用法：
+让我们一起通过一个简单的示例来区分 `*` 和 `**` 的用法
 
 ```{code-cell} python3
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib as mpl  # i18n
-FONTPATH = "_fonts/SourceHanSerifSC-SemiBold.otf"  # i18n
-mpl.font_manager.fontManager.addfont(FONTPATH)  # i18n
-mpl.rcParams['font.family'] = ['Source Han Serif SC']  # i18n
 
-# 设置图框和子图
+# Set up the frame and subplots
 fig, ax = plt.subplots(2, 1)
 plt.subplots_adjust(hspace=0.7)
 
-# 创建一个生成合成数据的函数
+# Create a function that generates synthetic data
 def generate_data(β_0, β_1, σ=30, n=100):
     x_values = np.arange(0, n, 1)
     y_values = β_0 + β_1 * x_values + np.random.normal(size=n, scale=σ)
     return x_values, y_values
 
-# 将折线和图例的关键字参数存储在字典中
+# Store the keyword arguments for lines and legends in a dictionary
 line_kargs = {'lw': 1.5, 'alpha': 0.7}
 legend_kargs = {'bbox_to_anchor': (0., 1.02, 1., .102), 
                 'loc': 3, 
@@ -394,23 +407,23 @@ legend_kargs = {'bbox_to_anchor': (0., 1.02, 1., .102),
 β_0s = [10, 20, 30]
 β_1s = [1, 2, 3]
 
-# 使用 for 循环绘制折线
+# Use a for loop to plot lines
 def generate_plots(β_0s, β_1s, idx, line_kargs, legend_kargs):
     label_list = []
     for βs in zip(β_0s, β_1s):
     
-        # 使用 * 解包元组 βs 和 generate_data 函数的元组输出
-        # 使用 ** 解包折线关键字参数字典
+        # Use * to unpack tuple βs and the tuple output from the generate_data function
+        # Use ** to unpack the dictionary of keyword arguments for lines
         ax[idx].plot(*generate_data(*βs), **line_kargs)
 
         label_list.append(f'$β_0 = {βs[0]}$ | $β_1 = {βs[1]}$')
 
-    # 使用 ** 解包图例关键字参数字典
+    # Use ** to unpack the dictionary of keyword arguments for legends
     ax[idx].legend(label_list, **legend_kargs)
 
 generate_plots(β_0s, β_1s, 0, line_kargs, legend_kargs)
 
-# 我们可以轻松地重用和更新参数
+# We can easily reuse and update our parameters
 β_1s.append(-2)
 β_0s.append(40)
 line_kargs['lw'] = 2
@@ -420,30 +433,29 @@ generate_plots(β_0s, β_1s, 1, line_kargs, legend_kargs)
 plt.show()
 ```
 
-在这个示例中，`*` 解包了存储在元组中的压缩参数 `βs` 和 `generate_data` 函数的输出，
-而 `**` 解包了存储在 `legend_kargs` 和 `line_kargs` 中的图形参数。
+在这个示例中，`*` 解包了存储在元组中的压缩参数 `βs` 和 `generate_data` 函数的输出，而 `**` 解包了存储在 `legend_kargs` 和 `line_kargs` 中的图形参数。
 
-总结一下，当 `*list`/`*tuple` 和 `**dictionary` 被传入*函数调用*时，它们被解包为单独的参数而不是集合。
+总结一下，当 `*list`/`*tuple` 和 `**dictionary` 被传入*函数调用*时，它们会被解包为单独的参数，而不是作为集合传入。
 
-区别在于 `*` 将列表和元组解包为*位置参数*，而 `**` 将字典解包为*关键字参数*。
+区别在于 `*` 会将列表和元组解包为*位置参数*，而 `**` 会将字典解包为*关键字参数*。
 
-### 任意数量的参数
+### 任意参数
 
 当我们*定义*函数时，有时希望允许用户向函数传入任意数量的参数。
 
 你可能已经注意到 `ax.plot()` 函数可以处理任意数量的参数。
 
-如果我们查看该函数的[文档](https://github.com/matplotlib/matplotlib/blob/v3.6.2/lib/matplotlib/axes/_axes.py#L1417-L1669)，可以看到该函数定义为：
+如果我们查看该函数的[文档](https://github.com/matplotlib/matplotlib/blob/v3.6.2/lib/matplotlib/axes/_axes.py#L1417-L1669)，可以看到该函数的定义为
 
 ```
 Axes.plot(*args, scalex=True, scaley=True, data=None, **kwargs)
 ```
 
-我们在*函数定义*的上下文中再次看到了 `*` 和 `**` 运算符。
+我们再次在*函数定义*的上下文中发现了 `*` 和 `**` 运算符。
 
 事实上，`*args` 和 `**kargs` 在 Python 的科学库中无处不在，用于减少冗余并允许灵活的输入。
 
-`*args` 使函数能够处理大小可变的*位置参数*：
+`*args` 使函数能够处理大小可变的*位置参数*
 
 ```{code-cell} python3
 l1 = ['a', 'b', 'c']
@@ -455,36 +467,137 @@ def arb(*ls):
 arb(l1, l2)
 ```
 
-输入被传递到函数中并存储在一个元组中。
+输入被传入函数并存储在一个元组中。
 
-让我们尝试更多的输入：
+让我们尝试更多输入
 
 ```{code-cell} python3
 l3 = ['z', 'x', 'b']
 arb(l1, l2, l3)
 ```
 
-类似地，Python 允许我们使用 `**kargs` 向函数传入任意数量的*关键字参数*：
+类似地，Python 允许我们使用 `**kargs` 向函数传入任意数量的*关键字参数*
 
 ```{code-cell} python3
 def arb(**ls):
     print(ls)
 
-# 注意这些是关键字参数
+# Note that these are keyword arguments
 arb(l1=l1, l2=l2)
 ```
 
 我们可以看到 Python 使用字典来存储这些关键字参数。
 
-让我们尝试更多的输入：
+让我们尝试更多输入
 
 ```{code-cell} python3
 arb(l1=l1, l2=l2, l3=l3)
 ```
 
-总体而言，`*args` 和 `**kargs` 在*定义函数*时使用，它们使函数能够接受任意大小的输入。
+总体而言，`*args` 和 `**kargs` 用于*定义函数*时，它们使函数能够接受任意大小的输入。
 
 区别在于带有 `*args` 的函数能够接受任意大小的*位置参数*，而 `**kargs` 允许函数接受任意数量的*关键字参数*。
+
+## 类型提示
+
+```{index} single: Python; Type Hints
+```
+
+Python 是一种*动态类型*语言，这意味着您无需声明变量的类型。
+
+（参见我们{doc}`之前关于动态类型与静态类型的讨论 <need_for_speed>`。）
+
+然而，Python 支持可选的**类型提示**（也称为类型注解），允许您指明变量、函数参数和返回值的预期类型。
+
+类型提示从 Python 3.5 开始引入，并在后续版本中不断演进。此处展示的所有语法均适用于 Python 3.9 及更高版本。
+
+```{note}
+类型提示在*运行时会被 Python 解释器忽略*——它们不会影响代码的执行方式。它们纯粹是信息性的，作为面向开发者和工具的文档使用。
+```
+
+### 基本语法
+
+类型提示使用冒号 `:` 来注解变量和参数，使用箭头 `->` 来注解返回类型。
+
+下面是一个简单的示例：
+
+```{code-cell} python3
+def greet(name: str, times: int) -> str:
+    return (name + '! ') * times
+
+greet('hello', 3)
+```
+
+在这个函数定义中：
+
+- `name: str` 表示 `name` 预期为字符串类型
+- `times: int` 表示 `times` 预期为整数类型
+- `-> str` 表示该函数返回一个字符串
+
+您也可以直接对变量进行注解：
+
+```{code-cell} python3
+x: int = 10
+y: float = 3.14
+name: str = 'Python'
+```
+
+### 常用类型
+
+最常用的类型提示是内置类型：
+
+| 类型      | 示例                          |
+|-----------|----------------------------------|
+| `int`     | `x: int = 5`                    |
+| `float`   | `x: float = 3.14`              |
+| `str`     | `x: str = 'hello'`             |
+| `bool`    | `x: bool = True`               |
+| `list`    | `x: list = [1, 2, 3]`          |
+| `dict`    | `x: dict = {'a': 1}`           |
+
+对于容器类型，您可以指定其元素的类型：
+
+```{code-cell} python3
+prices: list[float] = [9.99, 4.50, 2.89]
+counts: dict[str, int] = {'apples': 3, 'oranges': 5}
+```
+
+### 提示不强制类型检查
+
+对于 Python 初学者来说，有一点很重要：类型提示在运行时*不会被强制执行*。
+
+如果您传入"错误"的类型，Python 不会报错：
+
+```{code-cell} python3
+def add(x: int, y: int) -> int:
+    return x + y
+
+# Passes floats — Python doesn't complain
+add(1.5, 2.7)
+```
+
+提示写的是 `int`，但 Python 会愉快地接受 `float` 参数并返回 `4.2`——同样不是 `int`。
+
+这是与 C 或 Java 等静态类型语言的关键区别，在那些语言中，类型不匹配会导致编译错误。
+
+### 为什么使用类型提示？
+
+如果 Python 会忽略它们，为什么还要费心呢？
+
+1. **可读性**：类型提示使函数签名具有自文档化的特性。读者可以立即了解函数期望的类型和返回的类型。
+2. **编辑器支持**：VS Code 等集成开发环境利用类型提示来提供更好的自动补全、错误检测和内联文档。
+3. **错误检查**：[mypy](https://mypy.readthedocs.io/) 和 [pyrefly](https://pyrefly.org/) 等工具通过分析类型提示，在*运行代码之前*就能发现错误。
+4. **大语言模型生成的代码**：大型语言模型经常生成带有类型提示的代码，因此理解其语法有助于您阅读和使用这些输出。
+
+### 科学 Python 中的类型提示
+
+类型提示与{doc}`性能需求 <need_for_speed>`的讨论密切相关：
+
+* [JAX](https://jax.readthedocs.io/) 和 [Numba](https://numba.pydata.org/) 等高性能库依赖于了解变量类型来编译快速的机器码。
+* 虽然这些库在运行时推断类型，而不是直接读取 Python 类型提示，但其*理念*是相同的——显式的类型信息能够实现优化。
+* 随着 Python 生态系统的发展，类型提示与性能工具之间的联系预计将进一步增强。
+
+目前，类型提示在日常 Python 开发中的主要优势在于*清晰度和工具支持*，随着程序规模的增长，这一点的价值也愈发凸显。
 
 ## 装饰器与描述符
 
@@ -494,26 +607,26 @@ arb(l1=l1, l2=l2, l3=l3)
 ```{index} single: Python; Descriptors
 ```
 
-让我们看看 Python 开发者常用的一些特殊语法元素。
+让我们来看一些 Python 开发者经常使用的特殊语法元素。
 
-你可能不会立即需要以下概念，但你会在其他人的代码中看到它们。
+你可能不会立即用到以下概念，但你会在其他人的代码中看到它们。
 
-因此，在你的 Python 学习过程中，你需要在某个阶段理解它们。
+因此，在 Python 学习的某个阶段，你需要理解它们。
 
 ### 装饰器
 
 ```{index} single: Python; Decorators
 ```
 
-装饰器是一种语法糖，虽然很容易避免使用，但事实证明非常受欢迎。
+装饰器是一种语法糖，虽然完全可以避免使用，但已被证明非常受欢迎。
 
-说清楚装饰器的作用非常简单。
+说清楚装饰器的作用非常容易。
 
-另一方面，解释*为什么*你可能会使用它们则需要花费一些努力。
+另一方面，解释*为什么*要使用它们则需要花一些功夫。
 
 #### 一个示例
 
-假设我们正在开发一个如下所示的程序：
+假设我们正在开发一个看起来像这样的程序
 
 ```{code-cell} python3
 import numpy as np
@@ -524,20 +637,20 @@ def f(x):
 def g(x):
     return np.sqrt(42 * x)
 
-# 程序继续使用 f 和 g 进行各种计算
+# Program continues with various calculations using f and g
 ```
 
-现在假设有一个问题：偶尔会有负数被传入到后续计算中的 `f` 和 `g`。
+现在假设出现了一个问题：在后续计算中，`f` 和 `g` 偶尔会接收到负数。
 
-如果你尝试一下，你会看到当这些函数以负数调用时，它们返回一个名为 `nan` 的 NumPy 对象。
+如果你尝试一下，你会发现当这些函数以负数作为参数被调用时，它们会返回一个名为 `nan` 的 NumPy 对象。
 
-这代表"非数字"（表明你正在尝试在未定义的点处求值一个数学函数）。
+这代表"不是一个数"（表示你正在尝试在数学函数无定义的点处对其求值）。
 
-也许这不是我们想要的，因为它会导致其他难以在后期发现的问题。
+也许这并不是我们想要的结果，因为它会导致其他难以在后续发现的问题。
 
-假设我们希望程序在发生这种情况时终止，并给出合理的错误消息。
+假设我们希望程序在这种情况发生时终止，并给出一条合理的错误信息。
 
-这个更改很容易实现：
+这个改动实现起来很容易
 
 ```{code-cell} python3
 import numpy as np
@@ -550,20 +663,20 @@ def g(x):
     assert x >= 0, "Argument must be nonnegative"
     return np.sqrt(42 * x)
 
-# 程序继续使用 f 和 g 进行各种计算
+# Program continues with various calculations using f and g
 ```
 
-然而请注意，这里有一些重复，以两行相同代码的形式出现。
+但请注意，这里存在一些重复，即两行完全相同的代码。
 
-重复使我们的代码更长且更难维护，因此我们应该尽力避免。
+重复会使我们的代码更长、更难维护，因此是我们努力避免的事情。
 
-在这里这不是什么大问题，但现在想象一下，不是只有 `f` 和 `g`，而是我们有 20 个需要以完全相同方式修改的函数。
+在这里这还不是大问题，但现在想象一下，不只是 `f` 和 `g`，而是有 20 个这样的函数需要以完全相同的方式进行修改。
 
-这意味着我们需要重复测试逻辑（即测试非负性的 `assert` 行）20 次。
+这意味着我们需要重复测试逻辑（即检查非负性的 `assert` 语句）20 次。
 
-如果测试逻辑更长更复杂，情况就更糟了。
+如果测试逻辑更长、更复杂，情况会更糟。
 
-在这种情况下，以下方法会更为简洁：
+在这种情况下，以下方法会更简洁
 
 ```{code-cell} python3
 import numpy as np
@@ -582,44 +695,42 @@ def g(x):
 
 f = check_nonneg(f)
 g = check_nonneg(g)
-# 程序继续使用 f 和 g 进行各种计算
+# Program continues with various calculations using f and g
 ```
 
-这看起来很复杂，所以让我们慢慢理解它。
+这看起来很复杂，所以让我们慢慢地梳理一遍。
 
-为了理清逻辑，考虑当我们说 `f = check_nonneg(f)` 时会发生什么。
+为了理清逻辑，考虑当我们写 `f = check_nonneg(f)` 时会发生什么。
 
-这调用了函数 `check_nonneg`，参数 `func` 设置为等于 `f`。
+这会调用函数 `check_nonneg`，并将参数 `func` 设置为等于 `f`。
 
-现在 `check_nonneg` 创建了一个名为 `safe_function` 的新函数，
-该函数验证 `x` 为非负数，然后对其调用 `func`（与 `f` 相同）。
+现在 `check_nonneg` 创建了一个名为 `safe_function` 的新函数，它先验证 `x` 是非负的，然后对其调用 `func`（即与 `f` 相同的函数）。
 
 最后，全局名称 `f` 被设置为等于 `safe_function`。
 
-现在 `f` 的行为符合我们的期望，`g` 也是如此。
+现在 `f` 的行为符合我们的预期，`g` 也同样如此。
 
 与此同时，测试逻辑只需编写一次。
 
-#### 引入装饰器
+#### 装饰器登场
 
 ```{index} single: Python; Decorators
 ```
 
 我们代码的最后一个版本仍然不够理想。
 
-例如，如果有人正在阅读我们的代码并想了解 `f` 的工作原理，
-他们会寻找函数定义，即：
+例如，如果有人在阅读我们的代码并想了解 `f` 的工作原理，他们会去寻找函数定义，即
 
 ```{code-cell} python3
 def f(x):
     return np.log(np.log(x))
 ```
 
-他们很可能会错过 `f = check_nonneg(f)` 这一行。
+他们很可能会忽略 `f = check_nonneg(f)` 这一行。
 
-出于这个和其他原因，Python 引入了装饰器。
+出于这个和其他原因，装饰器被引入了 Python。
 
-使用装饰器，我们可以将以下代码：
+使用装饰器，我们可以将以下代码
 
 ```{code-cell} python3
 def f(x):
@@ -632,7 +743,7 @@ f = check_nonneg(f)
 g = check_nonneg(g)
 ```
 
-替换为：
+替换为
 
 ```{code-cell} python3
 @check_nonneg
@@ -644,29 +755,30 @@ def g(x):
     return np.sqrt(42 * x)
 ```
 
-这两段代码做的事情完全相同。
+这两段代码的作用完全相同。
 
-如果它们做的事情相同，我们真的需要装饰器语法吗？
+如果它们的作用相同，我们真的需要装饰器语法吗？
 
-好吧，注意装饰器就位于函数定义的正上方。
+注意，装饰器紧贴在函数定义的上方。
 
-因此，任何查看函数定义的人都会看到它们，并了解函数已被修改。
+因此，任何查看函数定义的人都会看到它们，并意识到该函数已被修改。
 
-在许多人看来，这使得装饰器语法成为对语言的重大改进。
+在许多人看来，这使得装饰器语法成为对 Python 语言的重大改进。
 
 (descriptors)=
+
 ### 描述符
 
 ```{index} single: Python; Descriptors
 ```
 
-描述符解决了变量管理方面的一个常见问题。
+描述符解决了一个关于变量管理的常见问题。
 
 为了理解这个问题，考虑一个模拟汽车的 `Car` 类。
 
-假设该类定义了变量 `miles` 和 `kms`，分别以英里和公里为单位给出行驶距离。
+假设该类定义了变量 `miles` 和 `kms`，分别表示以英里和千米为单位的行驶距离。
 
-该类的一个高度简化的版本可能如下所示：
+该类的一个高度简化版本可能如下所示
 
 ```{code-cell} python3
 class Car:
@@ -675,10 +787,10 @@ class Car:
         self.miles = miles
         self.kms = miles * 1.61
 
-    # 其他一些功能，细节省略
+    # Some other functionality, details omitted
 ```
 
-我们可能遇到的一个潜在问题是，用户更改了其中一个变量而没有更改另一个：
+我们可能遇到的一个潜在问题是，用户修改了其中一个变量但没有修改另一个
 
 ```{code-cell} python3
 car = Car()
@@ -696,7 +808,7 @@ car.kms
 
 在最后两行中，我们看到 `miles` 和 `kms` 不同步了。
 
-我们真正想要的是某种机制，使得每次用户设置其中一个变量时，*另一个会自动更新*。
+我们真正想要的是某种机制，使得每当用户设置其中一个变量时，*另一个会自动更新*。
 
 #### 解决方案
 
@@ -704,11 +816,11 @@ car.kms
 
 描述符只是一个实现了某些方法的 Python 对象。
 
-这些方法在通过点属性符号访问对象时被触发。
+当通过点属性符号访问该对象时，这些方法会被触发。
 
-理解这一点的最好方式是亲眼看看它的实际效果。
+理解这一点的最佳方式是通过实际操作来观察。
 
-考虑这个 `Car` 类的替代版本：
+考虑这个 `Car` 类的替代版本
 
 ```{code-cell} python3
 class Car:
@@ -735,7 +847,7 @@ class Car:
     kms = property(get_kms, set_kms)
 ```
 
-首先让我们检查一下是否获得了我们期望的行为：
+首先让我们验证我们得到了预期的行为
 
 ```{code-cell} python3
 car = Car()
@@ -747,24 +859,23 @@ car.miles = 6000
 car.kms
 ```
 
-是的，这就是我们想要的——`car.kms` 会自动更新。
+是的，这正是我们想要的——`car.kms` 会自动更新。
 
 #### 工作原理
 
-名称 `_miles` 和 `_kms` 是我们用来存储变量值的任意名称。
+`_miles` 和 `_kms` 这两个名称是我们用来存储变量值的任意名称。
 
-对象 `miles` 和 `kms` 是*属性*，一种常见的描述符。
+`miles` 和 `kms` 对象是*属性*，一种常见的描述符。
 
-方法 `get_miles`、`set_miles`、`get_kms` 和 `set_kms` 定义了
-当你获取（即访问）或设置（绑定）这些变量时会发生什么：
+方法 `get_miles`、`set_miles`、`get_kms` 和 `set_kms` 定义了当你获取（即访问）或设置（绑定）这些变量时会发生什么
 
-* 即所谓的 "getter" 和 "setter" 方法。
+* 即所谓的"getter"和"setter"方法。
 
 Python 内置函数 `property` 接受 getter 和 setter 方法并创建一个属性。
 
-例如，在 `car` 作为 `Car` 的实例创建之后，对象 `car.miles` 是一个属性。
+例如，在 `car` 作为 `Car` 的实例被创建后，对象 `car.miles` 就是一个属性。
 
-作为属性，当我们通过 `car.miles = 6000` 设置其值时，它的 setter 方法会被触发——在本例中是 `set_miles`。
+作为一个属性，当我们通过 `car.miles = 6000` 设置其值时，其 setter 方法会被触发——在本例中为 `set_miles`。
 
 #### 装饰器与属性
 
@@ -774,9 +885,9 @@ Python 内置函数 `property` 接受 getter 和 setter 方法并创建一个属
 ```{index} single: Python; Properties
 ```
 
-如今，通过装饰器使用 `property` 函数非常普遍。
+如今，通过装饰器来使用 `property` 函数非常普遍。
 
-这是我们 `Car` 类的另一个版本，与之前的工作方式相同，但现在使用装饰器来设置属性：
+这是我们 `Car` 类的另一个版本，它的功能与之前相同，但现在使用装饰器来设置属性
 
 ```{code-cell} python3
 class Car:
@@ -806,9 +917,10 @@ class Car:
 
 我们不会在这里介绍所有细节。
 
-如需进一步了解，可以参考[描述符文档](https://docs.python.org/3/howto/descriptor.html)。
+如需进一步了解，你可以参阅[描述符文档](https://docs.python.org/3/howto/descriptor.html)。
 
 (paf_generators)=
+
 ## 生成器
 
 ```{index} single: Python; Generators
@@ -1078,7 +1190,6 @@ sum(draws)
 
 * 避免了创建大型列表/元组的需要，以及
 * 提供了一个统一的迭代接口，可以在 `for` 循环中透明地使用。
-
 
 ## 练习
 
