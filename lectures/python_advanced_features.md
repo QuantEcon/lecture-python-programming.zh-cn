@@ -8,29 +8,36 @@ kernelspec:
   language: python
   name: python3
 heading-map:
+  More Language Features: 更多语言特性
   Overview: 概述
-  Iterables and Iterators: 可迭代对象与迭代器
-  Iterables and Iterators::Iterators: 迭代器
-  Iterables and Iterators::Iterators in For Loops: For 循环中的迭代器
-  Iterables and Iterators::Iterables: 可迭代对象
-  Iterables and Iterators::Iterators and built-ins: 迭代器与内置函数
-  '`*` and `**` Operators': '`*` 和 `**` 运算符'
-  '`*` and `**` Operators::Unpacking Arguments': 解包参数
-  '`*` and `**` Operators::Arbitrary Arguments': 任意数量的参数
-  Decorators and Descriptors: 装饰器与描述符
-  Decorators and Descriptors::Decorators: 装饰器
-  Decorators and Descriptors::Decorators::An Example: 一个示例
-  Decorators and Descriptors::Decorators::Enter Decorators: 引入装饰器
-  Decorators and Descriptors::Descriptors: 描述符
-  Decorators and Descriptors::Descriptors::A Solution: 解决方案
-  Decorators and Descriptors::Descriptors::How it Works: 工作原理
-  Decorators and Descriptors::Descriptors::Decorators and Properties: 装饰器与属性
+  Iterables and iterators: 可迭代对象与迭代器
+  Iterables and iterators::Iterators: 迭代器
+  Iterables and iterators::Iterators in for loops: For 循环中的迭代器
+  Iterables and iterators::Iterables: 可迭代对象
+  Iterables and iterators::Iterators and built-ins: 迭代器与内置函数
+  '`*` and `**` operators': '`*` 和 `**` 运算符'
+  '`*` and `**` operators::Unpacking arguments': 解包参数
+  '`*` and `**` operators::Arbitrary arguments': 任意数量的参数
+  Type hints: 类型提示
+  Type hints::Basic syntax: 基本语法
+  Type hints::Common types: 常见类型
+  Type hints::Hints don't enforce types: 提示不强制类型检查
+  Type hints::Why use type hints?: 为什么使用类型提示？
+  Type hints::Type hints in scientific Python: 科学 Python 中的类型提示
+  Decorators and descriptors: 装饰器与描述符
+  Decorators and descriptors::Decorators: 装饰器
+  Decorators and descriptors::Decorators::An example: 一个示例
+  Decorators and descriptors::Decorators::Enter decorators: 引入装饰器
+  Decorators and descriptors::Descriptors: 描述符
+  Decorators and descriptors::Descriptors::A solution: 解决方案
+  Decorators and descriptors::Descriptors::How it works: 工作原理
+  Decorators and descriptors::Descriptors::Decorators and properties: 装饰器与属性
   Generators: 生成器
-  Generators::Generator Expressions: 生成器表达式
-  Generators::Generator Functions: 生成器函数
-  Generators::Generator Functions::Example 1: 示例 1
-  Generators::Generator Functions::Example 2: 示例 2
-  Generators::Advantages of Iterators: 迭代器的优势
+  Generators::Generator expressions: 生成器表达式
+  Generators::Generator functions: 生成器函数
+  Generators::Generator functions::Example 1: 示例 1
+  Generators::Generator functions::Example 2: 示例 2
+  Generators::Advantages of iterators: 迭代器的优势
   Exercises: 练习
 ---
 
@@ -66,6 +73,7 @@ heading-map:
 现在让我们更仔细地了解它的工作原理，重点关注 Python 中 `for` 循环的实现。
 
 (iterators)=
+
 ### 迭代器
 
 ```{index} single: Python; Iterators
@@ -486,6 +494,107 @@ arb(l1=l1, l2=l2, l3=l3)
 
 区别在于带有 `*args` 的函数能够接受任意大小的*位置参数*，而 `**kargs` 允许函数接受任意数量的*关键字参数*。
 
+## 类型提示
+
+```{index} single: Python; Type Hints
+```
+
+Python 是一种*动态类型*语言，这意味着您无需声明变量的类型。
+
+（参见我们{doc}`之前关于 <need_for_speed>`动态类型与静态类型的讨论。）
+
+然而，Python 支持可选的**类型提示**（也称为类型注解），允许您指明变量、函数参数和返回值的预期类型。
+
+类型提示从 Python 3.5 开始引入，并在后续版本中不断发展。此处展示的所有语法均适用于 Python 3.9 及更高版本。
+
+```{note}
+类型提示在*运行时会被 Python 解释器忽略*——它们不会影响代码的执行方式。它们纯粹是信息性的，作为供人类和工具使用的文档。
+```
+
+### 基本语法
+
+类型提示使用冒号 `:` 来注解变量和参数，使用箭头 `->` 来注解返回类型。
+
+以下是一个简单示例：
+
+```{code-cell} python3
+def greet(name: str, times: int) -> str:
+    return (name + '! ') * times
+
+greet('hello', 3)
+```
+
+在这个函数定义中：
+
+- `name: str` 表示 `name` 预期为字符串类型
+- `times: int` 表示 `times` 预期为整数类型
+- `-> str` 表示函数返回一个字符串
+
+您也可以直接对变量进行注解：
+
+```{code-cell} python3
+x: int = 10
+y: float = 3.14
+name: str = 'Python'
+```
+
+### 常见类型
+
+最常用的类型提示是内置类型：
+
+| 类型      | 示例                          |
+|-----------|----------------------------------|
+| `int`     | `x: int = 5`                    |
+| `float`   | `x: float = 3.14`              |
+| `str`     | `x: str = 'hello'`             |
+| `bool`    | `x: bool = True`               |
+| `list`    | `x: list = [1, 2, 3]`          |
+| `dict`    | `x: dict = {'a': 1}`           |
+
+对于容器类型，您可以指定其元素的类型：
+
+```{code-cell} python3
+prices: list[float] = [9.99, 4.50, 2.89]
+counts: dict[str, int] = {'apples': 3, 'oranges': 5}
+```
+
+### 提示不强制类型检查
+
+对于 Python 初学者来说有一点很重要：类型提示在运行时*不会被强制执行*。
+
+如果您传入"错误"的类型，Python 不会报错：
+
+```{code-cell} python3
+def add(x: int, y: int) -> int:
+    return x + y
+
+# 传入浮点数——Python 不会报错
+add(1.5, 2.7)
+```
+
+提示中声明的是 `int`，但 Python 愉快地接受了 `float` 参数并返回 `4.2`——同样不是 `int`。
+
+这是与 C 或 Java 等静态类型语言的关键区别，在那些语言中，类型不匹配会导致编译错误。
+
+### 为什么使用类型提示？
+
+如果 Python 会忽略它们，为什么还要使用？
+
+1. **可读性**：类型提示使函数签名具有自文档化效果。读者可以立即了解函数期望和返回的类型。
+2. **编辑器支持**：VS Code 等集成开发环境使用类型提示来提供更好的自动补全、错误检测和内联文档。
+3. **错误检查**：[mypy](https://mypy.readthedocs.io/) 和 [pyrefly](https://pyrefly.org/) 等工具通过分析类型提示，在*运行代码之前*发现错误。
+4. **大语言模型生成的代码**：大型语言模型经常生成带有类型提示的代码，因此理解该语法有助于您阅读和使用其输出结果。
+
+### 科学 Python 中的类型提示
+
+类型提示与{doc}`性能需求 <need_for_speed>`的讨论密切相关：
+
+* [JAX](https://jax.readthedocs.io/) 和 [Numba](https://numba.pydata.org/) 等高性能库依赖于了解变量类型来编译高效的机器码。
+* 虽然这些库在运行时推断类型，而不是直接读取 Python 类型提示，但其*理念*是相同的——明确的类型信息能够实现优化。
+* 随着 Python 生态系统的发展，类型提示与性能工具之间的联系预计将会进一步加强。
+
+目前，类型提示在日常 Python 编程中的主要优势在于*清晰性和工具支持*，随着程序规模的增长，这一优势会愈发凸显。
+
 ## 装饰器与描述符
 
 ```{index} single: Python; Decorators
@@ -655,6 +764,7 @@ def g(x):
 在许多人看来，这使得装饰器语法成为对语言的重大改进。
 
 (descriptors)=
+
 ### 描述符
 
 ```{index} single: Python; Descriptors
@@ -809,6 +919,7 @@ class Car:
 如需进一步了解，可以参考[描述符文档](https://docs.python.org/3/howto/descriptor.html)。
 
 (paf_generators)=
+
 ## 生成器
 
 ```{index} single: Python; Generators
@@ -1079,7 +1190,6 @@ sum(draws)
 * 避免了创建大型列表/元组的需要，以及
 * 提供了一个统一的迭代接口，可以在 `for` 循环中透明地使用。
 
-
 ## 练习
 
 
@@ -1087,7 +1197,7 @@ sum(draws)
 :label: paf_ex1
 ```
 
-完成以下代码，并使用[此 csv 文件](https://raw.githubusercontent.com/QuantEcon/lecture-python-programming/master/source/_static/lecture_specific/python_advanced_features/test_table.csv)进行测试，我们假设你已将该文件放在当前工作目录中：
+完成以下代码，并使用[此 csv 文件](https://raw.githubusercontent.com/QuantEcon/lecture-python-programming/main/lectures/_static/lecture_specific/python_advanced_features/test_table.csv)进行测试，我们假设你已将该文件放在当前工作目录中：
 
 ```{code-block} python3
 :class: no-execute
