@@ -8,29 +8,30 @@ kernelspec:
   language: python
   name: python3
 heading-map:
+  More Language Features: 更多语言特性
   Overview: 概述
-  Iterables and Iterators: 可迭代对象与迭代器
-  Iterables and Iterators::Iterators: 迭代器
-  Iterables and Iterators::Iterators in For Loops: For 循环中的迭代器
-  Iterables and Iterators::Iterables: 可迭代对象
-  Iterables and Iterators::Iterators and built-ins: 迭代器与内置函数
-  '`*` and `**` Operators': '`*` 和 `**` 运算符'
-  '`*` and `**` Operators::Unpacking Arguments': 解包参数
-  '`*` and `**` Operators::Arbitrary Arguments': 任意数量的参数
-  Decorators and Descriptors: 装饰器与描述符
-  Decorators and Descriptors::Decorators: 装饰器
-  Decorators and Descriptors::Decorators::An Example: 一个示例
-  Decorators and Descriptors::Decorators::Enter Decorators: 引入装饰器
-  Decorators and Descriptors::Descriptors: 描述符
-  Decorators and Descriptors::Descriptors::A Solution: 解决方案
-  Decorators and Descriptors::Descriptors::How it Works: 工作原理
-  Decorators and Descriptors::Descriptors::Decorators and Properties: 装饰器与属性
+  Iterables and iterators: 可迭代对象与迭代器
+  Iterables and iterators::Iterators: 迭代器
+  Iterables and iterators::Iterators in for loops: For 循环中的迭代器
+  Iterables and iterators::Iterables: 可迭代对象
+  Iterables and iterators::Iterators and built-ins: 迭代器与内置函数
+  '`*` and `**` operators': '`*` 和 `**` 运算符'
+  '`*` and `**` operators::Unpacking arguments': 解包参数
+  '`*` and `**` operators::Arbitrary arguments': 任意数量的参数
+  Decorators and descriptors: 装饰器与描述符
+  Decorators and descriptors::Decorators: 装饰器
+  Decorators and descriptors::Decorators::An example: 一个示例
+  Decorators and descriptors::Decorators::Enter decorators: 引入装饰器
+  Decorators and descriptors::Descriptors: 描述符
+  Decorators and descriptors::Descriptors::A solution: 解决方案
+  Decorators and descriptors::Descriptors::How it works: 工作原理
+  Decorators and descriptors::Descriptors::Decorators and properties: 装饰器与属性
   Generators: 生成器
-  Generators::Generator Expressions: 生成器表达式
-  Generators::Generator Functions: 生成器函数
-  Generators::Generator Functions::Example 1: 示例 1
-  Generators::Generator Functions::Example 2: 示例 2
-  Generators::Advantages of Iterators: 迭代器的优势
+  Generators::Generator expressions: 生成器表达式
+  Generators::Generator functions: 生成器函数
+  Generators::Generator functions::Example 1: 示例 1
+  Generators::Generator functions::Example 2: 示例 2
+  Generators::Advantages of iterators: 迭代器的优势
   Exercises: 练习
 ---
 
@@ -66,6 +67,7 @@ heading-map:
 现在让我们更仔细地了解它的工作原理，重点关注 Python 中 `for` 循环的实现。
 
 (iterators)=
+
 ### 迭代器
 
 ```{index} single: Python; Iterators
@@ -655,6 +657,7 @@ def g(x):
 在许多人看来，这使得装饰器语法成为对语言的重大改进。
 
 (descriptors)=
+
 ### 描述符
 
 ```{index} single: Python; Descriptors
@@ -809,6 +812,7 @@ class Car:
 如需进一步了解，可以参考[描述符文档](https://docs.python.org/3/howto/descriptor.html)。
 
 (paf_generators)=
+
 ## 生成器
 
 ```{index} single: Python; Generators
@@ -1079,7 +1083,6 @@ sum(draws)
 * 避免了创建大型列表/元组的需要，以及
 * 提供了一个统一的迭代接口，可以在 `for` 循环中透明地使用。
 
-
 ## 练习
 
 
@@ -1087,7 +1090,7 @@ sum(draws)
 :label: paf_ex1
 ```
 
-完成以下代码，并使用[此 csv 文件](https://raw.githubusercontent.com/QuantEcon/lecture-python-programming/master/source/_static/lecture_specific/python_advanced_features/test_table.csv)进行测试，我们假设你已将该文件放在当前工作目录中：
+完成以下代码，并使用[此 csv 文件](https://raw.githubusercontent.com/QuantEcon/lecture-python-programming/main/lectures/_static/lecture_specific/python_advanced_features/test_table.csv)进行测试，我们假设你已将该文件放在当前工作目录中：
 
 ```{code-block} python3
 :class: no-execute
