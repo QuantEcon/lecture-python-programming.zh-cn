@@ -10,6 +10,7 @@ kernelspec:
   language: python
   name: python3
 heading-map:
+  '{index}`Pandas <single: Pandas>`': '{index}`Pandas <single: Pandas>`'
   Overview: 概述
   Series: Series
   DataFrames: DataFrames
