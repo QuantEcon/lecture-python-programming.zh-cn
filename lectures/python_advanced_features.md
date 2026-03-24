@@ -8,29 +8,33 @@ kernelspec:
   language: python
   name: python3
 heading-map:
+  More Language Features: 更多语言特性
   Overview: 概述
-  Iterables and Iterators: 可迭代对象与迭代器
-  Iterables and Iterators::Iterators: 迭代器
-  Iterables and Iterators::Iterators in For Loops: For 循环中的迭代器
-  Iterables and Iterators::Iterables: 可迭代对象
-  Iterables and Iterators::Iterators and built-ins: 迭代器与内置函数
-  '`*` and `**` Operators': '`*` 和 `**` 运算符'
-  '`*` and `**` Operators::Unpacking Arguments': 解包参数
-  '`*` and `**` Operators::Arbitrary Arguments': 任意数量的参数
-  Decorators and Descriptors: 装饰器与描述符
-  Decorators and Descriptors::Decorators: 装饰器
-  Decorators and Descriptors::Decorators::An Example: 一个示例
-  Decorators and Descriptors::Decorators::Enter Decorators: 引入装饰器
-  Decorators and Descriptors::Descriptors: 描述符
-  Decorators and Descriptors::Descriptors::A Solution: 解决方案
-  Decorators and Descriptors::Descriptors::How it Works: 工作原理
-  Decorators and Descriptors::Descriptors::Decorators and Properties: 装饰器与属性
+  Iterables and iterators: 可迭代对象与迭代器
+  Iterables and iterators::Iterators: 迭代器
+  Iterables and iterators::Iterators in for loops: For 循环中的迭代器
+  Iterables and iterators::Iterables: 可迭代对象
+  Iterables and iterators::Iterators and built-ins: 迭代器与内置函数
+  '`*` and `**` operators': '`*` 和 `**` 运算符'
+  '`*` and `**` operators::Unpacking arguments': 解包参数
+  '`*` and `**` operators::Arbitrary arguments': 任意数量的参数
+  Type hints: 装饰器与描述符
+  Type hints::Basic syntax: 装饰器
+  Type hints::Common types: 描述符
+  Decorators and descriptors: 装饰器与描述符
+  Decorators and descriptors::Decorators: 装饰器
+  Decorators and descriptors::Decorators::An example: 一个示例
+  Decorators and descriptors::Decorators::Enter decorators: 引入装饰器
+  Decorators and descriptors::Descriptors: 描述符
+  Decorators and descriptors::Descriptors::A solution: 解决方案
+  Decorators and descriptors::Descriptors::How it works: 工作原理
+  Decorators and descriptors::Descriptors::Decorators and properties: 装饰器与属性
   Generators: 生成器
-  Generators::Generator Expressions: 生成器表达式
-  Generators::Generator Functions: 生成器函数
-  Generators::Generator Functions::Example 1: 示例 1
-  Generators::Generator Functions::Example 2: 示例 2
-  Generators::Advantages of Iterators: 迭代器的优势
+  Generators::Generator expressions: 生成器表达式
+  Generators::Generator functions: 生成器函数
+  Generators::Generator functions::Example 1: 示例 1
+  Generators::Generator functions::Example 2: 示例 2
+  Generators::Advantages of iterators: 迭代器的优势
   Exercises: 练习
 ---
 
@@ -66,6 +70,7 @@ heading-map:
 现在让我们更仔细地了解它的工作原理，重点关注 Python 中 `for` 循环的实现。
 
 (iterators)=
+
 ### 迭代器
 
 ```{index} single: Python; Iterators
@@ -655,6 +660,7 @@ def g(x):
 在许多人看来，这使得装饰器语法成为对语言的重大改进。
 
 (descriptors)=
+
 ### 描述符
 
 ```{index} single: Python; Descriptors
@@ -809,6 +815,332 @@ class Car:
 如需进一步了解，可以参考[描述符文档](https://docs.python.org/3/howto/descriptor.html)。
 
 (paf_generators)=
+
+## 装饰器与描述符
+
+```{index} single: Python; Decorators
+```
+
+```{index} single: Python; Descriptors
+```
+
+让我们看看 Python 开发者常用的一些特殊语法元素。
+
+你可能不会立即需要以下概念，但你会在其他人的代码中看到它们。
+
+因此，在你的 Python 学习过程中，你需要在某个阶段理解它们。
+
+### 装饰器
+
+```{index} single: Python; Decorators
+```
+
+装饰器是一种语法糖，虽然很容易避免使用，但事实证明非常受欢迎。
+
+说清楚装饰器的作用非常简单。
+
+另一方面，解释*为什么*你可能会使用它们则需要花费一些努力。
+
+#### 一个示例
+
+假设我们正在开发一个如下所示的程序：
+
+```{code-cell} python3
+import numpy as np
+
+def f(x):
+    return np.log(np.log(x))
+
+def g(x):
+    return np.sqrt(42 * x)
+
+# 程序继续使用 f 和 g 进行各种计算
+```
+
+现在假设有一个问题：偶尔会有负数被传入到后续计算中的 `f` 和 `g`。
+
+如果你尝试一下，你会看到当这些函数以负数调用时，它们返回一个名为 `nan` 的 NumPy 对象。
+
+这代表"非数字"（表明你正在尝试在未定义的点处求值一个数学函数）。
+
+也许这不是我们想要的，因为它会导致其他难以在后期发现的问题。
+
+假设我们希望程序在发生这种情况时终止，并给出合理的错误消息。
+
+这个更改很容易实现：
+
+```{code-cell} python3
+import numpy as np
+
+def f(x):
+    assert x >= 0, "Argument must be nonnegative"
+    return np.log(np.log(x))
+
+def g(x):
+    assert x >= 0, "Argument must be nonnegative"
+    return np.sqrt(42 * x)
+
+# 程序继续使用 f 和 g 进行各种计算
+```
+
+然而请注意，这里有一些重复，以两行相同代码的形式出现。
+
+重复使我们的代码更长且更难维护，因此我们应该尽力避免。
+
+在这里这不是什么大问题，但现在想象一下，不是只有 `f` 和 `g`，而是我们有 20 个需要以完全相同方式修改的函数。
+
+这意味着我们需要重复测试逻辑（即测试非负性的 `assert` 行）20 次。
+
+如果测试逻辑更长更复杂，情况就更糟了。
+
+在这种情况下，以下方法会更为简洁：
+
+```{code-cell} python3
+import numpy as np
+
+def check_nonneg(func):
+    def safe_function(x):
+        assert x >= 0, "Argument must be nonnegative"
+        return func(x)
+    return safe_function
+
+def f(x):
+    return np.log(np.log(x))
+
+def g(x):
+    return np.sqrt(42 * x)
+
+f = check_nonneg(f)
+g = check_nonneg(g)
+# 程序继续使用 f 和 g 进行各种计算
+```
+
+这看起来很复杂，所以让我们慢慢理解它。
+
+为了理清逻辑，考虑当我们说 `f = check_nonneg(f)` 时会发生什么。
+
+这调用了函数 `check_nonneg`，参数 `func` 设置为等于 `f`。
+
+现在 `check_nonneg` 创建了一个名为 `safe_function` 的新函数，
+该函数验证 `x` 为非负数，然后对其调用 `func`（与 `f` 相同）。
+
+最后，全局名称 `f` 被设置为等于 `safe_function`。
+
+现在 `f` 的行为符合我们的期望，`g` 也是如此。
+
+与此同时，测试逻辑只需编写一次。
+
+#### 引入装饰器
+
+```{index} single: Python; Decorators
+```
+
+我们代码的最后一个版本仍然不够理想。
+
+例如，如果有人正在阅读我们的代码并想了解 `f` 的工作原理，
+他们会寻找函数定义，即：
+
+```{code-cell} python3
+def f(x):
+    return np.log(np.log(x))
+```
+
+他们很可能会错过 `f = check_nonneg(f)` 这一行。
+
+出于这个和其他原因，Python 引入了装饰器。
+
+使用装饰器，我们可以将以下代码：
+
+```{code-cell} python3
+def f(x):
+    return np.log(np.log(x))
+
+def g(x):
+    return np.sqrt(42 * x)
+
+f = check_nonneg(f)
+g = check_nonneg(g)
+```
+
+替换为：
+
+```{code-cell} python3
+@check_nonneg
+def f(x):
+    return np.log(np.log(x))
+
+@check_nonneg
+def g(x):
+    return np.sqrt(42 * x)
+```
+
+这两段代码做的事情完全相同。
+
+如果它们做的事情相同，我们真的需要装饰器语法吗？
+
+好吧，注意装饰器就位于函数定义的正上方。
+
+因此，任何查看函数定义的人都会看到它们，并了解函数已被修改。
+
+在许多人看来，这使得装饰器语法成为对语言的重大改进。
+
+(descriptors)=
+
+### 描述符
+
+```{index} single: Python; Descriptors
+```
+
+描述符解决了变量管理方面的一个常见问题。
+
+为了理解这个问题，考虑一个模拟汽车的 `Car` 类。
+
+假设该类定义了变量 `miles` 和 `kms`，分别以英里和公里为单位给出行驶距离。
+
+该类的一个高度简化的版本可能如下所示：
+
+```{code-cell} python3
+class Car:
+
+    def __init__(self, miles=1000):
+        self.miles = miles
+        self.kms = miles * 1.61
+
+    # 其他一些功能，细节省略
+```
+
+我们可能遇到的一个潜在问题是，用户更改了其中一个变量而没有更改另一个：
+
+```{code-cell} python3
+car = Car()
+car.miles
+```
+
+```{code-cell} python3
+car.kms
+```
+
+```{code-cell} python3
+car.miles = 6000
+car.kms
+```
+
+在最后两行中，我们看到 `miles` 和 `kms` 不同步了。
+
+我们真正想要的是某种机制，使得每次用户设置其中一个变量时，*另一个会自动更新*。
+
+#### 解决方案
+
+在 Python 中，这个问题使用*描述符*来解决。
+
+描述符只是一个实现了某些方法的 Python 对象。
+
+这些方法在通过点属性符号访问对象时被触发。
+
+理解这一点的最好方式是亲眼看看它的实际效果。
+
+考虑这个 `Car` 类的替代版本：
+
+```{code-cell} python3
+class Car:
+
+    def __init__(self, miles=1000):
+        self._miles = miles
+        self._kms = miles * 1.61
+
+    def set_miles(self, value):
+        self._miles = value
+        self._kms = value * 1.61
+
+    def set_kms(self, value):
+        self._kms = value
+        self._miles = value / 1.61
+
+    def get_miles(self):
+        return self._miles
+
+    def get_kms(self):
+        return self._kms
+
+    miles = property(get_miles, set_miles)
+    kms = property(get_kms, set_kms)
+```
+
+首先让我们检查一下是否获得了我们期望的行为：
+
+```{code-cell} python3
+car = Car()
+car.miles
+```
+
+```{code-cell} python3
+car.miles = 6000
+car.kms
+```
+
+是的，这就是我们想要的——`car.kms` 会自动更新。
+
+#### 工作原理
+
+名称 `_miles` 和 `_kms` 是我们用来存储变量值的任意名称。
+
+对象 `miles` 和 `kms` 是*属性*，一种常见的描述符。
+
+方法 `get_miles`、`set_miles`、`get_kms` 和 `set_kms` 定义了
+当你获取（即访问）或设置（绑定）这些变量时会发生什么：
+
+* 即所谓的 "getter" 和 "setter" 方法。
+
+Python 内置函数 `property` 接受 getter 和 setter 方法并创建一个属性。
+
+例如，在 `car` 作为 `Car` 的实例创建之后，对象 `car.miles` 是一个属性。
+
+作为属性，当我们通过 `car.miles = 6000` 设置其值时，它的 setter 方法会被触发——在本例中是 `set_miles`。
+
+#### 装饰器与属性
+
+```{index} single: Python; Decorators
+```
+
+```{index} single: Python; Properties
+```
+
+如今，通过装饰器使用 `property` 函数非常普遍。
+
+这是我们 `Car` 类的另一个版本，与之前的工作方式相同，但现在使用装饰器来设置属性：
+
+```{code-cell} python3
+class Car:
+
+    def __init__(self, miles=1000):
+        self._miles = miles
+        self._kms = miles * 1.61
+
+    @property
+    def miles(self):
+        return self._miles
+
+    @property
+    def kms(self):
+        return self._kms
+
+    @miles.setter
+    def miles(self, value):
+        self._miles = value
+        self._kms = value * 1.61
+
+    @kms.setter
+    def kms(self, value):
+        self._kms = value
+        self._miles = value / 1.61
+```
+
+我们不会在这里介绍所有细节。
+
+如需进一步了解，可以参考[描述符文档](https://docs.python.org/3/howto/descriptor.html)。
+
+(paf_generators)=
+
 ## 生成器
 
 ```{index} single: Python; Generators
@@ -1078,7 +1410,6 @@ sum(draws)
 
 * 避免了创建大型列表/元组的需要，以及
 * 提供了一个统一的迭代接口，可以在 `for` 循环中透明地使用。
-
 
 ## 练习
 
