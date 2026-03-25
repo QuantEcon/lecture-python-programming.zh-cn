@@ -10,6 +10,7 @@ kernelspec:
   language: python
   name: python3
 heading-map:
+  '{index}`Pandas <single: Pandas>`': '{index}`Pandas <single: Pandas>`'
   Overview: 概述
   Series: Series
   DataFrames: DataFrames
@@ -177,7 +178,7 @@ s
 我们将使用 `pandas` 函数 `read_csv` 从 URL 读取数据。
 
 ```{code-cell} ipython3
-df = pd.read_csv('https://raw.githubusercontent.com/QuantEcon/lecture-python-programming/master/source/_static/lecture_specific/pandas/data/test_pwt.csv')
+df = pd.read_csv('https://raw.githubusercontent.com/QuantEcon/lecture-python-programming/main/lectures/_static/lecture_specific/pandas/data/test_pwt.csv')
 type(df)
 ```
 
