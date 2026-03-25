@@ -8,7 +8,6 @@ kernelspec:
   language: python
   name: python3
 heading-map:
-  More Language Features: 更多语言特性
   Overview: 概述
   Iterables and iterators: 可迭代对象与迭代器
   Iterables and iterators::Iterators: 迭代器
