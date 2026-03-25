@@ -9,25 +9,27 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  Getting Started: 入门
-  Symbolic algebra: 符号代数
-  Symbolic algebra::Symbols: 符号
-  Symbolic algebra::Expressions: 表达式
-  Symbolic algebra::Equations: 方程
-  'Symbolic algebra::Equations::Example: fixed point computation': 示例：不动点计算
-  Symbolic algebra::Inequalities and logic: 不等式与逻辑
-  Symbolic algebra::Series: 级数
-  'Symbolic algebra::Series::Example: bank deposits': 示例：银行存款
-  'Symbolic algebra::Series::Example: discrete random variable': 示例：离散随机变量
-  Symbolic Calculus: 符号微积分
-  Symbolic Calculus::Limits: 极限
-  Symbolic Calculus::Derivatives: 导数
-  Symbolic Calculus::Integrals: 积分
-  Plotting: 绘图
-  'Application: Two-person Exchange Economy': 应用：两人交换经济
-  Exercises: 练习
+translation:
+  title: SymPy
+  headings:
+    Overview: 概述
+    Getting Started: 入门
+    Symbolic algebra: 符号代数
+    Symbolic algebra::Symbols: 符号
+    Symbolic algebra::Expressions: 表达式
+    Symbolic algebra::Equations: 方程
+    'Symbolic algebra::Equations::Example: fixed point computation': 示例：不动点计算
+    Symbolic algebra::Inequalities and logic: 不等式与逻辑
+    Symbolic algebra::Series: 级数
+    'Symbolic algebra::Series::Example: bank deposits': 示例：银行存款
+    'Symbolic algebra::Series::Example: discrete random variable': 示例：离散随机变量
+    Symbolic Calculus: 符号微积分
+    Symbolic Calculus::Limits: 极限
+    Symbolic Calculus::Derivatives: 导数
+    Symbolic Calculus::Integrals: 积分
+    Plotting: 绘图
+    'Application: Two-person Exchange Economy': 应用：两人交换经济
+    Exercises: 练习
 ---
 
 (sympy)=

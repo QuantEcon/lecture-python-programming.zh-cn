@@ -7,21 +7,23 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  Vectorized operations: 向量化运算
-  Vectorized operations::Problem Statement: 问题陈述
-  Vectorized operations::NumPy vectorization: NumPy 向量化
-  Vectorized operations::A Comparison with Numba: 与 Numba 的比较
-  Vectorized operations::Parallelized Numba: 并行化的 Numba
-  Vectorized operations::Vectorized code with JAX: 使用 JAX 的向量化代码
-  Vectorized operations::JAX plus vmap: JAX 加 vmap
-  Vectorized operations::JAX plus vmap::Version 1: 版本 1
-  Vectorized operations::vmap version 2: vmap 版本 2
-  Vectorized operations::Summary: 总结
-  Sequential operations: 顺序运算
-  Sequential operations::Numba Version: Numba 版本
-  Sequential operations::JAX Version: JAX 版本
-  Sequential operations::Summary: 总结
+translation:
+  title: NumPy vs Numba vs JAX
+  headings:
+    Vectorized operations: 向量化运算
+    Vectorized operations::Problem Statement: 问题陈述
+    Vectorized operations::NumPy vectorization: NumPy 向量化
+    Vectorized operations::A Comparison with Numba: 与 Numba 的比较
+    Vectorized operations::Parallelized Numba: 并行化的 Numba
+    Vectorized operations::Vectorized code with JAX: 使用 JAX 的向量化代码
+    Vectorized operations::JAX plus vmap: JAX 加 vmap
+    Vectorized operations::JAX plus vmap::Version 1: 版本 1
+    Vectorized operations::vmap version 2: vmap 版本 2
+    Vectorized operations::Summary: 总结
+    Sequential operations: 顺序运算
+    Sequential operations::Numba Version: Numba 版本
+    Sequential operations::JAX Version: JAX 版本
+    Sequential operations::Summary: 总结
 ---
 
 (parallel)=

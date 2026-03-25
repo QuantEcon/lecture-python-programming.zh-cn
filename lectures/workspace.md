@@ -9,17 +9,19 @@ kernelspec:
   name: python3
   display_name: Python 3 (ipykernel)
   language: python
-heading-map:
-  Overview: 概述
-  Working with Python files: 使用 Python 文件
-  Development environments: 开发环境
-  'A step forward from Jupyter Notebooks: JupyterLab': Jupyter Notebook 的进阶：JupyterLab
-  'A step forward from Jupyter Notebooks: JupyterLab::Using magic commands': 使用魔法命令
-  'A step forward from Jupyter Notebooks: JupyterLab::Using the terminal': 使用终端
-  A walk through Visual Studio Code: Visual Studio Code 使用指南
-  A walk through Visual Studio Code::Using the run button: 使用运行按钮
-  A walk through Visual Studio Code::Using the terminal: 使用终端
-  Git your hands dirty: 动手实践 Git
+translation:
+  title: 编写较长的程序
+  headings:
+    Overview: 概述
+    Working with Python files: 使用 Python 文件
+    Development environments: 开发环境
+    'A step forward from Jupyter Notebooks: JupyterLab': Jupyter Notebook 的进阶：JupyterLab
+    'A step forward from Jupyter Notebooks: JupyterLab::Using magic commands': 使用魔法命令
+    'A step forward from Jupyter Notebooks: JupyterLab::Using the terminal': 使用终端
+    A walk through Visual Studio Code: Visual Studio Code 使用指南
+    A walk through Visual Studio Code::Using the run button: 使用运行按钮
+    A walk through Visual Studio Code::Using the terminal: 使用终端
+    Git your hands dirty: 动手实践 Git
 ---
 
 (workspace)=

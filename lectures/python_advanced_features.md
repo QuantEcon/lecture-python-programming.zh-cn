@@ -7,38 +7,39 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  More Language Features: 更多语言特性
-  Overview: 概述
-  Iterables and iterators: 可迭代对象与迭代器
-  Iterables and iterators::Iterators: 迭代器
-  Iterables and iterators::Iterators in for loops: for 循环中的迭代器
-  Iterables and iterators::Iterables: 可迭代对象
-  Iterables and iterators::Iterators and built-ins: 迭代器与内置函数
-  '`*` and `**` operators': '`*` 和 `**` 运算符'
-  '`*` and `**` operators::Unpacking arguments': 解包参数
-  '`*` and `**` operators::Arbitrary arguments': 任意数量的参数
-  Type hints: 类型提示
-  Type hints::Basic syntax: 基本语法
-  Type hints::Common types: 常用类型
-  Type hints::Hints don't enforce types: 提示不强制类型
-  Type hints::Why use type hints?: 为什么使用类型提示？
-  Type hints::Type hints in scientific Python: 科学 Python 中的类型提示
-  Decorators and descriptors: 装饰器与描述符
-  Decorators and descriptors::Decorators: 装饰器
-  Decorators and descriptors::Decorators::An example: 一个示例
-  Decorators and descriptors::Decorators::Enter decorators: 引入装饰器
-  Decorators and descriptors::Descriptors: 描述符
-  Decorators and descriptors::Descriptors::A solution: 解决方案
-  Decorators and descriptors::Descriptors::How it works: 工作原理
-  Decorators and descriptors::Descriptors::Decorators and properties: 装饰器与属性
-  Generators: 生成器
-  Generators::Generator expressions: 生成器表达式
-  Generators::Generator functions: 生成器函数
-  Generators::Generator functions::Example 1: 示例 1
-  Generators::Generator functions::Example 2: 示例 2
-  Generators::Advantages of iterators: 迭代器的优势
-  Exercises: 练习
+translation:
+  title: 更多语言特性
+  headings:
+    Overview: 概述
+    Iterables and iterators: 可迭代对象与迭代器
+    Iterables and iterators::Iterators: 迭代器
+    Iterables and iterators::Iterators in for loops: for 循环中的迭代器
+    Iterables and iterators::Iterables: 可迭代对象
+    Iterables and iterators::Iterators and built-ins: 迭代器与内置函数
+    '`*` and `**` operators': '`*` 和 `**` 运算符'
+    '`*` and `**` operators::Unpacking arguments': 解包参数
+    '`*` and `**` operators::Arbitrary arguments': 任意数量的参数
+    Type hints: 类型提示
+    Type hints::Basic syntax: 基本语法
+    Type hints::Common types: 常用类型
+    Type hints::Hints don't enforce types: 提示不强制类型
+    Type hints::Why use type hints?: 为什么使用类型提示？
+    Type hints::Type hints in scientific Python: 科学 Python 中的类型提示
+    Decorators and descriptors: 装饰器与描述符
+    Decorators and descriptors::Decorators: 装饰器
+    Decorators and descriptors::Decorators::An example: 一个示例
+    Decorators and descriptors::Decorators::Enter decorators: 引入装饰器
+    Decorators and descriptors::Descriptors: 描述符
+    Decorators and descriptors::Descriptors::A solution: 解决方案
+    Decorators and descriptors::Descriptors::How it works: 工作原理
+    Decorators and descriptors::Descriptors::Decorators and properties: 装饰器与属性
+    Generators: 生成器
+    Generators::Generator expressions: 生成器表达式
+    Generators::Generator functions: 生成器函数
+    Generators::Generator functions::Example 1: 示例 1
+    Generators::Generator functions::Example 2: 示例 2
+    Generators::Advantages of iterators: 迭代器的优势
+    Exercises: 练习
 ---
 
 (python_advanced_features)=

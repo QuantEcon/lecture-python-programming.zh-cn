@@ -7,26 +7,28 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  NumPy Arrays: NumPy 数组
-  NumPy Arrays::Basics: 基础
-  NumPy Arrays::Shape and Dimension: 形状与维度
-  NumPy Arrays::Creating Arrays: 创建数组
-  NumPy Arrays::Array Indexing: 数组索引
-  NumPy Arrays::Array Methods: 数组方法
-  Arithmetic Operations: 算术运算
-  Matrix Multiplication: 矩阵乘法
-  Broadcasting: 广播
-  Mutability and Copying Arrays: 可变性与数组复制
-  Mutability and Copying Arrays::Mutability: 可变性
-  Mutability and Copying Arrays::Making Copies: 复制数组
-  Additional Features: 其他功能
-  Additional Features::Universal Functions: 通用函数
-  Additional Features::Comparisons: 比较
-  Additional Features::Sub-packages: 子包
-  Additional Features::Implicit Multithreading: 隐式多线程
-  Exercises: 练习
+translation:
+  title: NumPy
+  headings:
+    Overview: 概述
+    NumPy Arrays: NumPy 数组
+    NumPy Arrays::Basics: 基础
+    NumPy Arrays::Shape and Dimension: 形状与维度
+    NumPy Arrays::Creating Arrays: 创建数组
+    NumPy Arrays::Array Indexing: 数组索引
+    NumPy Arrays::Array Methods: 数组方法
+    Arithmetic Operations: 算术运算
+    Matrix Multiplication: 矩阵乘法
+    Broadcasting: 广播
+    Mutability and Copying Arrays: 可变性与数组复制
+    Mutability and Copying Arrays::Mutability: 可变性
+    Mutability and Copying Arrays::Making Copies: 复制数组
+    Additional Features: 其他功能
+    Additional Features::Universal Functions: 通用函数
+    Additional Features::Comparisons: 比较
+    Additional Features::Sub-packages: 子包
+    Additional Features::Implicit Multithreading: 隐式多线程
+    Exercises: 练习
 ---
 
 (np)=

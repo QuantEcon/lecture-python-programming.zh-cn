@@ -7,18 +7,20 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  Debugging: 调试
-  Debugging::The `debug` Magic: '`debug` 魔法命令'
-  Debugging::Setting a Break Point: 设置断点
-  Debugging::Other Useful Magics: 其他有用的魔法命令
-  Handling Errors: 错误处理
-  Handling Errors::Errors in Python: Python 中的错误
-  Handling Errors::Assertions: 断言
-  Handling Errors::Handling Errors During Runtime: 运行时错误处理
-  Handling Errors::Handling Errors During Runtime::Catching Exceptions: 捕获异常
-  Exercises: 练习
+translation:
+  title: 调试与错误处理
+  headings:
+    Overview: 概述
+    Debugging: 调试
+    Debugging::The `debug` Magic: '`debug` 魔法命令'
+    Debugging::Setting a Break Point: 设置断点
+    Debugging::Other Useful Magics: 其他有用的魔法命令
+    Handling Errors: 错误处理
+    Handling Errors::Errors in Python: Python 中的错误
+    Handling Errors::Assertions: 断言
+    Handling Errors::Handling Errors During Runtime: 运行时错误处理
+    Handling Errors::Handling Errors During Runtime::Catching Exceptions: 捕获异常
+    Exercises: 练习
 ---
 
 (debugging)=

@@ -7,18 +7,20 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  An Example of Poor Code: 劣质代码示例
-  Good Coding Practice: 良好的编码实践
-  Good Coding Practice::Don't Use Magic Numbers: 不要使用魔法数字
-  Good Coding Practice::Don't Repeat Yourself: 不要重复自己
-  Good Coding Practice::Minimize Global Variables: 最小化全局变量
-  Good Coding Practice::Minimize Global Variables::JIT Compilation: JIT 编译
-  Good Coding Practice::Use Functions or Classes: 使用函数或类
-  Good Coding Practice::Use Functions or Classes::Which One, Functions or Classes?: 选哪个，函数还是类？
-  Revisiting the Example: 重新审视示例
-  Exercises: 练习
+translation:
+  title: 编写高质量代码
+  headings:
+    Overview: 概述
+    An Example of Poor Code: 劣质代码示例
+    Good Coding Practice: 良好的编码实践
+    Good Coding Practice::Don't Use Magic Numbers: 不要使用魔法数字
+    Good Coding Practice::Don't Repeat Yourself: 不要重复自己
+    Good Coding Practice::Minimize Global Variables: 最小化全局变量
+    Good Coding Practice::Minimize Global Variables::JIT Compilation: JIT 编译
+    Good Coding Practice::Use Functions or Classes: 使用函数或类
+    Good Coding Practice::Use Functions or Classes::Which One, Functions or Classes?: 选哪个，函数还是类？
+    Revisiting the Example: 重新审视示例
+    Exercises: 练习
 ---
 
 (writing_good_code)=

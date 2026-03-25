@@ -7,6 +7,8 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
+translation:
+  title: 面向经济学与金融学的Python编程
 ---
 
 # 面向经济学与金融学的Python编程

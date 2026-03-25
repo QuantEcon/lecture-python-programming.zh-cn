@@ -7,23 +7,25 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  Function Basics: 函数基础
-  Function Basics::Built-In Functions: 内置函数
-  Function Basics::Third Party Functions: 第三方函数
-  Defining Functions: 定义函数
-  Defining Functions::Basic Syntax: 基本语法
-  Defining Functions::Keyword Arguments: 关键字参数
-  Defining Functions::The Flexibility of Python Functions: Python 函数的灵活性
-  'Defining Functions::One-Line Functions: `lambda`': 单行函数：`lambda`
-  Defining Functions::Why Write Functions?: 为什么要编写函数？
-  Applications: 应用
-  Applications::Random Draws: 随机抽取
-  Applications::Adding Conditions: 添加条件
-  Recursive Function Calls (Advanced): 递归函数调用（进阶）
-  Exercises: 练习
-  Advanced Exercises: 进阶练习
+translation:
+  title: 函数
+  headings:
+    Overview: 概述
+    Function Basics: 函数基础
+    Function Basics::Built-In Functions: 内置函数
+    Function Basics::Third Party Functions: 第三方函数
+    Defining Functions: 定义函数
+    Defining Functions::Basic Syntax: 基本语法
+    Defining Functions::Keyword Arguments: 关键字参数
+    Defining Functions::The Flexibility of Python Functions: Python 函数的灵活性
+    'Defining Functions::One-Line Functions: `lambda`': 单行函数：`lambda`
+    Defining Functions::Why Write Functions?: 为什么要编写函数？
+    Applications: 应用
+    Applications::Random Draws: 随机抽取
+    Applications::Adding Conditions: 添加条件
+    Recursive Function Calls (Advanced): 递归函数调用（进阶）
+    Exercises: 练习
+    Advanced Exercises: 进阶练习
 ---
 
 (functions)=

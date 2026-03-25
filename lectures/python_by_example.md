@@ -7,24 +7,26 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  'The Task: Plotting a White Noise Process': 任务：绘制白噪声过程
-  Version 1: 版本一
-  Version 1::Imports: 导入语句
-  Version 1::Imports::Why So Many Imports?: 为什么需要这么多导入语句？
-  Version 1::Imports::Packages: 包
-  Version 1::Imports::Subpackages: 子包
-  Version 1::Importing Names Directly: 直接导入名称
-  Version 1::Random Draws: 随机抽取
-  Alternative Implementations: 替代实现
-  Alternative Implementations::A Version with a For Loop: 使用 For 循环的版本
-  Alternative Implementations::Lists: 列表
-  Alternative Implementations::The For Loop: For 循环
-  Alternative Implementations::A Comment on Indentation: 关于缩进的说明
-  Alternative Implementations::While Loops: While 循环
-  Another Application: 另一个应用
-  Exercises: 练习
+translation:
+  title: 入门示例
+  headings:
+    Overview: 概述
+    'The Task: Plotting a White Noise Process': 任务：绘制白噪声过程
+    Version 1: 版本一
+    Version 1::Imports: 导入语句
+    Version 1::Imports::Why So Many Imports?: 为什么需要这么多导入语句？
+    Version 1::Imports::Packages: 包
+    Version 1::Imports::Subpackages: 子包
+    Version 1::Importing Names Directly: 直接导入名称
+    Version 1::Random Draws: 随机抽取
+    Alternative Implementations: 替代实现
+    Alternative Implementations::A Version with a For Loop: 使用 For 循环的版本
+    Alternative Implementations::Lists: 列表
+    Alternative Implementations::The For Loop: For 循环
+    Alternative Implementations::A Comment on Indentation: 关于缩进的说明
+    Alternative Implementations::While Loops: While 循环
+    Another Application: 另一个应用
+    Exercises: 练习
 ---
 
 (python_by_example)=

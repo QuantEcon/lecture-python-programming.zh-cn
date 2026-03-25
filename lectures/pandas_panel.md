@@ -9,13 +9,15 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  Slicing and Reshaping Data: 数据切片与重塑
-  Merging Dataframes and Filling NaNs: 合并数据框与填充 NaN 值
-  Grouping and Summarizing Data: 数据分组与汇总
-  Final Remarks: 结语
-  Exercises: 练习
+translation:
+  title: Pandas 面板数据
+  headings:
+    Overview: 概述
+    Slicing and Reshaping Data: 数据切片与重塑
+    Merging Dataframes and Filling NaNs: 合并数据框与填充 NaN 值
+    Grouping and Summarizing Data: 数据分组与汇总
+    Final Remarks: 结语
+    Exercises: 练习
 ---
 
 ```{raw} jupyter

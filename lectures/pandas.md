@@ -9,19 +9,21 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  Series: Series
-  DataFrames: DataFrames
-  DataFrames::Select Data by Position: 按位置选择数据
-  DataFrames::Select Data by Conditions: 按条件选择数据
-  DataFrames::Apply Method: Apply 方法
-  DataFrames::Make Changes in DataFrames: 修改 DataFrames
-  DataFrames::Standardization and Visualization: 标准化与可视化
-  On-Line Data Sources: 在线数据来源
-  'On-Line Data Sources::Accessing Data with {index}`requests <single: requests>`': '使用 {index}`requests <single: requests>` 访问数据'
-  'On-Line Data Sources::Using {index}`wbgapi <single: wbgapi>` and {index}`yfinance <single: yfinance>` to Access Data': '使用 {index}`wbgapi <single: wbgapi>` 和 {index}`yfinance <single: yfinance>` 访问数据'
-  Exercises: 练习
+translation:
+  title: Pandas
+  headings:
+    Overview: 概述
+    Series: Series
+    DataFrames: DataFrames
+    DataFrames::Select Data by Position: 按位置选择数据
+    DataFrames::Select Data by Conditions: 按条件选择数据
+    DataFrames::Apply Method: Apply 方法
+    DataFrames::Make Changes in DataFrames: 修改 DataFrames
+    DataFrames::Standardization and Visualization: 标准化与可视化
+    On-Line Data Sources: 在线数据来源
+    'On-Line Data Sources::Accessing Data with {index}`requests <single: requests>`': '使用 {index}`requests <single: requests>` 访问数据'
+    'On-Line Data Sources::Using {index}`wbgapi <single: wbgapi>` and {index}`yfinance <single: yfinance>` to Access Data': '使用 {index}`wbgapi <single: wbgapi>` 和 {index}`yfinance <single: yfinance>` 访问数据'
+    Exercises: 练习
 ---
 
 (pd)=

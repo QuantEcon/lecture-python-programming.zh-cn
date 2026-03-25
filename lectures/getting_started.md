@@ -7,33 +7,35 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  Python in the Cloud: 云端 Python
-  Local Install: 本地安装
-  Local Install::The Anaconda Distribution: Anaconda 发行版
-  Local Install::Installing Anaconda: 安装 Anaconda
-  Local Install::Updating `conda`: 更新 `conda`
-  '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`': '{index}`Jupyter 笔记本 <single: Jupyter Notebooks>`'
-  '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Starting the Jupyter Notebook': 启动 Jupyter 笔记本
-  '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Notebook Basics': 笔记本基础
-  '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Notebook Basics::Running Cells': 运行单元格
-  '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Notebook Basics::Modal Editing': 模式编辑
-  '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Notebook Basics::Inserting Unicode (e.g., Greek Letters)': 插入 Unicode（例如希腊字母）
-  '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Notebook Basics::A Test Program': 测试程序
-  '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Working with the Notebook': 使用笔记本
-  '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Working with the Notebook::Tab Completion': Tab 补全
-  '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Working with the Notebook::On-Line Help': 在线帮助
-  '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Working with the Notebook::Other Content': 其他内容
-  '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Debugging Code': 调试代码
-  '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Sharing Notebooks': 共享笔记本
-  '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::QuantEcon Notes': QuantEcon Notes
-  Installing Libraries: 安装库
-  Working with Python Files: 使用 Python 文件
-  Working with Python Files::Editing and Execution: 编辑与执行
-  'Working with Python Files::Editing and Execution::Option 1: {index}`JupyterLab <single: JupyterLab>`': '选项 1：{index}`JupyterLab <single: JupyterLab>`'
-  'Working with Python Files::Editing and Execution::Option 2: Using a Text Editor': 选项 2：使用文本编辑器
-  Exercises: 练习
+translation:
+  title: 入门指南
+  headings:
+    Overview: 概述
+    Python in the Cloud: 云端 Python
+    Local Install: 本地安装
+    Local Install::The Anaconda Distribution: Anaconda 发行版
+    Local Install::Installing Anaconda: 安装 Anaconda
+    Local Install::Updating `conda`: 更新 `conda`
+    '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`': '{index}`Jupyter 笔记本 <single: Jupyter Notebooks>`'
+    '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Starting the Jupyter Notebook': 启动 Jupyter 笔记本
+    '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Notebook Basics': 笔记本基础
+    '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Notebook Basics::Running Cells': 运行单元格
+    '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Notebook Basics::Modal Editing': 模式编辑
+    '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Notebook Basics::Inserting Unicode (e.g., Greek Letters)': 插入 Unicode（例如希腊字母）
+    '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Notebook Basics::A Test Program': 测试程序
+    '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Working with the Notebook': 使用笔记本
+    '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Working with the Notebook::Tab Completion': Tab 补全
+    '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Working with the Notebook::On-Line Help': 在线帮助
+    '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Working with the Notebook::Other Content': 其他内容
+    '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Debugging Code': 调试代码
+    '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::Sharing Notebooks': 共享笔记本
+    '{index}`Jupyter Notebooks <single: Jupyter Notebooks>`::QuantEcon Notes': QuantEcon Notes
+    Installing Libraries: 安装库
+    Working with Python Files: 使用 Python 文件
+    Working with Python Files::Editing and Execution: 编辑与执行
+    'Working with Python Files::Editing and Execution::Option 1: {index}`JupyterLab <single: JupyterLab>`': '选项 1：{index}`JupyterLab <single: JupyterLab>`'
+    'Working with Python Files::Editing and Execution::Option 2: Using a Text Editor': 选项 2：使用文本编辑器
+    Exercises: 练习
 ---
 
 (getting_started)=

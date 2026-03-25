@@ -7,17 +7,19 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  Objects: 对象
-  Objects::Type: 类型
-  Objects::Identity: 标识符
-  'Objects::Object Content: Data and Attributes': 对象内容：数据与属性
-  Objects::Methods: 方法
-  Inspection Using Rich: 使用 Rich 进行检查
-  A Little Mystery: 一个小谜题
-  Summary: 总结
-  Exercises: 练习
+translation:
+  title: OOP I：对象与方法
+  headings:
+    Overview: 概述
+    Objects: 对象
+    Objects::Type: 类型
+    Objects::Identity: 标识符
+    'Objects::Object Content: Data and Attributes': 对象内容：数据与属性
+    Objects::Methods: 方法
+    Inspection Using Rich: 使用 Rich 进行检查
+    A Little Mystery: 一个小谜题
+    Summary: 总结
+    Exercises: 练习
 ---
 
 (oop_intro)=
