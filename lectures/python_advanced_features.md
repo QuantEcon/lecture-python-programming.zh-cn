@@ -1194,7 +1194,7 @@ sum(draws)
 :label: paf_ex1
 ```
 
-完成以下代码，并使用[此 csv 文件](https://raw.githubusercontent.com/QuantEcon/lecture-python-programming/master/source/_static/lecture_specific/python_advanced_features/test_table.csv)进行测试，我们假设你已将该文件放在当前工作目录中：
+完成以下代码，并使用 [此 csv 文件](https://raw.githubusercontent.com/QuantEcon/lecture-python-programming/main/lectures/_static/lecture_specific/python_advanced_features/test_table.csv) 进行测试，我们假设你已将该文件放在当前工作目录中：
 
 ```{code-block} python3
 :class: no-execute
