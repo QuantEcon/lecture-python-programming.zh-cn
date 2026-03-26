@@ -19,7 +19,7 @@ translation:
     Local Namespaces: 局部命名空间
     The `__builtins__` Namespace: '`__builtins__` 命名空间'
     Name Resolution: 名称解析
-    'Name Resolution::{index}`Mutable <single: Mutable>` Versus {index}`Immutable <single: Immutable>` Parameters': '{index}`可变 <single: Mutable>` 与 {index}`不可变 <single: Immutable>` 参数'
+    Name Resolution::Mutable Versus Immutable Parameters: 可变 与 不可变 参数
 ---
 
 (oop_names)=

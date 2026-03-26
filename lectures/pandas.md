@@ -21,8 +21,8 @@ translation:
     DataFrames::Make Changes in DataFrames: 修改 DataFrames
     DataFrames::Standardization and Visualization: 标准化与可视化
     On-Line Data Sources: 在线数据来源
-    'On-Line Data Sources::Accessing Data with {index}`requests <single: requests>`': '使用 {index}`requests <single: requests>` 访问数据'
-    'On-Line Data Sources::Using {index}`wbgapi <single: wbgapi>` and {index}`yfinance <single: yfinance>` to Access Data': '使用 {index}`wbgapi <single: wbgapi>` 和 {index}`yfinance <single: yfinance>` 访问数据'
+    On-Line Data Sources::Accessing Data with requests: 使用 requests 访问数据
+    On-Line Data Sources::Using wbgapi and yfinance to Access Data: 使用 wbgapi 和 yfinance 访问数据
     Exercises: 练习
 ---
 

@@ -24,7 +24,7 @@ translation:
     Pure Python is slow::Data Access::Summing in Pure Python: 在纯 Python 中求和
     Pure Python is slow::Summary: 总结
     Accelerating Python: 加速 Python
-    'Accelerating Python::{index}`Vectorization <single: Vectorization>`': '{index}`向量化 <single: Vectorization>`'
+    Accelerating Python::Vectorization: 向量化
     Accelerating Python::Vectorization vs for pure Python loops: 向量化 vs 纯 Python 循环
     Accelerating Python::JIT compilers: JIT 编译器
     Parallelization: 并行化
