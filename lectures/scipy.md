@@ -7,24 +7,26 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  '{index}`SciPy <single: SciPy>` versus {index}`NumPy <single: NumPy>`': '{index}`SciPy <single: SciPy>` 与 {index}`NumPy <single: NumPy>` 的比较'
-  Statistics: 统计
-  Statistics::Random Variables and Distributions: 随机变量与分布
-  Statistics::Alternative Syntax: 替代语法
-  Statistics::Other Goodies in scipy.stats: scipy.stats 中的其他功能
-  Roots and Fixed Points: 根与不动点
-  'Roots and Fixed Points::{index}`Bisection <single: Bisection>`': '{index}`二分法 <single: Bisection>`'
-  'Roots and Fixed Points::The {index}`Newton-Raphson Method <single: Newton-Raphson Method>`': '{index}`牛顿-拉弗森法 <single: Newton-Raphson Method>`'
-  Roots and Fixed Points::Hybrid Methods: 混合方法
-  Roots and Fixed Points::Multivariate Root-Finding: 多元求根
-  Roots and Fixed Points::Fixed Points: 不动点
-  '{index}`Optimization <single: Optimization>`': '{index}`优化 <single: Optimization>`'
-  '{index}`Optimization <single: Optimization>`::Multivariate Optimization': 多元优化
-  '{index}`Integration <single: Integration>`': '{index}`积分 <single: Integration>`'
-  '{index}`Linear Algebra <single: Linear Algebra>`': '{index}`线性代数 <single: Linear Algebra>`'
-  Exercises: 练习
+translation:
+  title: SciPy
+  headings:
+    Overview: 概述
+    SciPy versus NumPy: SciPy 与 NumPy 的比较
+    Statistics: 统计
+    Statistics::Random Variables and Distributions: 随机变量与分布
+    Statistics::Alternative Syntax: 替代语法
+    Statistics::Other Goodies in scipy.stats: scipy.stats 中的其他功能
+    Roots and Fixed Points: 根与不动点
+    Roots and Fixed Points::Bisection: 二分法
+    Roots and Fixed Points::The Newton-Raphson Method: 牛顿-拉弗森法
+    Roots and Fixed Points::Hybrid Methods: 混合方法
+    Roots and Fixed Points::Multivariate Root-Finding: 多元求根
+    Roots and Fixed Points::Fixed Points: 不动点
+    Optimization: 优化
+    Optimization::Multivariate Optimization: 多元优化
+    Integration: 积分
+    Linear Algebra: 线性代数
+    Exercises: 练习
 ---
 
 (sp)=

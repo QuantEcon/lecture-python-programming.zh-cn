@@ -7,28 +7,30 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  Data Types: 数据类型
-  Data Types::Primitive Data Types: 基本数据类型
-  Data Types::Primitive Data Types::Boolean Values: 布尔值
-  Data Types::Primitive Data Types::Numeric Types: 数值类型
-  Data Types::Containers: 容器
-  Data Types::Containers::Slice Notation: 切片表示法
-  Data Types::Containers::Sets and Dictionaries: 集合与字典
-  Input and Output: 输入与输出
-  Input and Output::Paths: 路径
-  Iterating: 迭代
-  Iterating::Looping over Different Objects: 遍历不同对象
-  Iterating::Looping without Indices: 不使用索引的循环
-  Iterating::List Comprehensions: 列表推导式
-  Comparisons and Logical Operators: 比较与逻辑运算符
-  Comparisons and Logical Operators::Comparisons: 比较
-  Comparisons and Logical Operators::Combining Expressions: 组合表达式
-  Coding Style and Documentation: 编码风格与文档
-  'Coding Style and Documentation::Python Style Guidelines: PEP8': Python 风格指南：PEP8
-  Coding Style and Documentation::Docstrings: 文档字符串
-  Exercises: 练习
+translation:
+  title: Python 基础要点
+  headings:
+    Overview: 概述
+    Data Types: 数据类型
+    Data Types::Primitive Data Types: 基本数据类型
+    Data Types::Primitive Data Types::Boolean Values: 布尔值
+    Data Types::Primitive Data Types::Numeric Types: 数值类型
+    Data Types::Containers: 容器
+    Data Types::Containers::Slice Notation: 切片表示法
+    Data Types::Containers::Sets and Dictionaries: 集合与字典
+    Input and Output: 输入与输出
+    Input and Output::Paths: 路径
+    Iterating: 迭代
+    Iterating::Looping over Different Objects: 遍历不同对象
+    Iterating::Looping without Indices: 不使用索引的循环
+    Iterating::List Comprehensions: 列表推导式
+    Comparisons and Logical Operators: 比较与逻辑运算符
+    Comparisons and Logical Operators::Comparisons: 比较
+    Comparisons and Logical Operators::Combining Expressions: 组合表达式
+    Coding Style and Documentation: 编码风格与文档
+    'Coding Style and Documentation::Python Style Guidelines: PEP8': Python 风格指南：PEP8
+    Coding Style and Documentation::Docstrings: 文档字符串
+    Exercises: 练习
 ---
 
 (python_done_right)=

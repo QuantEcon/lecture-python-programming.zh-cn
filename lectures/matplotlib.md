@@ -7,21 +7,23 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  Overview::Matplotlib's Split Personality: Matplotlib 的双重性格
-  The APIs: API 接口
-  The APIs::The MATLAB-style API: MATLAB 风格 API
-  The APIs::The Object-Oriented API: 面向对象 API
-  The APIs::Tweaks: 调整
-  More Features: 更多特性
-  More Features::Multiple Plots on One Axis: 在同一坐标轴上绘制多个图形
-  More Features::Multiple Subplots: 多个子图
-  More Features::3D Plots: 三维图形
-  More Features::A Customizing Function: 自定义函数
-  More Features::Style Sheets: 样式表
-  Further Reading: 延伸阅读
-  Exercises: 练习
+translation:
+  title: Matplotlib
+  headings:
+    Overview: 概述
+    Overview::Matplotlib's Split Personality: Matplotlib 的双重性格
+    The APIs: API 接口
+    The APIs::The MATLAB-style API: MATLAB 风格 API
+    The APIs::The Object-Oriented API: 面向对象 API
+    The APIs::Tweaks: 调整
+    More Features: 更多特性
+    More Features::Multiple Plots on One Axis: 在同一坐标轴上绘制多个图形
+    More Features::Multiple Subplots: 多个子图
+    More Features::3D Plots: 三维图形
+    More Features::A Customizing Function: 自定义函数
+    More Features::Style Sheets: 样式表
+    Further Reading: 延伸阅读
+    Exercises: 练习
 ---
 
 (matplotlib)=

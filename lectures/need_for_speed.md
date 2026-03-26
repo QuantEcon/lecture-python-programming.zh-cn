@@ -7,36 +7,38 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  Major Scientific Libraries: 主要科学库
-  Major Scientific Libraries::Why do we need them?: 为什么需要它们？
-  Major Scientific Libraries::Python's Scientific Ecosystem: Python 的科学生态系统
-  Pure Python is slow: 纯 Python 速度慢
-  Pure Python is slow::High vs low level code: 高级语言与低级语言
-  Pure Python is slow::Where are the bottlenecks?: 瓶颈在哪里？
-  Pure Python is slow::Where are the bottlenecks?::Dynamic typing: 动态类型
-  Pure Python is slow::Where are the bottlenecks?::Static types: 静态类型
-  Pure Python is slow::Data Access: 数据访问
-  Pure Python is slow::Data Access::Summing with Compiled Code: 使用编译代码求和
-  Pure Python is slow::Data Access::Summing in Pure Python: 在纯 Python 中求和
-  Pure Python is slow::Summary: 总结
-  Accelerating Python: 加速 Python
-  'Accelerating Python::{index}`Vectorization <single: Vectorization>`': '{index}`向量化 <single: Vectorization>`'
-  Accelerating Python::Vectorization vs for pure Python loops: 向量化 vs 纯 Python 循环
-  Accelerating Python::JIT compilers: JIT 编译器
-  Parallelization: 并行化
-  Parallelization::Parallelization on CPUs: CPU 上的并行化
-  Parallelization::Parallelization on CPUs::Multiprocessing: 多进程
-  Parallelization::Parallelization on CPUs::Multithreading: 多线程
-  Parallelization::Parallelization on CPUs::Advantages and Disadvantages: 优缺点
-  Parallelization::Hardware Accelerators: 硬件加速器
-  Parallelization::Hardware Accelerators::GPUs and TPUs: GPU 和 TPU
-  Parallelization::Hardware Accelerators::Why TPUs/GPUs Matter: 为何 TPU/GPU 至关重要
-  Parallelization::Single GPUs vs GPU Servers: 单 GPU 与 GPU 服务器
-  Parallelization::Single GPUs vs GPU Servers::Single GPU Systems: 单 GPU 系统
-  Parallelization::Single GPUs vs GPU Servers::Multi-GPU Servers: 多 GPU 服务器
-  Parallelization::Summary: 总结
+translation:
+  title: 科学计算中的 Python
+  headings:
+    Overview: 概述
+    Major Scientific Libraries: 主要科学库
+    Major Scientific Libraries::Why do we need them?: 为什么需要它们？
+    Major Scientific Libraries::Python's Scientific Ecosystem: Python 的科学生态系统
+    Pure Python is slow: 纯 Python 速度慢
+    Pure Python is slow::High vs low level code: 高级语言与低级语言
+    Pure Python is slow::Where are the bottlenecks?: 瓶颈在哪里？
+    Pure Python is slow::Where are the bottlenecks?::Dynamic typing: 动态类型
+    Pure Python is slow::Where are the bottlenecks?::Static types: 静态类型
+    Pure Python is slow::Data Access: 数据访问
+    Pure Python is slow::Data Access::Summing with Compiled Code: 使用编译代码求和
+    Pure Python is slow::Data Access::Summing in Pure Python: 在纯 Python 中求和
+    Pure Python is slow::Summary: 总结
+    Accelerating Python: 加速 Python
+    Accelerating Python::Vectorization: 向量化
+    Accelerating Python::Vectorization vs for pure Python loops: 向量化 vs 纯 Python 循环
+    Accelerating Python::JIT compilers: JIT 编译器
+    Parallelization: 并行化
+    Parallelization::Parallelization on CPUs: CPU 上的并行化
+    Parallelization::Parallelization on CPUs::Multiprocessing: 多进程
+    Parallelization::Parallelization on CPUs::Multithreading: 多线程
+    Parallelization::Parallelization on CPUs::Advantages and Disadvantages: 优缺点
+    Parallelization::Hardware Accelerators: 硬件加速器
+    Parallelization::Hardware Accelerators::GPUs and TPUs: GPU 和 TPU
+    Parallelization::Hardware Accelerators::Why TPUs/GPUs Matter: 为何 TPU/GPU 至关重要
+    Parallelization::Single GPUs vs GPU Servers: 单 GPU 与 GPU 服务器
+    Parallelization::Single GPUs vs GPU Servers::Single GPU Systems: 单 GPU 系统
+    Parallelization::Single GPUs vs GPU Servers::Multi-GPU Servers: 多 GPU 服务器
+    Parallelization::Summary: 总结
 ---
 
 (speed)=

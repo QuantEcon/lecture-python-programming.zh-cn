@@ -7,21 +7,23 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  OOP Review: 面向对象编程回顾
-  OOP Review::Key Concepts: 核心概念
-  OOP Review::Why is OOP Useful?: 面向对象编程为何有用？
-  Defining Your Own Classes: 定义您自己的类
-  'Defining Your Own Classes::Example: A Consumer Class': 示例：消费者类
-  'Defining Your Own Classes::Example: A Consumer Class::Usage': 用法
-  'Defining Your Own Classes::Example: A Consumer Class::Self': Self
-  'Defining Your Own Classes::Example: A Consumer Class::Details': 详情
-  'Defining Your Own Classes::Example: The Solow Growth Model': 示例：索洛增长模型
-  'Defining Your Own Classes::Example: A Market': 示例：市场
-  'Defining Your Own Classes::Example: Chaos': 示例：混沌
-  Special Methods: 特殊方法
-  Exercises: 练习
+translation:
+  title: OOP II：构建类
+  headings:
+    Overview: 概述
+    OOP Review: 面向对象编程回顾
+    OOP Review::Key Concepts: 核心概念
+    OOP Review::Why is OOP Useful?: 面向对象编程为何有用？
+    Defining Your Own Classes: 定义您自己的类
+    'Defining Your Own Classes::Example: A Consumer Class': 示例：消费者类
+    'Defining Your Own Classes::Example: A Consumer Class::Usage': 用法
+    'Defining Your Own Classes::Example: A Consumer Class::Self': Self
+    'Defining Your Own Classes::Example: A Consumer Class::Details': 详情
+    'Defining Your Own Classes::Example: The Solow Growth Model': 示例：索洛增长模型
+    'Defining Your Own Classes::Example: A Market': 示例：市场
+    'Defining Your Own Classes::Example: Chaos': 示例：混沌
+    Special Methods: 特殊方法
+    Exercises: 练习
 ---
 
 (python_oop)=

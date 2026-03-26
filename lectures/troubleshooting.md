@@ -7,9 +7,11 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  Fixing Your Local Environment: 修复本地环境
-  Reporting an Issue: 提交问题报告
+translation:
+  title: 故障排除
+  headings:
+    Fixing Your Local Environment: 修复本地环境
+    Reporting an Issue: 提交问题报告
 ---
 
 (troubleshooting)=

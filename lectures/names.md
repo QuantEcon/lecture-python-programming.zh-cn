@@ -7,17 +7,19 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  Variable Names in Python: Python 中的变量名称
-  Namespaces: 命名空间
-  Viewing Namespaces: 查看命名空间
-  Interactive Sessions: 交互式会话
-  The Global Namespace: 全局命名空间
-  Local Namespaces: 局部命名空间
-  The `__builtins__` Namespace: '`__builtins__` 命名空间'
-  Name Resolution: 名称解析
-  'Name Resolution::{index}`Mutable <single: Mutable>` Versus {index}`Immutable <single: Immutable>` Parameters': '{index}`可变 <single: Mutable>` 与 {index}`不可变 <single: Immutable>` 参数'
+translation:
+  title: 名称与命名空间
+  headings:
+    Overview: 概述
+    Variable Names in Python: Python 中的变量名称
+    Namespaces: 命名空间
+    Viewing Namespaces: 查看命名空间
+    Interactive Sessions: 交互式会话
+    The Global Namespace: 全局命名空间
+    Local Namespaces: 局部命名空间
+    The `__builtins__` Namespace: '`__builtins__` 命名空间'
+    Name Resolution: 名称解析
+    Name Resolution::Mutable Versus Immutable Parameters: 可变 与 不可变 参数
 ---
 
 (oop_names)=

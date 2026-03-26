@@ -9,19 +9,21 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  '{index}`Compiling Functions <single: Compiling Functions>`': '{index}`编译函数 <single: Compiling Functions>`'
-  '{index}`Compiling Functions <single: Compiling Functions>`::An Example': 一个示例
-  '{index}`Compiling Functions <single: Compiling Functions>`::How and When it Works': 工作原理及适用场景
-  Decorator Notation: 装饰器语法
-  Type Inference: 类型推断
-  Compiling Classes: 编译类
-  Dangers and Limitations: 危险与局限
-  Dangers and Limitations::Limitations: 局限性
-  'Dangers and Limitations::A Gotcha: Global Variables': 一个陷阱：全局变量
-  Multithreaded Loops in Numba: Numba 中的多线程循环
-  Exercises: 练习
+translation:
+  title: Numba
+  headings:
+    Overview: 概述
+    Compiling Functions: 编译函数
+    Compiling Functions::An Example: 一个示例
+    Compiling Functions::How and When it Works: 工作原理及适用场景
+    Decorator Notation: 装饰器语法
+    Type Inference: 类型推断
+    Compiling Classes: 编译类
+    Dangers and Limitations: 危险与局限
+    Dangers and Limitations::Limitations: 局限性
+    'Dangers and Limitations::A Gotcha: Global Variables': 一个陷阱：全局变量
+    Multithreaded Loops in Numba: Numba 中的多线程循环
+    Exercises: 练习
 ---
 
 (speed)=

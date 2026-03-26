@@ -7,23 +7,25 @@ kernelspec:
   display_name: Python 3
   language: python
   name: python3
-heading-map:
-  Overview: 概述
-  Overview::Can't I Just Use LLMs?: 我就不能直接使用大语言模型吗？
-  Overview::Isn't MATLAB Better?: MATLAB 不是更好吗？
-  Introducing Python: Python 简介
-  Introducing Python::Common Uses: 常见用途
-  Introducing Python::Relative Popularity: 相对流行度
-  Introducing Python::Features: 特性
-  Introducing Python::Syntax and Design: 语法与设计
-  Introducing Python::The AI Connection: 与人工智能的关联
-  Scientific Programming with Python: 使用 Python 进行科学编程
-  Scientific Programming with Python::NumPy: NumPy
-  Scientific Programming with Python::NumPy Alternatives: NumPy 的替代方案
-  Scientific Programming with Python::SciPy: SciPy
-  Scientific Programming with Python::Graphics: 图形可视化
-  Scientific Programming with Python::Networks and Graphs: 网络与图
-  Scientific Programming with Python::Other Scientific Libraries: 其他科学库
+translation:
+  title: 关于本系列讲座
+  headings:
+    Overview: 概述
+    Overview::Can't I Just Use LLMs?: 我就不能直接使用大语言模型吗？
+    Overview::Isn't MATLAB Better?: MATLAB 不是更好吗？
+    Introducing Python: Python 简介
+    Introducing Python::Common Uses: 常见用途
+    Introducing Python::Relative Popularity: 相对流行度
+    Introducing Python::Features: 特性
+    Introducing Python::Syntax and Design: 语法与设计
+    Introducing Python::The AI Connection: 与人工智能的关联
+    Scientific Programming with Python: 使用 Python 进行科学编程
+    Scientific Programming with Python::NumPy: NumPy
+    Scientific Programming with Python::NumPy Alternatives: NumPy 的替代方案
+    Scientific Programming with Python::SciPy: SciPy
+    Scientific Programming with Python::Graphics: 图形可视化
+    Scientific Programming with Python::Networks and Graphs: 网络与图
+    Scientific Programming with Python::Other Scientific Libraries: 其他科学库
 ---
 
 (about_py)=

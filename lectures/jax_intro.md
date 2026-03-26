@@ -9,34 +9,36 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-heading-map:
-  JAX as a NumPy Replacement: JAX 作为 NumPy 的替代品
-  JAX as a NumPy Replacement::Similarities: 相似之处
-  JAX as a NumPy Replacement::Differences: 差异
-  JAX as a NumPy Replacement::Differences::Precision: 精度
-  JAX as a NumPy Replacement::Differences::Immutability: 不可变性
-  JAX as a NumPy Replacement::Differences::A workaround: 变通方法
-  Functional Programming: 函数式编程
-  Functional Programming::Pure functions: 纯函数
-  Functional Programming::Examples: 示例
-  Random numbers: 随机数
-  Random numbers::Random number generation: 随机数生成
-  Random numbers::Why explicit random state?: 为什么要显式随机状态？
-  Random numbers::Why explicit random state?::NumPy's approach: NumPy 的方法
-  Random numbers::Why explicit random state?::JAX's approach: JAX 的方法
-  JIT compilation: JIT 编译
-  JIT compilation::A simple example: 一个简单的示例
-  JIT compilation::A simple example::With NumPy: 使用 NumPy
-  JIT compilation::A simple example::With JAX: 使用 JAX
-  JIT compilation::A simple example::Changing array sizes: 更改数组大小
-  JIT compilation::Evaluating a more complicated function: 评估更复杂的函数
-  JIT compilation::Evaluating a more complicated function::With NumPy: 使用 NumPy
-  JIT compilation::Evaluating a more complicated function::With JAX: 使用 JAX
-  JIT compilation::Compiling the Whole Function: 编译整个函数
-  JIT compilation::Compiling non-pure functions: 编译非纯函数
-  JIT compilation::Summary: 总结
-  Gradients: 梯度
-  Exercises: 练习
+translation:
+  title: JAX
+  headings:
+    JAX as a NumPy Replacement: JAX 作为 NumPy 的替代品
+    JAX as a NumPy Replacement::Similarities: 相似之处
+    JAX as a NumPy Replacement::Differences: 差异
+    JAX as a NumPy Replacement::Differences::Precision: 精度
+    JAX as a NumPy Replacement::Differences::Immutability: 不可变性
+    JAX as a NumPy Replacement::Differences::A workaround: 变通方法
+    Functional Programming: 函数式编程
+    Functional Programming::Pure functions: 纯函数
+    Functional Programming::Examples: 示例
+    Random numbers: 随机数
+    Random numbers::Random number generation: 随机数生成
+    Random numbers::Why explicit random state?: 为什么要显式随机状态？
+    Random numbers::Why explicit random state?::NumPy's approach: NumPy 的方法
+    Random numbers::Why explicit random state?::JAX's approach: JAX 的方法
+    JIT compilation: JIT 编译
+    JIT compilation::A simple example: 一个简单的示例
+    JIT compilation::A simple example::With NumPy: 使用 NumPy
+    JIT compilation::A simple example::With JAX: 使用 JAX
+    JIT compilation::A simple example::Changing array sizes: 更改数组大小
+    JIT compilation::Evaluating a more complicated function: 评估更复杂的函数
+    JIT compilation::Evaluating a more complicated function::With NumPy: 使用 NumPy
+    JIT compilation::Evaluating a more complicated function::With JAX: 使用 JAX
+    JIT compilation::Compiling the Whole Function: 编译整个函数
+    JIT compilation::Compiling non-pure functions: 编译非纯函数
+    JIT compilation::Summary: 总结
+    Gradients: 梯度
+    Exercises: 练习
 ---
 
 # JAX
