@@ -86,6 +86,7 @@ import quantecon as qe
 ```{code-cell} ipython3
 import jax.numpy as jnp
 import matplotlib as mpl  # i18n
+import matplotlib.font_manager  # i18n
 FONTPATH = "_fonts/SourceHanSerifSC-SemiBold.otf"  # i18n
 mpl.font_manager.fontManager.addfont(FONTPATH)  # i18n
 mpl.rcParams['font.family'] = ['Source Han Serif SC']  # i18n
