@@ -5,7 +5,7 @@ on:
       - 'publish*'
 
 permissions:
-  contents: write
+  contents: read
   actions: read
   pages: write
   id-token: write
