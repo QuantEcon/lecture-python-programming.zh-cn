@@ -88,6 +88,7 @@ k_{t+1} = s k_t^{\alpha} + (1 - \delta) k_t,
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl  # i18n
+import matplotlib.font_manager  # i18n
 FONTPATH = "_fonts/SourceHanSerifSC-SemiBold.otf"  # i18n
 mpl.font_manager.fontManager.addfont(FONTPATH)  # i18n
 mpl.rcParams['font.family'] = ['Source Han Serif SC']  # i18n
