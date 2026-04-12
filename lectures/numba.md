@@ -162,7 +162,7 @@ time3 = timer3.elapsed
 ```
 
 ```{code-cell} ipython3
-time1 / time3  # Calculate speed gain
+time1 / time3  # 计算加速比
 ```
 
 ### 工作原理与适用时机
