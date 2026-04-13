@@ -61,30 +61,29 @@ mpl.rcParams['font.family'] = ['Source Han Serif SC']  # i18n
 
 ## 概述
 
-在 {doc}`之前的讲座 <need_for_speed>` 中，我们讨论了向量化，这是一种通过将数组处理操作批量发送到高效底层代码来提高执行速度的方法。
+在 {doc}`之前的讲座 <need_for_speed>` 中，我们学习了向量化，这是一种通过将数组处理操作批量发送到高效底层代码来提高执行速度的方法。
 
-然而，正如 {ref}`在那次讲座中所讨论的 <numba-p_c_vectorization>`，传统的向量化方案（例如在 MATLAB 和 NumPy 中）存在一些弱点。
+然而，正如 {ref}`之前所讨论的 <numba-p_c_vectorization>`，传统的向量化方案有以下弱点：
 
 * 对于复合数组操作，内存消耗极大
-* 对某些算法无效甚至无法应用。
+* 对于某些算法，向量化无效甚至不可能实现
 
-绕过这些问题的一种方法是使用 [Numba](https://numba.pydata.org/)，这是一个面向数值计算的 Python **即时（JIT）编译器**。
+绕过这些问题的一种方法是使用 [Numba](https://numba.pydata.org/)，这是一个面向 Python 的**即时（JIT）编译器**。
 
 Numba 在运行时将函数编译为本地机器码指令。
 
-编译成功后，Numba 的性能将与低级语言生成的机器码相当。
+编译成功后，其性能可与编译后的 C 或 Fortran 媲美。
 
-此外，Numba 还可以完成其他有用的技巧，例如 {ref}`多线程 <multithreading>` 或通过 `numba.cuda` 与 GPU 进行交互。
-
-Numba 的 JIT 编译器在许多方面与 Julia 中的 JIT 编译器类似。
-
-主要区别在于它的目标更为保守，只尝试编译语言的一个较小子集。
-
-虽然这听起来像是一个缺陷，但在某些方面却是一个优势。
-
-Numba 精简、易用，且非常擅长它所做的事情。
+此外，Numba 还可以完成有用的技巧，例如 {ref}`多线程 <multithreading>`。
 
 本讲座将介绍核心思路。
+
+
+```{note}
+一些读者可能对 Numba 与 [Julia](https://julialang.org/) 之间的关系感到好奇，Julia 包含其自己的 JIT 编译器。虽然这两种编译器在许多方面相似，但 Numba 的目标更为有限，仅尝试编译 Python 语言的一个小子集。虽然这听起来像是一个缺陷，但也是一种优势：Numba 更具限制性的特性使其易于使用，并且非常擅长其所做的事情。
+```
+
+
 
 (numba_link)=
 ## {index}`编译函数 <single: Compiling Functions>`
@@ -104,16 +103,14 @@ $$
     x_{t+1} = \alpha x_t (1 - x_t)
 $$
 
-在下文中，我们设置
+在下文中，我们设 $\alpha = 4$。
 
-```{code-cell} ipython3
-α = 4.0
-```
+#### 基础版本
 
 以下是从 $x_0 = 0.1$ 出发的典型轨迹图，横轴为 $t$
 
 ```{code-cell} ipython3
-def qm(x0, n):
+def qm(x0, n, α=4.0):
     x = np.empty(n+1)
     x[0] = x0
     for t in range(n):
@@ -128,34 +125,42 @@ ax.set_ylabel('$x_{t}$', fontsize = 12)
 plt.show()
 ```
 
-要使用 Numba 加速函数 `qm`，第一步是
-
-```{code-cell} ipython3
-from numba import jit
-
-qm_numba = jit(qm)
-```
-
-函数 `qm_numba` 是 `qm` 的一个版本，它被"定向"用于即时编译（JIT-compilation）。
-
-我们将在稍后解释这意味着什么。
-
-让我们对这两个版本的相同函数调用进行计时和比较，首先从原始函数 `qm` 开始：
+让我们看看在较大的 $n$ 下运行需要多长时间
 
 ```{code-cell} ipython3
 n = 10_000_000
 
 with qe.Timer() as timer1:
-    qm(0.1, int(n))
-time1 = timer1.elapsed
+    # Time Python base version
+    x = qm(0.1, int(n))
+
 ```
 
-现在让我们尝试 qm_numba
+#### 通过 Numba 加速
+
+要使用 Numba 加速函数 `qm`，我们首先导入 `jit` 函数
+
+
+```{code-cell} ipython3
+from numba import jit
+```
+
+现在我们将其应用于 `qm`，生成一个新函数：
+
+```{code-cell} ipython3
+qm_numba = jit(qm)
+```
+
+函数 `qm_numba` 是 `qm` 的一个版本，它被"定向"用于 JIT 编译。
+
+我们稍后将解释这意味着什么。
+
+让我们对这个新版本计时：
 
 ```{code-cell} ipython3
 with qe.Timer() as timer2:
-    qm_numba(0.1, int(n))
-time2 = timer2.elapsed
+    # Time jitted version
+    x = qm_numba(0.1, int(n))
 ```
 
 这已经是非常大的速度提升。
@@ -166,96 +171,64 @@ time2 = timer2.elapsed
 
 ```{code-cell} ipython3
 with qe.Timer() as timer3:
-    qm_numba(0.1, int(n))
-time3 = timer3.elapsed
+    # Second run
+    x = qm_numba(0.1, int(n))
 ```
 
+以下是速度提升
+
 ```{code-cell} ipython3
-time1 / time3  # 计算加速比
+timer1.elapsed /  timer3.elapsed
 ```
+
+对我们原始代码进行少量修改便获得了巨大的提升。
+
+让我们讨论一下这是如何工作的。
 
 ### 工作原理与适用场景
 
-Numba 尝试使用 [LLVM Project](https://llvm.org/) 提供的基础设施生成快速的机器代码。
+Numba 尝试使用 [LLVM Project](https://llvm.org/) 提供的基础设施生成快速机器码。
 
-它通过动态推断类型信息来实现这一目标。
+它通过动态推断类型信息来实现这一点。
 
-（有关类型的讨论，请参阅我们 {doc}`早期关于科学计算的讲座 <need_for_speed>`。）
+（有关类型的讨论，请参阅我们 {doc}`之前关于科学计算的讲座 <need_for_speed>`。）
 
 基本思路如下：
 
 * Python 非常灵活，因此我们可以用多种类型调用函数 qm。
     * 例如，`x0` 可以是 NumPy 数组或列表，`n` 可以是整数或浮点数，等等。
-* 这使得*预*编译函数（即在运行时之前编译）变得困难。
-* 然而，当我们实际调用函数时，例如运行 `qm(0.5, 10)`，`x0` 和 `n` 的类型就变得明确了。
-* 此外，一旦输入类型已知，`qm` 中*其他变量*的类型*便可以被推断出来*。
-* 因此，Numba 和其他 JIT 编译器的策略是等待这一时刻，然后再编译函数。
+* 这使得*提前*（即在运行时之前）生成高效机器码非常困难。
+* 然而，当我们实际*调用*函数时，例如运行 `qm(0.5, 10)`，`x0`、`α` 和 `n` 的类型就被确定了。
+* 此外，一旦输入类型已知，`qm` 中*其他变量*的类型*可以被推断出来*。
+* 因此，Numba 和其他 JIT 编译器的策略是*等到函数被调用时*，然后再进行编译。
 
-这就是所谓的"即时"编译（just-in-time compilation）。
+这被称为"即时"编译。
 
-请注意，如果你调用 `qm(0.5, 10)` 后紧接着调用 `qm(0.9, 20)`，编译只在第一次调用时发生。
+注意，如果你先调用 `qm_numba(0.5, 10)`，然后再调用 `qm_numba(0.9, 20)`，编译只在第一次调用时发生。
 
-这是因为编译后的代码会被缓存并在需要时重复使用。
+这是因为编译后的代码会被缓存并按需重用。
 
-这就是为什么在上述代码中，`time3` 小于 `time2`。
-
-这是因为编译后的代码会被缓存并在需要时重复使用。
-
-这就是为什么在上面的代码中，`time3` 小于 `time2`。
+这就是为什么在上面的代码中，`qm_numba` 的第二次运行更快。
 
 ```{admonition} 备注
-在实践中，我们不直接写 `qm_numba = jit(qm)`，而是使用*装饰器*语法，在函数定义前加上 `@jit`。这等价于在定义之后添加 `qm = jit(qm)`。我们在本讲座的其余部分都使用这种语法。（有关装饰器的更多内容，请参见 {doc}`python_advanced_features`。）
+在实践中，我们通常使用*装饰器*语法，而不是编写 `qm_numba = jit(qm)`，在函数定义前加上 `@jit`。这等价于在定义之后添加 `qm = jit(qm)`。
 ```
 
-在实践中，这通常使用另一种*装饰器*语法来完成。
+## 注意事项
 
-（我们在 {doc}`单独的讲座 <python_advanced_features>` 中讨论装饰器，但在此阶段您可以跳过细节。）
+Numba 相对容易使用，但并非总是无缝衔接的。
 
-具体来说，要将函数定向为 JIT 编译，我们可以在函数定义前放置 `@jit`。
+让我们来回顾一些用户常遇到的问题。
 
-以下是 `qm` 的写法
+### 类型推断
 
-```{code-cell} ipython3
-@jit
-def qm(x0, n):
-    x = np.empty(n+1)
-    x[0] = x0
-    for t in range(n):
-        x[t+1] = α * x[t] * (1 - x[t])
-    return x
-```
-
-这等价于在函数定义后添加 `qm = jit(qm)`。
-
-以下代码现在使用 JIT 编译版本：
-
-```{code-cell} ipython3
-with qe.Timer(precision=4):
-    qm(0.1, 100_000)
-```
-
-```{code-cell} ipython3
-with qe.Timer(precision=4):
-    qm(0.1, 100_000)
-```
-
-Numba 还为装饰器提供了几个参数以加速计算和缓存函数——请参阅 [这里](https://numba.readthedocs.io/en/stable/user/performance-tips.html)。
-
-## 类型推断
-
-成功的类型推断是 JIT 编译的关键部分。
-
-可以想象，对于简单的 Python 对象（例如，浮点数和整数等简单标量数据类型），推断类型更为容易。
-
-Numba 也与 NumPy 数组配合良好，因为它们具有明确定义的类型。
+成功的类型推断是 JIT 编译的关键。
 
 在理想情况下，Numba 可以推断出所有必要的类型信息。
 
-这使它能够生成本地机器码，而无需调用 Python 运行时环境。
+当 Numba *无法* 推断所有类型信息时，它将抛出错误。
 
-当 Numba 无法推断所有类型信息时，它将引发错误。
-
-例如，在下面的示例中，Numba 在编译 `iterate` 时无法确定函数 `g` 的类型
+例如，在以下情况中，Numba 在编译 `iterate` 时无法确定函数 `g` 的类型：
 
 ```{code-cell} ipython3
 @jit
@@ -286,25 +259,13 @@ def g(x):
 iterate(g, 0.5, 100)
 ```
 
-## 危险与局限
+在其他情况下，例如当我们想使用来自外部库（如 `SciPy`）的函数时，可能没有简单的解决方法。
 
-让我们补充一些注意事项。
+### 全局变量
 
-### 局限性
+使用 Numba 时另一个需要注意的问题是全局变量的处理。
 
-正如我们所见，Numba 需要推断所有变量的类型信息以生成快速的机器级指令。
-
-对于较大的例程或使用外部库的例程，此过程很容易失败。
-
-因此，最好专注于加速代码中小而关键的片段。
-
-这将比在 Python 程序中大量使用 `@jit` 语句带来更好的性能。
-
-### 一个陷阱：全局变量
-
-以下是使用 Numba 时需要注意的另一件事。
-
-考虑以下示例
+例如，考虑以下代码：
 
 ```{code-cell} ipython3
 a = 1
@@ -322,34 +283,19 @@ a = 2
 print(add_a(10))
 ```
 
-注意，更改全局变量对函数返回值没有任何影响。
+注意，更改全局变量对函数返回的值没有任何影响 😱。
 
-当 Numba 为函数编译机器码时，它将全局变量视为常量，以确保类型稳定性。
+当 Numba 为函数编译机器码时，它将全局变量视为常量以确保类型稳定性。
 
-### 缓存编译代码
+为了避免这种情况，请将值作为函数参数传递，而不是依赖全局变量。
 
-默认情况下，Numba 在每次启动新的 Python 会话时都会重新编译函数。
-
-为了避免这种开销，可以向装饰器传递 `cache=True`：
-
-```{code-cell} ipython3
-@jit(cache=True)
-def qm(x0, n):
-    x = np.empty(n+1)
-    x[0] = x0
-    for t in range(n):
-        x[t+1] = α * x[t] * (1 - x[t])
-    return x
-```
-
-这会将编译后的代码存储在磁盘上，以便后续会话可以跳过编译步骤。
 
 (multithreading)=
 ## Numba 中的多线程循环
 
-除了 JIT 编译之外，Numba 还为 CPU 和 GPU 上的并行计算提供了支持。
+除了 JIT 编译之外，Numba 还为 CPU 和 GPU 上的并行计算提供支持。
 
-Numba 中在 CPU 上进行并行化的关键工具是 `prange` 函数，它告诉 Numba 在可用的核心上并行执行循环迭代。
+Numba 中 CPU 并行化的关键工具是 `prange` 函数，它告诉 Numba 在可用的 CPU 核心上并行执行循环迭代。
 
 为了说明，让我们首先看一个简单的单线程（即非并行化）代码片段。
 
@@ -370,19 +316,13 @@ $$
 以下是代码：
 
 ```{code-cell} ipython3
-from numba import jit
-
 @jit
-def h(w, r=0.1, s=0.3, v1=0.1, v2=1.0):
-    """
-    Updates household wealth.
-    """
-
-    # 抽取冲击
+def update(w, r=0.1, s=0.3, v1=0.1, v2=1.0):
+    " Updates household wealth. "
+    # Draw shocks
     R = np.exp(v1 * np.random.randn()) * (1 + r)
     y = np.exp(v2 * np.random.randn())
-
-    # 更新财富
+    # Update wealth
     w = R * s * w + y
     return w
 ```
@@ -396,7 +336,7 @@ T = 100
 w = np.empty(T)
 w[0] = 5
 for t in range(T-1):
-    w[t+1] = h(w[t])
+    w[t+1] = update(w[t])
 
 ax.plot(w)
 ax.set_xlabel('$t$', fontsize=12)
@@ -416,14 +356,16 @@ plt.show()
 ```{code-cell} ipython3
 @jit
 def compute_long_run_median(w0=1, T=1000, num_reps=50_000):
-
     obs = np.empty(num_reps)
+    # For each household
     for i in range(num_reps):
+        # Set the initial condition and run forward in time
         w = w0
         for t in range(T):
-            w = h(w)
+            w = update(w)
+        # Record the final value
         obs[i] = w
-
+    # Take the median of all final values
     return np.median(obs)
 ```
 
@@ -431,6 +373,13 @@ def compute_long_run_median(w0=1, T=1000, num_reps=50_000):
 
 ```{code-cell} ipython3
 with qe.Timer():
+    # Warm up
+    compute_long_run_median()
+```
+
+```{code-cell} ipython3
+with qe.Timer():
+    # Second run
     compute_long_run_median()
 ```
 
@@ -442,15 +391,15 @@ with qe.Timer():
 from numba import prange
 
 @jit(parallel=True)
-def compute_long_run_median_parallel(w0=1, T=1000, num_reps=50_000):
-
+def compute_long_run_median_parallel(
+        w0=1, T=1000, num_reps=50_000
+    ):
     obs = np.empty(num_reps)
-    for i in prange(num_reps):
+    for i in prange(num_reps):  # Parallelize over households
         w = w0
         for t in range(T):
-            w = h(w)
+            w = update(w)
         obs[i] = w
-
     return np.median(obs)
 ```
 
@@ -458,6 +407,13 @@ def compute_long_run_median_parallel(w0=1, T=1000, num_reps=50_000):
 
 ```{code-cell} ipython3
 with qe.Timer():
+    # Warm up
+    compute_long_run_median_parallel()
+```
+
+```{code-cell} ipython3
+with qe.Timer():
+    # Second run
     compute_long_run_median_parallel()
 ```
 
