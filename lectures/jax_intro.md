@@ -535,7 +535,7 @@ ax.text(0, 0.65, "split", ha='center', va='center', fontsize=9,
 
 ax.text(3, -0.5, "⋮", ha='center', va='center', fontsize=14)
 
-ax.set_title("PRNG Key Splitting Tree", fontsize=13, pad=10)
+ax.set_title("PRNG 密钥拆分树", fontsize=13, pad=10)
 plt.tight_layout()
 plt.show()
 ```
