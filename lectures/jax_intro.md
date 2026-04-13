@@ -15,9 +15,13 @@ translation:
     JAX as a NumPy Replacement: JAX 作为 NumPy 的替代品
     JAX as a NumPy Replacement::Similarities: 相似之处
     JAX as a NumPy Replacement::Differences: 差异
+    JAX as a NumPy Replacement::Differences::Speed!: 速度！
+    JAX as a NumPy Replacement::Differences::Speed!::With NumPy: 使用 NumPy
+    JAX as a NumPy Replacement::Differences::Speed!::With JAX: 使用 JAX
+    JAX as a NumPy Replacement::Differences::Size Experiment: 大小实验
     JAX as a NumPy Replacement::Differences::Precision: 精度
     JAX as a NumPy Replacement::Differences::Immutability: 不可变性
-    JAX as a NumPy Replacement::Differences::A workaround: 变通方法
+    JAX as a NumPy Replacement::Differences::A Workaround: 变通方法
     Functional Programming: 函数式编程
     Functional Programming::Pure functions: 纯函数
     Functional Programming::Examples: 示例
@@ -26,18 +30,12 @@ translation:
     Random numbers::Why explicit random state?: 为什么要显式随机状态？
     Random numbers::Why explicit random state?::NumPy's approach: NumPy 的方法
     Random numbers::Why explicit random state?::JAX's approach: JAX 的方法
-    JIT compilation: JIT 编译
-    JIT compilation::A simple example: 一个简单的示例
-    JIT compilation::A simple example::With NumPy: 使用 NumPy
-    JIT compilation::A simple example::With JAX: 使用 JAX
-    JIT compilation::A simple example::Changing array sizes: 更改数组大小
-    JIT compilation::Evaluating a more complicated function: 评估更复杂的函数
-    JIT compilation::Evaluating a more complicated function::With NumPy: 使用 NumPy
-    JIT compilation::Evaluating a more complicated function::With JAX: 使用 JAX
-    JIT compilation::How JIT compilation works: JIT 编译的工作原理
-    JIT compilation::Compiling the whole function: 编译整个函数
-    JIT compilation::Compiling non-pure functions: 编译非纯函数
-    JIT compilation::Summary: 总结
+    JIT Compilation: JIT 编译
+    JIT Compilation::With NumPy: 一个简单的示例
+    JIT Compilation::With JAX: 评估更复杂的函数
+    JIT Compilation::Compiling the Whole Function: JIT 编译的工作原理
+    JIT Compilation::How JIT compilation works: 编译整个函数
+    JIT Compilation::Compiling non-pure functions: 编译非纯函数
     Vectorization with `vmap`: 使用 `vmap` 进行向量化
     Vectorization with `vmap`::A simple example: 一个简单的示例
     Vectorization with `vmap`::Combining transformations: 组合变换
@@ -49,13 +47,16 @@ translation:
 
 本讲座简要介绍 [Google JAX](https://github.com/jax-ml/jax)。
 
+```{include} _admonition/gpu.md
+```
+
 JAX 是一个高性能科学计算库，提供以下功能：
 
 * 类似 [NumPy](https://en.wikipedia.org/wiki/NumPy) 的接口，可以在 CPU 和 GPU 上自动并行化，
 * 一个即时编译器，用于加速大量数值运算，以及
 * [自动微分](https://en.wikipedia.org/wiki/Automatic_differentiation)。
 
-JAX 也在日益维护和提供[更多专业化的科学计算例程](https://docs.jax.dev/en/latest/jax.scipy.html)，例如那些最初在 [SciPy](https://en.wikipedia.org/wiki/SciPy) 中找到的例程。
+JAX 也在日益维护和提供 [更多专业化的科学计算例程](https://docs.jax.dev/en/latest/jax.scipy.html)，例如那些最初在 [SciPy](https://en.wikipedia.org/wiki/SciPy) 中找到的例程。
 
 除了 Anaconda 中已有的内容外，本讲座还需要以下库：
 
@@ -65,36 +66,27 @@ JAX 也在日益维护和提供[更多专业化的科学计算例程](https://do
 !pip install jax quantecon
 ```
 
-```{include} _admonition/gpu.md
-```
-
-## JAX 作为 NumPy 的替代品
-
-JAX 的一个吸引人之处在于，它的数组处理操作在尽可能的情况下遵循 NumPy API。
-
-这意味着在许多情况下，我们可以将 JAX 作为 NumPy 的直接替代品使用。
-
-让我们来看看 JAX 和 NumPy 之间的异同。
-
-### 相似之处
-
 我们将使用以下导入：
 
 ```{code-cell} ipython3
 import jax
 import jax.numpy as jnp
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
 import numpy as np
 import quantecon as qe
-import matplotlib as mpl  # i18n
-import matplotlib.font_manager  # i18n
-FONTPATH = "_fonts/SourceHanSerifSC-SemiBold.otf"  # i18n
-mpl.font_manager.fontManager.addfont(FONTPATH)  # i18n
-mpl.rcParams['font.family'] = ['Source Han Serif SC']  # i18n
 ```
 
-注意我们导入了 `jax.numpy as jnp`，它提供了类似 NumPy 的接口。
+## JAX 作为 NumPy 的替代品
+
+让我们来看看 JAX 和 NumPy 之间的异同。
+
+### 相似之处
+
+上面我们导入了 `jax.numpy as jnp`，它提供了类似 NumPy 的数组操作接口。
+
+JAX 的一个吸引人之处在于，这个接口在尽可能的情况下遵循 NumPy API。
+
+因此，我们通常可以将 JAX 作为 NumPy 的直接替代品使用。
 
 以下是使用 `jnp` 进行的一些标准数组操作：
 
@@ -111,14 +103,10 @@ print(jnp.sum(a))
 ```
 
 ```{code-cell} ipython3
-print(jnp.mean(a))
-```
-
-```{code-cell} ipython3
 print(jnp.dot(a, a))
 ```
 
-然而，数组对象 `a` 并不是 NumPy 数组：
+但需要注意的是，数组对象 `a` 并不是 NumPy 数组：
 
 ```{code-cell} ipython3
 a
@@ -128,37 +116,131 @@ a
 type(a)
 ```
 
-即使是数组上的标量值映射也会返回 JAX 数组。
+即使是数组上的标量值映射也会返回 JAX 数组而非标量！
 
 ```{code-cell} ipython3
 jnp.sum(a)
-```
-
-对高维数组的操作也与 NumPy 类似：
-
-```{code-cell} ipython3
-A = jnp.ones((2, 2))
-B = jnp.identity(2)
-A @ B
-```
-
-JAX 的数组接口也提供了 `linalg` 子包：
-
-```{code-cell} ipython3
-jnp.linalg.inv(B)   # Inverse of identity is identity
-```
-
-```{code-cell} ipython3
-jnp.linalg.eigh(B)  # Computes eigenvalues and eigenvectors
 ```
 
 ### 差异
 
 现在让我们来看看 JAX 和 NumPy 数组操作之间的一些差异。
 
+(jax_speed)=
+#### 速度！
+
+一个主要差异是 JAX 更快——有时快得多。
+
+为了说明这一点，假设我们想在许多点处计算余弦函数。
+
+```{code-cell}
+n = 50_000_000
+x = np.linspace(0, 10, n)   # NumPy array
+```
+
+##### 使用 NumPy
+
+让我们用 NumPy 来试试。
+
+```{code-cell}
+with qe.Timer():
+    # First NumPy timing
+    y = np.cos(x)
+```
+
+再来一次。
+
+```{code-cell}
+with qe.Timer():
+    # Second NumPy timing
+    y = np.cos(x)
+```
+
+这里
+
+* NumPy 使用预编译的二进制文件将余弦函数应用于浮点数数组
+* 该二进制文件在本地机器的 CPU 上运行
+
+##### 使用 JAX
+
+现在让我们用 JAX 来试试。
+
+```{code-cell}
+x = jnp.linspace(0, 10, n)
+```
+
+让我们对同样的过程计时。
+
+```{code-cell}
+with qe.Timer():
+    # First run
+    y = jnp.cos(x)
+    # Hold the interpreter until the array operation finishes
+    y.block_until_ready()
+```
+
+```{note}
+上面，`block_until_ready` 方法会阻塞解释器，直到计算结果返回。
+这对于计时执行是必要的，因为 JAX 使用异步调度，
+允许 Python 解释器在数值计算之前运行。
+```
+
+现在让我们再次计时。
+
+```{code-cell}
+with qe.Timer():
+    # Second run
+    y = jnp.cos(x)
+    # Hold interpreter 
+    y.block_until_ready()
+```
+
+在 GPU 上，这段代码的运行速度远快于其 NumPy 等价代码。
+
+另外，通常情况下，由于 JIT 编译，第二次运行比第一次更快。
+
+这是因为即使是像 `jnp.cos` 这样的内置函数也会被 JIT 编译——第一次运行包含了编译时间。
+
+为什么 JAX 要对 `jnp.cos` 这样的内置函数进行 JIT 编译，而不是像 NumPy 那样直接提供预编译版本呢？
+
+原因是 JIT 编译器希望针对所使用数组的*大小*（以及数据类型）进行专门优化。
+
+大小对于生成优化代码很重要，因为高效的并行化需要将任务大小与可用硬件匹配。
+
+#### 大小实验
+
+我们可以通过改变输入大小并观察运行时间来验证 JAX 针对数组大小进行专门优化的说法。
+
+```{code-cell}
+x = jnp.linspace(0, 10, n + 1)
+```
+
+```{code-cell}
+with qe.Timer():
+    # First run
+    y = jnp.cos(x)
+    # Hold interpreter
+    y.block_until_ready()
+```
+
+
+```{code-cell}
+with qe.Timer():
+    # Second run
+    y = jnp.cos(x)
+    # Hold interpreter
+    y.block_until_ready()
+```
+
+运行时间先增加后减少（这在 GPU 上会更明显）。
+
+这与上面的讨论一致——改变数组大小后的第一次运行显示了编译开销。
+
+下面将进一步讨论 JIT 编译。
+
 #### 精度
 
-NumPy 和 JAX 之间的一个差异是 JAX 默认使用 32 位浮点数。
+NumPy 和 JAX 之间的另一个差异是 JAX 默认使用 32 位浮点数。
 
 这是因为 JAX 经常用于 GPU 计算，而大多数 GPU 计算使用 32 位浮点数。
 
@@ -196,7 +278,8 @@ a[0] = 1
 a
 ```
 
-在 JAX 中，这会失败：
+在 JAX 中，这会失败 😱。
+
 
 ```{code-cell} ipython3
 a = jnp.linspace(0, 1, 3)
@@ -204,32 +287,25 @@ a
 ```
 
 ```{code-cell} ipython3
-:tags: [raises-exception]
+try:
+    a[0] = 1
+except Exception as e:
+    print(e)
 
-a[0] = 1
 ```
 
-与不可变性一致，JAX 不支持原地操作：
+JAX 的设计者选择将数组设为不可变的，因为
 
-```{code-cell} ipython3
-a = np.array((2, 1))
-a.sort()    # Unlike NumPy, does not mutate a
-a
-```
+1. JAX 使用*函数式编程风格*，并且
+2. 函数式编程通常避免可变数据
 
-```{code-cell} ipython3
-a = jnp.array((2, 1))
-a_new = a.sort()   # Instead, the sort method returns a new sorted array
-a, a_new
-```
+我们将在 {ref}`下面 <jax_func>` 讨论这些思想。
 
-JAX 的设计者选择将数组设为不可变的，因为 JAX 使用 [函数式编程](https://en.wikipedia.org/wiki/Functional_programming) 风格。
 
-这个设计选择有重要的含义，我们接下来将对此进行探讨！
-
+(jax_at_workaround)=
 #### 变通方法
 
-我们注意到 JAX 确实提供了一种使用 [`at` 方法](https://docs.jax.dev/en/latest/_autosummary/jax.numpy.ndarray.at.html) 进行原地数组修改的版本。
+JAX 确实通过 [`at` 方法](https://docs.jax.dev/en/latest/_autosummary/jax.numpy.ndarray.at.html) 提供了原地数组修改的直接替代方案。
 
 ```{code-cell} ipython3
 a = jnp.linspace(0, 1, 3)
@@ -251,6 +327,8 @@ a
 
 （尽管它在 JIT 编译的函数中实际上可以很高效——但现在先把这个放在一边。）
 
+
+(jax_func)=
 ## 函数式编程
 
 来自 JAX 的文档：
