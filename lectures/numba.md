@@ -75,7 +75,7 @@ Numba 在运行时将函数编译为本地机器码指令。
 
 此外，Numba 还可以完成其他有用的技巧，例如 {ref}`多线程 <multithreading>` 或通过 `numba.cuda` 与 GPU 进行交互。
 
-Numba 的 JIT 编译器在许多方面与 JULIA 中的 JIT 编译器类似。
+Numba 的 JIT 编译器在许多方面与 Julia 中的 JIT 编译器类似。
 
 主要区别在于它的目标更为保守，只尝试编译语言的一个较小子集。
 
@@ -170,7 +170,7 @@ time3 = timer3.elapsed
 ```
 
 ```{code-cell} ipython3
-time1 / time3  # Calculate speed gain
+time1 / time3  # 计算速度提升倍数
 ```
 
 ### 工作原理与适用场景
@@ -367,11 +367,11 @@ def h(w, r=0.1, s=0.3, v1=0.1, v2=1.0):
     Updates household wealth.
     """
 
-    # Draw shocks
+    # 抽取冲击
     R = np.exp(v1 * np.random.randn()) * (1 + r)
     y = np.exp(v2 * np.random.randn())
 
-    # Update wealth
+    # 更新财富
     w = R * s * w + y
     return w
 ```
