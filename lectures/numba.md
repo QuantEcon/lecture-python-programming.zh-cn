@@ -95,7 +95,7 @@ Numba 在运行时将函数编译为本地机器码指令。
 (quad_map_eg)=
 ### 示例
 
-让我们考虑一个难以向量化的问题（即，难以交给数组处理操作）。
+让我们考虑一个难以向量化的问题（即难以交给数组处理操作来完成）。
 
 该问题涉及通过二次映射生成轨迹
 
@@ -107,7 +107,7 @@ $$
 
 #### 基础版本
 
-以下是从 $x_0 = 0.1$ 开始的典型轨迹图，x 轴为 $t$
+以下是从 $x_0 = 0.1$ 出发的典型轨迹图，横轴为 $t$
 
 ```{code-cell} ipython3
 def qm(x0, n, α=4.0):
@@ -163,9 +163,9 @@ with qe.Timer() as timer2:
     x = qm_numba(0.1, int(n))
 ```
 
-这是一个很大的速度提升。
+这已经是非常大的速度提升。
 
-事实上，下一次及所有后续运行速度甚至更快，因为函数已经被编译并存储在内存中：
+事实上，下一次及之后的每次运行都会更快，因为函数已经被编译并保存在内存中：
 
 (qm_numba_result)=
 
@@ -195,7 +195,7 @@ Numba 尝试使用 [LLVM Project](https://llvm.org/) 提供的基础设施生成
 
 基本思路如下：
 
-* Python 非常灵活，因此我们可以用多种类型调用函数 `qm`。
+* Python 非常灵活，因此我们可以用多种类型调用函数 qm。
     * 例如，`x0` 可以是 NumPy 数组或列表，`n` 可以是整数或浮点数，等等。
 * 这使得*提前*（即在运行时之前）生成高效机器码非常困难。
 * 然而，当我们实际*调用*函数时，例如运行 `qm(0.5, 10)`，`x0`、`α` 和 `n` 的类型就被确定了。
@@ -419,16 +419,14 @@ with qe.Timer():
 
 速度提升非常显著。
 
-注意，我们是跨家庭进行并行化，而不是跨时间——单个家庭跨时期的更新本质上是顺序的。
-
-有关基于 GPU 的并行化，请参阅我们的 {doc}`JAX 讲座 <jax_intro>`。
+注意，我们是跨家庭进行并行化，而非跨时间——单个家庭跨时期的更新本质上是顺序的。
 
 ## 练习
 
 ```{exercise}
 :label: speed_ex1
 
-{ref}`之前 <pbe_ex5>`我们考虑了如何用蒙特卡洛方法近似 $\pi$。
+{ref}`之前 <pbe_ex5>` 我们考虑了如何用蒙特卡洛方法近似 $\pi$。
 
 在这里使用相同的思路，但使用 Numba 使代码高效。
 
@@ -442,13 +440,11 @@ with qe.Timer():
 以下是一种解法：
 
 ```{code-cell} ipython3
-from random import uniform
-
 @jit
 def calculate_pi(n=1_000_000):
     count = 0
     for i in range(n):
-        u, v = uniform(0, 1), uniform(0, 1)
+        u, v = np.random.uniform(0, 1), np.random.uniform(0, 1)
         d = np.sqrt((u - 0.5)**2 + (v - 0.5)**2)
         if d < 0.5:
             count += 1
@@ -469,9 +465,9 @@ with qe.Timer():
     calculate_pi()
 ```
 
-如果我们通过删除 `@njit` 来关闭 JIT 编译，代码在我们的机器上大约需要慢 150 倍。
+如果我们通过删除 `@jit` 来关闭 JIT 编译，代码在我们的机器上大约需要慢 150 倍。
 
-因此，通过添加四个字符，我们获得了 2 个数量级的速度提升——这是巨大的。
+因此，通过添加四个字符，我们获得了 2 个数量级的速度提升。
 
 ```{solution-end}
 ```
@@ -513,7 +509,7 @@ with qe.Timer():
 :class: dropdown
 
 * 将低状态表示为 0，高状态表示为 1。
-* 如果您想在 NumPy 数组中存储整数，然后应用 JIT 编译，请使用 `x = np.empty(n, dtype=np.int_)`。
+* 如果您想在 NumPy 数组中存储整数，然后应用 JIT 编译，请使用 `x = np.empty(n, dtype=np.int64)`。
 
 ```
 
@@ -537,7 +533,7 @@ p, q = 0.1, 0.2  # 分别为离开低状态和高状态的概率
 
 ```{code-cell} ipython3
 def compute_series(n):
-    x = np.empty(n, dtype=np.int_)
+    x = np.empty(n, dtype=np.int64)
     x[0] = 1  # 从状态 1 开始
     U = np.random.uniform(0, 1, size=n)
     for t in range(1, n):
@@ -594,7 +590,7 @@ with qe.Timer():
 ```{exercise}
 :label: numba_ex3
 
-在{ref}`之前的练习 <speed_ex1>`中，我们使用 Numba 加速了通过蒙特卡洛方法计算常数 $\pi$ 的工作。
+在 {ref}`之前的练习 <speed_ex1>` 中，我们使用 Numba 加速了通过蒙特卡洛方法计算常数 $\pi$ 的工作。
 
 现在尝试添加并行化，看看是否能获得进一步的速度提升。
 
@@ -616,13 +612,11 @@ with qe.Timer():
 以下是一种解法：
 
 ```{code-cell} ipython3
-from random import uniform
-
-@njit(parallel=True)
+@jit(parallel=True)
 def calculate_pi(n=1_000_000):
     count = 0
     for i in prange(n):
-        u, v = uniform(0, 1), uniform(0, 1)
+        u, v = np.random.uniform(0, 1), np.random.uniform(0, 1)
         d = np.sqrt((u - 0.5)**2 + (v - 0.5)**2)
         if d < 0.5:
             count += 1
@@ -643,7 +637,7 @@ with qe.Timer():
     calculate_pi()
 ```
 
-通过打开和关闭并行化（在 `@njit` 注解中选择 `True` 或 `False`），我们可以测试多线程在 JIT 编译之上提供的速度增益。
+通过打开和关闭并行化（在 `@jit` 注解中选择 `True` 或 `False`），我们可以测试多线程在 JIT 编译之上提供的速度增益。
 
 在我们的工作站上，我们发现并行化将执行速度提高了 2 到 3 倍。
 
@@ -652,10 +646,11 @@ with qe.Timer():
 ```{solution-end}
 ```
 
+
 ```{exercise}
 :label: numba_ex4
 
-在{doc}`我们关于 SciPy 的讲座 <scipy>`中，我们讨论了在标的股票价格具有简单且众所周知的分布的情况下，如何为看涨期权定价。
+在 {doc}`我们关于 SciPy 的讲座 <scipy>` 中，我们讨论了在标的股票价格具有简单且众所周知的分布的情况下，如何为看涨期权定价。
 
 这里我们讨论一个更现实的情境。
 
@@ -709,9 +704,11 @@ $$
 
 ```
 
+
 ```{solution-start} numba_ex4
 :class: dropdown
 ```
+
 
 令 $s_t := \ln S_t$，价格动态变为
 
@@ -721,14 +718,14 @@ $$
 
 利用这一事实，解可以写成如下形式。
 
+
 ```{code-cell} ipython3
-from numpy.random import randn
 M = 10_000_000
 
 n, β, K = 20, 0.99, 100
 μ, ρ, ν, S0, h0 = 0.0001, 0.1, 0.001, 10, 0
 
-@njit(parallel=True)
+@jit(parallel=True)
 def compute_call_price_parallel(β=β,
                                 μ=μ,
                                 S0=S0,
@@ -745,10 +742,10 @@ def compute_call_price_parallel(β=β,
         h = h0
         # 向前模拟
         for t in range(n):
-            s = s + μ + np.exp(h) * randn()
-            h = ρ * h + ν * randn()
+            s = s + μ + np.exp(h) * np.random.randn()
+            h = ρ * h + ν * np.random.randn()
         # 将 max{S_n - K, 0} 的值累加到 current_sum
-        current_sum += np.maximum(np.exp(s) - K, 0)
+        current_sum += max(np.exp(s) - K, 0)
 
     return β**n * current_sum / M
 ```
