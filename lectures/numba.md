@@ -14,19 +14,15 @@ translation:
   headings:
     Overview: 概述
     Compiling Functions: 编译函数
-    Compiling Functions::An Example: 一个示例
-    Compiling Functions::How and When it Works: 工作原理及适用场景
-    Decorator Notation: 装饰器语法
-    Type Inference: 类型推断
-    Compiling Classes: 编译类
-    Dangers and Limitations: 危险与局限
-    Dangers and Limitations::Limitations: 局限性
-    'Dangers and Limitations::A Gotcha: Global Variables': 一个陷阱：全局变量
+    Compiling Functions::An Example: 示例
+    Compiling Functions::An Example::Base Version: 基础版本
+    Compiling Functions::An Example::Acceleration via Numba: 通过 Numba 加速
+    Compiling Functions::How and When it Works: 工作原理与适用场景
     Multithreaded Loops in Numba: Numba 中的多线程循环
     Exercises: 练习
 ---
 
-(speed)=
+(numba_lecture)=
 ```{raw} jupyter
 <div id="qe-notebook-header" align="right" style="text-align:right;">
         <a href="https://quantecon.org/" title="quantecon.org">
@@ -92,29 +88,26 @@ mpl.rcParams['font.family'] = ['Source Han Serif SC']  # i18n
 ```{index} single: Python; Numba
 ```
 
-如上所述，Numba 的主要用途是在运行时将函数编译为快速的本地机器码。
 
 (quad_map_eg)=
-### 一个示例
+### 示例
 
-让我们考虑一个难以向量化的问题：给定初始条件，生成差分方程的轨迹。
+让我们考虑一个难以向量化（即交由数组处理操作完成）的问题。
 
-我们将采用的差分方程是二次映射
+该问题涉及通过二次映射生成轨迹
 
 $$
-x_{t+1} = \alpha x_t (1 - x_t)
+    x_{t+1} = \alpha x_t (1 - x_t)
 $$
 
-在下文中，我们设定
+在以下内容中，我们设 $\alpha = 4$。
+
+#### 基础版本
+
+以下是从 $x_0 = 0.1$ 出发的典型轨迹图，x 轴为 $t$
 
 ```{code-cell} ipython3
-α = 4.0
-```
-
-以下是一条典型轨迹的图像，从 $x_0 = 0.1$ 开始，以 $t$ 为横轴
-
-```{code-cell} ipython3
-def qm(x0, n):
+def qm(x0, n, α=4.0):
     x = np.empty(n+1)
     x[0] = x0
     for t in range(n):
@@ -129,327 +122,95 @@ ax.set_ylabel('$x_{t}$', fontsize = 12)
 plt.show()
 ```
 
-要使用 Numba 加速函数 `qm`，我们的第一步是
-
-```{code-cell} ipython3
-from numba import jit
-
-qm_numba = jit(qm)
-```
-
-函数 `qm_numba` 是 `qm` 的一个版本，它被"定向"为 JIT 编译。
-
-我们稍后将解释这意味着什么。
-
-让我们对这两个版本进行相同的函数调用计时和比较，首先从原始函数 `qm` 开始：
+让我们看看当 $n$ 很大时运行需要多长时间
 
 ```{code-cell} ipython3
 n = 10_000_000
 
 with qe.Timer() as timer1:
-    qm(0.1, int(n))
-time1 = timer1.elapsed
+    # Time Python base version
+    x = qm(0.1, n)
+
 ```
 
-现在让我们试试 qm_numba
+#### 通过 Numba 加速
+
+要使用 Numba 加速函数 `qm`，我们首先导入 `jit` 函数
+
 
 ```{code-cell} ipython3
-with qe.Timer() as timer2:
-    qm_numba(0.1, int(n))
-time2 = timer2.elapsed
+from numba import jit
 ```
 
-这已经是一个非常大的速度提升。
-
-事实上，下次及之后每次运行时速度都会更快，因为函数已经被编译并存储在内存中：
-
-(qm_numba_result)=
-
-```{code-cell} ipython3
-with qe.Timer() as timer3:
-    qm_numba(0.1, int(n))
-time3 = timer3.elapsed
-```
-
-```{code-cell} ipython3
-time1 / time3  # 计算速度提升倍数
-```
-
-相对于修改的简单和清晰程度，这种速度提升令人印象深刻。
-
-### 工作原理及适用场景
-
-Numba 尝试使用 [LLVM 项目](https://llvm.org/) 提供的基础设施生成快速的机器码。
-
-它通过即时推断类型信息来实现这一点。
-
-（有关类型的讨论，请参阅我们{doc}`之前关于科学计算的讲座 <need_for_speed>`。）
-
-基本思路如下：
-
-* Python 非常灵活，因此我们可以用多种类型调用函数 `qm`。
-    * 例如，`x0` 可以是 NumPy 数组或列表，`n` 可以是整数或浮点数，等等。
-* 这使得*预*编译函数（即在运行时之前编译）变得困难。
-* 然而，当我们实际调用函数时，比如运行 `qm(0.5, 10)`，`x0` 和 `n` 的类型就变得清晰了。
-* 此外，一旦知道输入类型，`qm` 中其他变量的类型也可以被推断出来。
-* 因此，Numba 和其他 JIT 编译器的策略是等到这一时刻，*然后*再编译函数。
-
-这就是为什么它被称为"即时"编译。
-
-请注意，如果您调用 `qm(0.5, 10)`，然后紧跟着调用 `qm(0.9, 20)`，编译只发生在第一次调用时。
-
-编译后的代码会被缓存并按需复用。
-
-这就是为什么在上面的代码中，`time3` 比 `time2` 小。
-
-## 装饰器语法
-
-在上面的代码中，我们通过调用以下方式创建了 `qm` 的 JIT 编译版本
+现在我们将其应用于 `qm`，生成一个新函数：
 
 ```{code-cell} ipython3
 qm_numba = jit(qm)
 ```
 
-在实践中，这通常使用另一种*装饰器*语法来完成。
+函数 `qm_numba` 是 `qm` 的一个版本，专门针对 JIT 编译进行了"目标化"。
 
-（我们在{doc}`单独的讲座 <python_advanced_features>`中讨论装饰器，但在此阶段您可以跳过细节。）
+我们稍后将解释这意味着什么。
 
-让我们看看这是如何完成的。
-
-要将函数定向为 JIT 编译，我们可以在函数定义前放置 `@jit`。
-
-以下是 `qm` 的写法
+让我们对这个新版本计时：
 
 ```{code-cell} ipython3
-@jit
-def qm(x0, n):
-    x = np.empty(n+1)
-    x[0] = x0
-    for t in range(n):
-        x[t+1] = α * x[t] * (1 - x[t])
-    return x
+with qe.Timer() as timer2:
+    # Time jitted version
+    x = qm_numba(0.1, n)
 ```
 
-这等价于在函数定义后添加 `qm = jit(qm)`。
+这是一个很大的速度提升。
 
-以下代码现在使用 JIT 编译版本：
+事实上，第二次及之后的运行速度会更快，因为函数已经被编译并驻留在内存中：
+
+(qm_numba_result)=
 
 ```{code-cell} ipython3
-with qe.Timer(precision=4):
-    qm(0.1, 100_000)
+with qe.Timer() as timer3:
+    # Second run
+    x = qm_numba(0.1, n)
 ```
+
+速度提升如下
 
 ```{code-cell} ipython3
-with qe.Timer(precision=4):
-    qm(0.1, 100_000)
+timer1.elapsed /  timer3.elapsed
 ```
 
-Numba 还为装饰器提供了几个参数以加速计算和缓存函数——请参阅[这里](https://numba.readthedocs.io/en/stable/user/performance-tips.html)。
+这对我们原始代码的一个小改动来说是一个很大的提升。
 
-## 类型推断
+让我们来讨论这是如何工作的。
 
-成功的类型推断是 JIT 编译的关键部分。
+### 工作原理与适用场景
 
-可以想象，对于简单的 Python 对象（例如，浮点数和整数等简单标量数据类型），推断类型更为容易。
+Numba 尝试使用 [LLVM Project](https://llvm.org/) 提供的基础设施生成快速机器码。
 
-Numba 也与 NumPy 数组配合良好，因为它们具有明确定义的类型。
+它通过即时推断类型信息来实现这一点。
 
-在理想情况下，Numba 可以推断出所有必要的类型信息。
+（有关类型的讨论，请参阅我们 {doc}`早期的讲座 <need_for_speed>`，内容涉及科学计算。）
 
-这使它能够生成本地机器码，而无需调用 Python 运行时环境。
+基本思想如下：
 
-在这种情况下，Numba 将与低级语言的机器码相媲美。
+* Python 非常灵活，因此我们可以用多种类型调用函数 `qm`。
+    * 例如，`x0` 可以是 NumPy 数组或列表，`n` 可以是整数或浮点数，等等。
+* 这使得*提前*（即在运行时之前）生成高效机器码非常困难。
+* 然而，当我们实际*调用*函数时，例如运行 `qm(0.5, 10)`，`x0`、`α` 和 `n` 的类型就确定了。
+* 此外，一旦输入类型已知，`qm` 中*其他变量*的类型*可以被推断出来*。
+* 因此，Numba 和其他 JIT 编译器的策略是*等到函数被调用时*，再进行编译。
 
-当 Numba 无法推断所有类型信息时，它将引发错误。
+这被称为"即时"编译。
 
-例如，在下面这个（人为的）示例中，Numba 在编译函数 `bootstrap` 时无法确定函数 `mean` 的类型
+请注意，如果你调用 `qm_numba(0.5, 10)`，然后紧接着调用 `qm_numba(0.9, 20)`，编译只在第一次调用时发生。
 
-```{code-cell} ipython3
-@jit
-def bootstrap(data, statistics, n):
-    bootstrap_stat = np.empty(n)
-    n = len(data)
-    for i in range(n_resamples):
-        resample = np.random.choice(data, size=n, replace=True)
-        bootstrap_stat[i] = statistics(resample)
-    return bootstrap_stat
+这是因为编译后的代码会被缓存并按需复用。
 
-# 这里没有装饰器。
-def mean(data):
-    return np.mean(data)
+这就是为什么在上面的代码中，`qm_numba` 的第二次运行更快。
 
-data = np.array((2.3, 3.1, 4.3, 5.9, 2.1, 3.8, 2.2))
-n_resamples = 10
-
-# 这段代码会抛出错误
-try:
-    bootstrap(data, mean, n_resamples)
-except Exception as e:
-    print(e)
+```{admonition} 备注
+在实践中，我们通常不写 `qm_numba = jit(qm)`，而是使用*装饰器*语法，在函数定义前加上 `@jit`。这等价于在定义之后添加 `qm = jit(qm)`。
 ```
 
-在这种情况下，我们可以通过编译 `mean` 来轻松修复这个错误。
-
-```{code-cell} ipython3
-@jit
-def mean(data):
-    return np.mean(data)
-
-with qe.Timer():
-    bootstrap(data, mean, n_resamples)
-```
-
-## 编译类
-
-如上所述，目前 Numba 只能编译 Python 的一个子集。
-
-然而，这个子集一直在扩展。
-
-值得注意的是，Numba 现在在编译类方面相当有效。
-
-如果一个类被成功编译，那么它的方法就像 JIT 编译的函数一样运行。
-
-举一个例子，让我们考虑在{doc}`本讲座 <python_oop>`中创建的用于分析索洛-斯旺增长模型的类。
-
-要编译这个类，我们使用 `@jitclass` 装饰器：
-
-```{code-cell} ipython3
-from numba import float64
-from numba.experimental import jitclass
-```
-
-注意，我们还导入了一个叫做 `float64` 的东西。
-
-这是一种表示标准浮点数的数据类型。
-
-我们在这里导入它是因为当 Numba 尝试处理类时，它需要一些关于类型的额外帮助。
-
-以下是我们的代码：
-
-```{code-cell} ipython3
-solow_data = [
-    ('n', float64),
-    ('s', float64),
-    ('δ', float64),
-    ('α', float64),
-    ('z', float64),
-    ('k', float64)
-]
-
-@jitclass(solow_data)
-class Solow:
-    r"""
-    Implements the Solow growth model with the update rule
-
-        k_{t+1} = [(s z k^α_t) + (1 - δ)k_t] /(1 + n)
-
-    """
-    def __init__(self, n=0.05,  # population growth rate
-                       s=0.25,  # savings rate
-                       δ=0.1,   # depreciation rate
-                       α=0.3,   # share of labor
-                       z=2.0,   # productivity
-                       k=1.0):  # current capital stock
-
-        self.n, self.s, self.δ, self.α, self.z = n, s, δ, α, z
-        self.k = k
-
-    def h(self):
-        "Evaluate the h function"
-        # 解包参数（去掉 self 以简化符号）
-        n, s, δ, α, z = self.n, self.s, self.δ, self.α, self.z
-        # 应用更新规则
-        return (s * z * self.k**α + (1 - δ) * self.k) / (1 + n)
-
-    def update(self):
-        "Update the current state (i.e., the capital stock)."
-        self.k =  self.h()
-
-    def steady_state(self):
-        "Compute the steady state value of capital."
-        # 解包参数（去掉 self 以简化符号）
-        n, s, δ, α, z = self.n, self.s, self.δ, self.α, self.z
-        # 计算并返回稳态
-        return ((s * z) / (n + δ))**(1 / (1 - α))
-
-    def generate_sequence(self, t):
-        "Generate and return a time series of length t"
-        path = []
-        for i in range(t):
-            path.append(self.k)
-            self.update()
-        return path
-```
-
-首先，我们在 `solow_data` 中指定了类的实例数据类型。
-
-之后，将类定向为 JIT 编译只需在类定义前添加 `@jitclass(solow_data)` 即可。
-
-当我们调用类中的方法时，这些方法就像函数一样被即时编译。
-
-```{code-cell} ipython3
-s1 = Solow()
-s2 = Solow(k=8.0)
-
-T = 60
-fig, ax = plt.subplots()
-
-# 绘制共同的稳态资本值
-ax.plot([s1.steady_state()]*T, 'k-', label='稳态')
-
-# 为每个经济体绘制时间序列
-for s in s1, s2:
-    lb = f'从初始状态 {s.k} 出发的资本序列'
-    ax.plot(s.generate_sequence(T), 'o-', lw=2, alpha=0.6, label=lb)
-ax.set_ylabel('$k_{t}$', fontsize=12)
-ax.set_xlabel('$t$', fontsize=12)
-ax.legend()
-plt.show()
-```
-
-## 危险与局限
-
-让我们回顾上述内容并补充一些注意事项。
-
-### 局限性
-
-正如我们所见，Numba 需要推断所有变量的类型信息以生成快速的机器级指令。
-
-对于简单的例程，Numba 推断类型非常出色。
-
-对于较大的例程，或使用外部库的例程，它很容易失败。
-
-因此，在使用 Numba 时，明智的做法是专注于加速代码中小而关键的片段。
-
-这将比在 Python 程序中大量使用 `@njit` 语句带来更好的性能。
-
-### 一个陷阱：全局变量
-
-以下是使用 Numba 时需要注意的另一件事。
-
-考虑以下示例
-
-```{code-cell} ipython3
-a = 1
-
-@jit
-def add_a(x):
-    return a + x
-
-print(add_a(10))
-```
-
-```{code-cell} ipython3
-a = 2
-
-print(add_a(10))
-```
-
-注意，更改全局变量对函数返回值没有任何影响。
-
-当 Numba 为函数编译机器码时，它将全局变量视为常量，以确保类型稳定性。
-
-(multithreading)=
 ## Numba 中的多线程循环
 
 除了 JIT 编译之外，Numba 还为 CPU 上的并行计算提供了强大支持。
