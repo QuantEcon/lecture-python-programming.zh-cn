@@ -20,6 +20,7 @@ translation:
     Dangers and Limitations: 危险与局限
     Dangers and Limitations::Limitations: 局限性
     'Dangers and Limitations::A Gotcha: Global Variables': 一个陷阱：全局变量
+    Dangers and Limitations::Caching Compiled Code: 缓存编译代码
     Multithreaded Loops in Numba: Numba 中的多线程循环
     Exercises: 练习
 ---
@@ -60,28 +61,28 @@ mpl.rcParams['font.family'] = ['Source Han Serif SC']  # i18n
 
 ## 概述
 
-在 {doc}`之前的讲座 <need_for_speed>` 中，我们讨论了向量化，它通过将数组处理操作批量发送到高效的底层代码来提高执行速度。
+在 {doc}`之前的讲座 <need_for_speed>` 中，我们讨论了向量化，这是一种通过将数组处理操作批量发送到高效底层代码来提高执行速度的方法。
 
-然而，正如 {ref}`在那次讲座中所讨论的 <numba-p_c_vectorization>`，传统的向量化方案（如 MATLAB 和 NumPy 中的方案）存在一些弱点。
+然而，正如 {ref}`在那次讲座中所讨论的 <numba-p_c_vectorization>`，传统的向量化方案（例如在 MATLAB 和 NumPy 中）存在一些弱点。
 
 * 对于复合数组操作，内存消耗极大
-* 对某些算法无效或无法实现。
+* 对某些算法无效甚至无法应用。
 
 绕过这些问题的一种方法是使用 [Numba](https://numba.pydata.org/)，这是一个面向数值计算的 Python **即时（JIT）编译器**。
 
 Numba 在运行时将函数编译为本地机器码指令。
 
-编译成功后，其性能可与编译后的 C 或 Fortran 相媲美。
+编译成功后，Numba 的性能将与低级语言生成的机器码相当。
 
-此外，Numba 还可以完成其他有用的技巧，例如 {ref}`多线程 <multithreading>` 或通过 `numba.cuda` 与 GPU 交互。
+此外，Numba 还可以完成其他有用的技巧，例如 {ref}`多线程 <multithreading>` 或通过 `numba.cuda` 与 GPU 进行交互。
 
 Numba 的 JIT 编译器在许多方面与 Julia 中的 JIT 编译器类似。
 
-主要区别在于它没有那么雄心勃勃，只尝试编译语言的一个较小子集。
+主要区别在于它的目标更为保守，只尝试编译语言的一个较小子集。
 
-虽然这听起来像是一个缺陷，但在某些方面这也是一个优势。
+虽然这听起来像是一个缺陷，但在某些方面却是一个优势。
 
-Numba 精简、易用，并且在其所做的事情上非常出色。
+Numba 精简、易用，且非常擅长它所做的事情。
 
 本讲座将介绍核心思路。
 
@@ -95,7 +96,7 @@ Numba 精简、易用，并且在其所做的事情上非常出色。
 (quad_map_eg)=
 ### 示例
 
-让我们考虑一个难以向量化（即交由数组处理操作完成）的问题。
+让我们考虑一个难以向量化的问题（即难以交给数组处理操作来完成）。
 
 该问题涉及通过二次映射生成轨迹
 
@@ -109,7 +110,7 @@ $$
 α = 4.0
 ```
 
-以下是一条典型轨迹的图像，从 $x_0 = 0.1$ 开始，x 轴表示 $t$
+以下是从 $x_0 = 0.1$ 出发的典型轨迹图，横轴为 $t$
 
 ```{code-cell} ipython3
 def qm(x0, n):
@@ -135,11 +136,11 @@ from numba import jit
 qm_numba = jit(qm)
 ```
 
-函数 `qm_numba` 是 `qm` 的一个版本，它被"定向"为 JIT 编译。
+函数 `qm_numba` 是 `qm` 的一个版本，它被"定向"用于即时编译（JIT-compilation）。
 
-我们稍后将解释这意味着什么。
+我们将在稍后解释这意味着什么。
 
-让我们对这两个版本进行相同的函数调用计时并比较，首先从原始函数 `qm` 开始：
+让我们对这两个版本的相同函数调用进行计时和比较，首先从原始函数 `qm` 开始：
 
 ```{code-cell} ipython3
 n = 10_000_000
@@ -159,7 +160,7 @@ time2 = timer2.elapsed
 
 这已经是非常大的速度提升。
 
-实际上，下一次及之后所有运行会更快，因为函数已经被编译并存储在内存中：
+事实上，下一次及之后的每次运行都会更快，因为函数已经被编译并保存在内存中：
 
 (qm_numba_result)=
 
@@ -170,29 +171,33 @@ time3 = timer3.elapsed
 ```
 
 ```{code-cell} ipython3
-time1 / time3  # Calculate speed gain
+time1 / time3  # 计算加速比
 ```
 
-### 工作原理与适用时机
+### 工作原理与适用场景
 
-Numba 尝试利用 [LLVM Project](https://llvm.org/) 提供的基础设施生成快速机器码。
+Numba 尝试使用 [LLVM Project](https://llvm.org/) 提供的基础设施生成快速的机器代码。
 
 它通过动态推断类型信息来实现这一目标。
 
-（参见我们 {doc}`早前的讲座 <need_for_speed>`，其中讨论了科学计算中的类型问题。）
+（有关类型的讨论，请参阅我们 {doc}`早期关于科学计算的讲座 <need_for_speed>`。）
 
 基本思路如下：
 
 * Python 非常灵活，因此我们可以用多种类型调用函数 qm。
     * 例如，`x0` 可以是 NumPy 数组或列表，`n` 可以是整数或浮点数，等等。
-* 这使得*提前*（即在运行时之前）生成高效机器码非常困难。
-* 然而，当我们实际*调用*函数时，例如运行 `qm(0.5, 10)`，`x0` 和 `n` 的类型就变得明确了。
-* 此外，一旦输入类型已知，`qm` 中*其他变量*的类型也*可以被推断出来*。
-* 因此，Numba 和其他 JIT 编译器的策略是*等到函数被调用时再进行编译*。
+* 这使得*预*编译函数（即在运行时之前编译）变得困难。
+* 然而，当我们实际调用函数时，例如运行 `qm(0.5, 10)`，`x0` 和 `n` 的类型就变得明确了。
+* 此外，一旦输入类型已知，`qm` 中*其他变量*的类型*便可以被推断出来*。
+* 因此，Numba 和其他 JIT 编译器的策略是等待这一时刻，然后再编译函数。
 
-这被称为"即时"编译。
+这就是所谓的"即时"编译（just-in-time compilation）。
 
-注意，如果你先调用 `qm(0.5, 10)`，然后再调用 `qm(0.9, 20)`，编译只在第一次调用时发生。
+请注意，如果你调用 `qm(0.5, 10)` 后紧接着调用 `qm(0.9, 20)`，编译只在第一次调用时发生。
+
+这是因为编译后的代码会被缓存并在需要时重复使用。
+
+这就是为什么在上述代码中，`time3` 小于 `time2`。
 
 这是因为编译后的代码会被缓存并在需要时重复使用。
 
@@ -201,6 +206,40 @@ Numba 尝试利用 [LLVM Project](https://llvm.org/) 提供的基础设施生成
 ```{admonition} 备注
 在实践中，我们不直接写 `qm_numba = jit(qm)`，而是使用*装饰器*语法，在函数定义前加上 `@jit`。这等价于在定义之后添加 `qm = jit(qm)`。我们在本讲座的其余部分都使用这种语法。（有关装饰器的更多内容，请参见 {doc}`python_advanced_features`。）
 ```
+
+在实践中，这通常使用另一种*装饰器*语法来完成。
+
+（我们在 {doc}`单独的讲座 <python_advanced_features>` 中讨论装饰器，但在此阶段您可以跳过细节。）
+
+具体来说，要将函数定向为 JIT 编译，我们可以在函数定义前放置 `@jit`。
+
+以下是 `qm` 的写法
+
+```{code-cell} ipython3
+@jit
+def qm(x0, n):
+    x = np.empty(n+1)
+    x[0] = x0
+    for t in range(n):
+        x[t+1] = α * x[t] * (1 - x[t])
+    return x
+```
+
+这等价于在函数定义后添加 `qm = jit(qm)`。
+
+以下代码现在使用 JIT 编译版本：
+
+```{code-cell} ipython3
+with qe.Timer(precision=4):
+    qm(0.1, 100_000)
+```
+
+```{code-cell} ipython3
+with qe.Timer(precision=4):
+    qm(0.1, 100_000)
+```
+
+Numba 还为装饰器提供了几个参数以加速计算和缓存函数——请参阅 [这里](https://numba.readthedocs.io/en/stable/user/performance-tips.html)。
 
 ## 类型推断
 
@@ -249,19 +288,17 @@ iterate(g, 0.5, 100)
 
 ## 危险与局限
 
-让我们回顾上述内容并补充一些注意事项。
+让我们补充一些注意事项。
 
 ### 局限性
 
 正如我们所见，Numba 需要推断所有变量的类型信息以生成快速的机器级指令。
 
-对于简单的例程，Numba 推断类型非常出色。
+对于较大的例程或使用外部库的例程，此过程很容易失败。
 
-对于较大的例程，或使用外部库的例程，它很容易失败。
+因此，最好专注于加速代码中小而关键的片段。
 
-因此，在使用 Numba 时，明智的做法是专注于加速代码中小而关键的片段。
-
-这将比在 Python 程序中大量使用 `@njit` 语句带来更好的性能。
+这将比在 Python 程序中大量使用 `@jit` 语句带来更好的性能。
 
 ### 一个陷阱：全局变量
 
@@ -289,14 +326,30 @@ print(add_a(10))
 
 当 Numba 为函数编译机器码时，它将全局变量视为常量，以确保类型稳定性。
 
-为了避免这种情况，请将值作为函数参数传递，而不是依赖全局变量。
+### 缓存编译代码
+
+默认情况下，Numba 在每次启动新的 Python 会话时都会重新编译函数。
+
+为了避免这种开销，可以向装饰器传递 `cache=True`：
+
+```{code-cell} ipython3
+@jit(cache=True)
+def qm(x0, n):
+    x = np.empty(n+1)
+    x[0] = x0
+    for t in range(n):
+        x[t+1] = α * x[t] * (1 - x[t])
+    return x
+```
+
+这会将编译后的代码存储在磁盘上，以便后续会话可以跳过编译步骤。
 
 (multithreading)=
 ## Numba 中的多线程循环
 
-除了 JIT 编译之外，Numba 还为 CPU 和 GPU 上的并行计算提供支持。
+除了 JIT 编译之外，Numba 还为 CPU 和 GPU 上的并行计算提供了支持。
 
-Numba 中 CPU 并行化的关键工具是 `prange` 函数，它告诉 Numba 在可用的 CPU 核心上并行执行循环迭代。
+Numba 中在 CPU 上进行并行化的关键工具是 `prange` 函数，它告诉 Numba 在可用的核心上并行执行循环迭代。
 
 为了说明，让我们首先看一个简单的单线程（即非并行化）代码片段。
 
@@ -317,6 +370,8 @@ $$
 以下是代码：
 
 ```{code-cell} ipython3
+from numba import jit
+
 @jit
 def h(w, r=0.1, s=0.3, v1=0.1, v2=1.0):
     """
@@ -408,16 +463,14 @@ with qe.Timer():
 
 速度提升非常显著。
 
-请注意，我们是跨家庭而非跨时间进行并行化——单个家庭跨时期的更新本质上是顺序的。
-
-关于基于 GPU 的并行化，请参阅我们的 {doc}`JAX 相关讲座 <jax_intro>`。
+注意，我们是跨家庭进行并行化，而非跨时间——单个家庭跨时期的更新本质上是顺序的。
 
 ## 练习
 
 ```{exercise}
 :label: speed_ex1
 
-{ref}`之前 <pbe_ex5>`我们考虑了如何用蒙特卡洛方法近似 $\pi$。
+{ref}`之前 <pbe_ex5>` 我们考虑了如何用蒙特卡洛方法近似 $\pi$。
 
 在这里使用相同的思路，但使用 Numba 使代码高效。
 
@@ -431,13 +484,11 @@ with qe.Timer():
 以下是一种解法：
 
 ```{code-cell} ipython3
-from random import uniform
-
 @jit
 def calculate_pi(n=1_000_000):
     count = 0
     for i in range(n):
-        u, v = uniform(0, 1), uniform(0, 1)
+        u, v = np.random.uniform(0, 1), np.random.uniform(0, 1)
         d = np.sqrt((u - 0.5)**2 + (v - 0.5)**2)
         if d < 0.5:
             count += 1
@@ -458,9 +509,9 @@ with qe.Timer():
     calculate_pi()
 ```
 
-如果我们通过删除 `@njit` 来关闭 JIT 编译，代码在我们的机器上大约需要慢 150 倍。
+如果我们通过删除 `@jit` 来关闭 JIT 编译，代码在我们的机器上大约需要慢 150 倍。
 
-因此，通过添加四个字符，我们获得了 2 个数量级的速度提升——这是巨大的。
+因此，通过添加四个字符，我们获得了 2 个数量级的速度提升。
 
 ```{solution-end}
 ```
@@ -502,7 +553,7 @@ with qe.Timer():
 :class: dropdown
 
 * 将低状态表示为 0，高状态表示为 1。
-* 如果您想在 NumPy 数组中存储整数，然后应用 JIT 编译，请使用 `x = np.empty(n, dtype=np.int_)`。
+* 如果您想在 NumPy 数组中存储整数，然后应用 JIT 编译，请使用 `x = np.empty(n, dtype=np.int64)`。
 
 ```
 
@@ -526,7 +577,7 @@ p, q = 0.1, 0.2  # 分别为离开低状态和高状态的概率
 
 ```{code-cell} ipython3
 def compute_series(n):
-    x = np.empty(n, dtype=np.int_)
+    x = np.empty(n, dtype=np.int64)
     x[0] = 1  # 从状态 1 开始
     U = np.random.uniform(0, 1, size=n)
     for t in range(1, n):
@@ -583,7 +634,7 @@ with qe.Timer():
 ```{exercise}
 :label: numba_ex3
 
-在{ref}`之前的练习 <speed_ex1>`中，我们使用 Numba 加速了通过蒙特卡洛方法计算常数 $\pi$ 的工作。
+在 {ref}`之前的练习 <speed_ex1>` 中，我们使用 Numba 加速了通过蒙特卡洛方法计算常数 $\pi$ 的工作。
 
 现在尝试添加并行化，看看是否能获得进一步的速度提升。
 
@@ -605,13 +656,11 @@ with qe.Timer():
 以下是一种解法：
 
 ```{code-cell} ipython3
-from random import uniform
-
-@njit(parallel=True)
+@jit(parallel=True)
 def calculate_pi(n=1_000_000):
     count = 0
     for i in prange(n):
-        u, v = uniform(0, 1), uniform(0, 1)
+        u, v = np.random.uniform(0, 1), np.random.uniform(0, 1)
         d = np.sqrt((u - 0.5)**2 + (v - 0.5)**2)
         if d < 0.5:
             count += 1
@@ -632,7 +681,7 @@ with qe.Timer():
     calculate_pi()
 ```
 
-通过打开和关闭并行化（在 `@njit` 注解中选择 `True` 或 `False`），我们可以测试多线程在 JIT 编译之上提供的速度增益。
+通过打开和关闭并行化（在 `@jit` 注解中选择 `True` 或 `False`），我们可以测试多线程在 JIT 编译之上提供的速度增益。
 
 在我们的工作站上，我们发现并行化将执行速度提高了 2 到 3 倍。
 
@@ -641,10 +690,11 @@ with qe.Timer():
 ```{solution-end}
 ```
 
+
 ```{exercise}
 :label: numba_ex4
 
-在{doc}`我们关于 SciPy 的讲座 <scipy>`中，我们讨论了在标的股票价格具有简单且众所周知的分布的情况下，如何为看涨期权定价。
+在 {doc}`我们关于 SciPy 的讲座 <scipy>` 中，我们讨论了在标的股票价格具有简单且众所周知的分布的情况下，如何为看涨期权定价。
 
 这里我们讨论一个更现实的情境。
 
@@ -698,9 +748,11 @@ $$
 
 ```
 
+
 ```{solution-start} numba_ex4
 :class: dropdown
 ```
+
 
 令 $s_t := \ln S_t$，价格动态变为
 
@@ -710,14 +762,14 @@ $$
 
 利用这一事实，解可以写成如下形式。
 
+
 ```{code-cell} ipython3
-from numpy.random import randn
 M = 10_000_000
 
 n, β, K = 20, 0.99, 100
 μ, ρ, ν, S0, h0 = 0.0001, 0.1, 0.001, 10, 0
 
-@njit(parallel=True)
+@jit(parallel=True)
 def compute_call_price_parallel(β=β,
                                 μ=μ,
                                 S0=S0,
@@ -734,10 +786,10 @@ def compute_call_price_parallel(β=β,
         h = h0
         # 向前模拟
         for t in range(n):
-            s = s + μ + np.exp(h) * randn()
-            h = ρ * h + ν * randn()
+            s = s + μ + np.exp(h) * np.random.randn()
+            h = ρ * h + ν * np.random.randn()
         # 将 max{S_n - K, 0} 的值累加到 current_sum
-        current_sum += np.maximum(np.exp(s) - K, 0)
+        current_sum += max(np.exp(s) - K, 0)
 
     return β**n * current_sum / M
 ```
