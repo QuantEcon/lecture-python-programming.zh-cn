@@ -150,6 +150,7 @@ f(x; a, b) = \frac{x^{(a - 1)} (1 - x)^{(b - 1)}}
 from scipy.stats import beta
 import matplotlib.pyplot as plt
 import matplotlib as mpl  # i18n
+import matplotlib.font_manager  # i18n
 FONTPATH = "_fonts/SourceHanSerifSC-SemiBold.otf"  # i18n
 mpl.font_manager.fontManager.addfont(FONTPATH)  # i18n
 mpl.rcParams['font.family'] = ['Source Han Serif SC']  # i18n

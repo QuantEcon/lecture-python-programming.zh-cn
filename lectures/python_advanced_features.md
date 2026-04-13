@@ -377,6 +377,7 @@ print(*l1)
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl  # i18n
+import matplotlib.font_manager  # i18n
 FONTPATH = "_fonts/SourceHanSerifSC-SemiBold.otf"  # i18n
 mpl.font_manager.fontManager.addfont(FONTPATH)  # i18n
 mpl.rcParams['font.family'] = ['Source Han Serif SC']  # i18n
@@ -582,14 +583,14 @@ add(1.5, 2.7)
 
 1. **可读性**：类型提示使函数签名具有自文档化效果。读者可以立即了解函数期望的输入类型和返回类型。
 2. **编辑器支持**：VS Code 等 IDE 利用类型提示提供更好的自动补全、错误检测和内联文档功能。
-3. **错误检查**：[mypy](https://mypy.readthedocs.io/) 和 [pyrefly](https://pyrefly.org/) 等工具通过分析类型提示，在*运行代码之前*就能发现错误。
+3. **错误检查**：[mypy](https://mypy.readthedocs.io/en/stable/) 和 [pyrefly](https://pyrefly.org/) 等工具通过分析类型提示，在*运行代码之前*就能发现错误。
 4. **LLM 生成的代码**：大型语言模型经常生成带有类型提示的代码，因此理解其语法有助于阅读和使用它们的输出。
 
 ### 科学 Python 中的类型提示
 
 类型提示与 {doc}`性能需求 <need_for_speed>` 的讨论密切相关：
 
-* [JAX](https://jax.readthedocs.io/) 和 [Numba](https://numba.pydata.org/) 等高性能库依赖于了解变量类型来编译快速的机器码。
+* [JAX](https://docs.jax.dev/en/latest/) 和 [Numba](https://numba.pydata.org/) 等高性能库依赖于了解变量类型来编译快速的机器码。
 * 虽然这些库在运行时推断类型，而不是直接读取 Python 类型提示，但*概念*是相同的——显式的类型信息能够实现优化。
 * 随着 Python 生态系统的发展，类型提示与性能工具之间的联系预计将进一步加强。
 
@@ -1195,7 +1196,7 @@ sum(draws)
 :label: paf_ex1
 ```
 
-完成以下代码，并使用[此 csv 文件](https://raw.githubusercontent.com/QuantEcon/lecture-python-programming/master/source/_static/lecture_specific/python_advanced_features/test_table.csv)进行测试，我们假设你已将该文件放在当前工作目录中：
+完成以下代码，并使用 [此 csv 文件](https://raw.githubusercontent.com/QuantEcon/lecture-python-programming/main/lectures/_static/lecture_specific/python_advanced_features/test_table.csv) 进行测试，我们假设你已将该文件放在当前工作目录中：
 
 ```{code-block} python3
 :class: no-execute
