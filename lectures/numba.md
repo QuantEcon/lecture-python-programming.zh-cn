@@ -18,6 +18,9 @@ translation:
     Compiling Functions::An Example::Base Version: 基础版本
     Compiling Functions::An Example::Acceleration via Numba: 通过 Numba 加速
     Compiling Functions::How and When it Works: 工作原理与适用场景
+    Sharp Bits: 注意事项
+    Sharp Bits::Typing: 类型推断
+    Sharp Bits::Global Variables: 全局变量
     Multithreaded Loops in Numba: Numba 中的多线程循环
     Exercises: 练习
 ---
@@ -58,29 +61,29 @@ mpl.rcParams['font.family'] = ['Source Han Serif SC']  # i18n
 
 ## 概述
 
-在{doc}`之前的讲座 <need_for_speed>`中，我们学习了向量化，这是提高数值计算速度和效率的一种方法。
+在 {doc}`之前的讲座 <need_for_speed>` 中，我们学习了向量化，这是一种通过将数组处理操作批量发送到高效底层代码来提高执行速度的方法。
 
-向量化将数组处理操作批量发送到高效的底层代码。
+然而，正如 {ref}`之前所讨论的 <numba-p_c_vectorization>`，传统的向量化方案有以下弱点：
 
-然而，正如{ref}`之前所讨论的 <numba-p_c_vectorization>`，向量化有几个弱点。
+* 对于复合数组操作，内存消耗极大
+* 对于某些算法，向量化无效甚至不可能实现
 
-其一是在处理大量数据时内存消耗极大。
+绕过这些问题的一种方法是使用 [Numba](https://numba.pydata.org/)，这是一个面向 Python 的**即时（JIT）编译器**。
 
-其二是能够完全向量化的算法集并非通用的。
+Numba 在运行时将函数编译为本地机器码指令。
 
-事实上，对于某些算法，向量化是无效的。
+编译成功后，其性能可与编译后的 C 或 Fortran 媲美。
 
-幸运的是，一个名为 [Numba](https://numba.pydata.org/) 的新 Python 库解决了许多这些问题。
+此外，Numba 还可以完成有用的技巧，例如 {ref}`多线程 <multithreading>`。
 
-它通过一种称为**即时（JIT）编译**的技术来实现这一点。
+本讲座将介绍核心思路。
 
-核心思想是在运行时将函数编译为本地机器码指令。
 
-编译成功后，编译后的代码速度极快。
+```{note}
+一些读者可能对 Numba 与 [Julia](https://julialang.org/) 之间的关系感到好奇，Julia 包含其自己的 JIT 编译器。虽然这两种编译器在许多方面相似，但 Numba 的目标更为有限，仅尝试编译 Python 语言的一个小子集。虽然这听起来像是一个缺陷，但也是一种优势：Numba 更具限制性的特性使其易于使用，并且非常擅长其所做的事情。
+```
 
-除了编译带来的速度提升之外，Numba 还专门为数值计算而设计，并且还可以完成其他技巧，例如{ref}`多线程 <multithreading>`。
 
-本讲座将介绍主要思路。
 
 (numba_link)=
 ## {index}`编译函数 <single: Compiling Functions>`
@@ -92,7 +95,7 @@ mpl.rcParams['font.family'] = ['Source Han Serif SC']  # i18n
 (quad_map_eg)=
 ### 示例
 
-让我们考虑一个难以向量化（即交由数组处理操作完成）的问题。
+让我们考虑一个难以向量化的问题（即难以交给数组处理操作来完成）。
 
 该问题涉及通过二次映射生成轨迹
 
@@ -100,11 +103,11 @@ $$
     x_{t+1} = \alpha x_t (1 - x_t)
 $$
 
-在以下内容中，我们设 $\alpha = 4$。
+在下文中，我们设 $\alpha = 4$。
 
 #### 基础版本
 
-以下是从 $x_0 = 0.1$ 出发的典型轨迹图，x 轴为 $t$
+以下是从 $x_0 = 0.1$ 出发的典型轨迹图，横轴为 $t$
 
 ```{code-cell} ipython3
 def qm(x0, n, α=4.0):
@@ -122,7 +125,7 @@ ax.set_ylabel('$x_{t}$', fontsize = 12)
 plt.show()
 ```
 
-让我们看看当 $n$ 很大时运行需要多长时间
+让我们看看在较大的 $n$ 下运行需要多长时间
 
 ```{code-cell} ipython3
 n = 10_000_000
@@ -148,7 +151,7 @@ from numba import jit
 qm_numba = jit(qm)
 ```
 
-函数 `qm_numba` 是 `qm` 的一个版本，专门针对 JIT 编译进行了"目标化"。
+函数 `qm_numba` 是 `qm` 的一个版本，它被"定向"用于 JIT 编译。
 
 我们稍后将解释这意味着什么。
 
@@ -160,66 +163,127 @@ with qe.Timer() as timer2:
     x = qm_numba(0.1, n)
 ```
 
-这是一个很大的速度提升。
-
-事实上，第二次及之后的运行速度会更快，因为函数已经被编译并驻留在内存中：
-
-(qm_numba_result)=
-
-```{code-cell} ipython3
-with qe.Timer() as timer3:
-    # Second run
-    x = qm_numba(0.1, n)
-```
-
-速度提升如下
+以下是速度提升
 
 ```{code-cell} ipython3
 timer1.elapsed /  timer3.elapsed
 ```
 
-这对我们原始代码的一个小改动来说是一个很大的提升。
+对我们原始代码进行少量修改便获得了巨大的提升。
 
-让我们来讨论这是如何工作的。
+让我们讨论一下这是如何工作的。
 
 ### 工作原理与适用场景
 
 Numba 尝试使用 [LLVM Project](https://llvm.org/) 提供的基础设施生成快速机器码。
 
-它通过即时推断类型信息来实现这一点。
+它通过动态推断类型信息来实现这一点。
 
-（有关类型的讨论，请参阅我们 {doc}`早期的讲座 <need_for_speed>`，内容涉及科学计算。）
+（有关类型的讨论，请参阅我们 {doc}`之前关于科学计算的讲座 <need_for_speed>`。）
 
-基本思想如下：
+基本思路如下：
 
-* Python 非常灵活，因此我们可以用多种类型调用函数 `qm`。
+* Python 非常灵活，因此我们可以用多种类型调用函数 qm。
     * 例如，`x0` 可以是 NumPy 数组或列表，`n` 可以是整数或浮点数，等等。
 * 这使得*提前*（即在运行时之前）生成高效机器码非常困难。
-* 然而，当我们实际*调用*函数时，例如运行 `qm(0.5, 10)`，`x0`、`α` 和 `n` 的类型就确定了。
+* 然而，当我们实际*调用*函数时，例如运行 `qm(0.5, 10)`，`x0`、`α` 和 `n` 的类型就被确定了。
 * 此外，一旦输入类型已知，`qm` 中*其他变量*的类型*可以被推断出来*。
-* 因此，Numba 和其他 JIT 编译器的策略是*等到函数被调用时*，再进行编译。
+* 因此，Numba 和其他 JIT 编译器的策略是*等到函数被调用时*，然后再进行编译。
 
 这被称为"即时"编译。
 
-请注意，如果你调用 `qm_numba(0.5, 10)`，然后紧接着调用 `qm_numba(0.9, 20)`，编译只在第一次调用时发生。
+注意，如果你先调用 `qm_numba(0.5, 10)`，然后再调用 `qm_numba(0.9, 20)`，编译只在第一次调用时发生。
 
-这是因为编译后的代码会被缓存并按需复用。
+这是因为编译后的代码会被缓存并按需重用。
 
 这就是为什么在上面的代码中，`qm_numba` 的第二次运行更快。
 
 ```{admonition} 备注
-在实践中，我们通常不写 `qm_numba = jit(qm)`，而是使用*装饰器*语法，在函数定义前加上 `@jit`。这等价于在定义之后添加 `qm = jit(qm)`。
+在实践中，我们通常使用*装饰器*语法，而不是编写 `qm_numba = jit(qm)`，在函数定义前加上 `@jit`。这等价于在定义之后添加 `qm = jit(qm)`。
 ```
 
+## 注意事项
+
+Numba 相对容易使用，但并非总是无缝衔接的。
+
+让我们来回顾一些用户常遇到的问题。
+
+### 类型推断
+
+成功的类型推断是 JIT 编译的关键。
+
+在理想情况下，Numba 可以推断出所有必要的类型信息。
+
+当 Numba *无法* 推断所有类型信息时，它将抛出错误。
+
+例如，在以下情况中，Numba 在编译 `iterate` 时无法确定函数 `g` 的类型：
+
+```{code-cell} ipython3
+@jit
+def iterate(f, x0, n):
+    x = x0
+    for t in range(n):
+        x = f(x)
+    return x
+
+# Not jitted
+def g(x):
+    return np.cos(x) - 2 * np.sin(x)
+
+# This code throws an error
+try:
+    iterate(g, 0.5, 100)
+except Exception as e:
+    print(e)
+```
+
+在当前情况下，我们可以通过编译 `g` 来轻松解决这个问题。
+
+```{code-cell} ipython3
+@jit
+def g(x):
+    return np.cos(x) - 2 * np.sin(x)
+
+iterate(g, 0.5, 100)
+```
+
+在其他情况下，例如当我们想使用来自外部库（如 `SciPy`）的函数时，可能没有简单的解决方法。
+
+### 全局变量
+
+使用 Numba 时另一个需要注意的问题是全局变量的处理。
+
+例如，考虑以下代码：
+
+```{code-cell} ipython3
+a = 1
+
+@jit
+def add_a(x):
+    return a + x
+
+print(add_a(10))
+```
+
+```{code-cell} ipython3
+a = 2
+
+print(add_a(10))
+```
+
+注意，更改全局变量对函数返回的值没有任何影响 😱。
+
+当 Numba 为函数编译机器码时，它将全局变量视为常量以确保类型稳定性。
+
+为了避免这种情况，请将值作为函数参数传递，而不是依赖全局变量。
+
+
+(multithreading)=
 ## Numba 中的多线程循环
 
-除了 JIT 编译之外，Numba 还为 CPU 上的并行计算提供了强大支持。
+除了 JIT 编译之外，Numba 还为 CPU 和 GPU 上的并行计算提供支持。
 
-通过在多个 CPU 核心上分配计算任务，我们可以为许多数值算法实现显著的速度提升。
-
-Numba 中并行化的关键工具是 `prange` 函数，它告诉 Numba 在可用的 CPU 核心上并行执行循环迭代。
-
-这种多线程方法适用于科学计算和定量经济学中的广泛问题。
+Numba 中 CPU 并行化的关键工具是 `prange` 函数，它告诉 Numba 在可用的 CPU 核心上并行执行循环迭代。
 
 为了说明，让我们首先看一个简单的单线程（即非并行化）代码片段。
 
@@ -240,20 +304,13 @@ $$
 以下是代码：
 
 ```{code-cell} ipython3
-from numpy.random import randn
-from numba import njit
-
-@njit
-def h(w, r=0.1, s=0.3, v1=0.1, v2=1.0):
-    """
-    Updates household wealth.
-    """
-
-    # 抽取冲击
-    R = np.exp(v1 * randn()) * (1 + r)
-    y = np.exp(v2 * randn())
-
-    # 更新财富
+@jit
+def update(w, r=0.1, s=0.3, v1=0.1, v2=1.0):
+    " Updates household wealth. "
+    # Draw shocks
+    R = np.exp(v1 * np.random.randn()) * (1 + r)
+    y = np.exp(v2 * np.random.randn())
+    # Update wealth
     w = R * s * w + y
     return w
 ```
@@ -267,7 +324,7 @@ T = 100
 w = np.empty(T)
 w[0] = 5
 for t in range(T-1):
-    w[t+1] = h(w[t])
+    w[t+1] = update(w[t])
 
 ax.plot(w)
 ax.set_xlabel('$t$', fontsize=12)
@@ -277,38 +334,26 @@ plt.show()
 
 现在，假设我们有一个庞大的家庭群体，并且想知道中位财富将是多少。
 
-这个问题很难用纸笔求解，因此我们将使用模拟。
+这个问题很难用纸笔求解，因此我们将使用模拟：
 
-具体来说，我们将模拟大量家庭，然后计算该群体的中位财富。
-
-假设我们对这一中位数随时间变化的长期平均值感兴趣。
-
-事实证明，对于我们上面选择的参数规格，我们可以通过截取长时间模拟结束时群体中位财富的一个单期快照来计算这个值。
-
-此外，只要模拟期足够长，初始条件就不重要。
-
-* 这是由于一种称为遍历性的性质，我们将在[后面](https://python.quantecon.org/finite_markov.html#id15)讨论。
-
-因此，总结来说，我们将通过以下方式模拟 50,000 个家庭：
-
-1. 任意设定初始财富为 1，以及
-1. 向前模拟 1,000 个时期。
-
-然后我们将计算最终时期的中位财富。
+1. 向前模拟大量家庭
+2. 计算中位财富
 
 以下是代码：
 
 ```{code-cell} ipython3
-@njit
+@jit
 def compute_long_run_median(w0=1, T=1000, num_reps=50_000):
-
     obs = np.empty(num_reps)
+    # For each household
     for i in range(num_reps):
+        # Set the initial condition and run forward in time
         w = w0
         for t in range(T):
-            w = h(w)
+            w = update(w)
+        # Record the final value
         obs[i] = w
-
+    # Take the median of all final values
     return np.median(obs)
 ```
 
@@ -316,6 +361,13 @@ def compute_long_run_median(w0=1, T=1000, num_reps=50_000):
 
 ```{code-cell} ipython3
 with qe.Timer():
+    # Warm up
+    compute_long_run_median()
+```
+
+```{code-cell} ipython3
+with qe.Timer():
+    # Second run
     compute_long_run_median()
 ```
 
@@ -326,16 +378,16 @@ with qe.Timer():
 ```{code-cell} ipython3
 from numba import prange
 
-@njit(parallel=True)
-def compute_long_run_median_parallel(w0=1, T=1000, num_reps=50_000):
-
+@jit(parallel=True)
+def compute_long_run_median_parallel(
+        w0=1, T=1000, num_reps=50_000
+    ):
     obs = np.empty(num_reps)
-    for i in prange(num_reps):
+    for i in prange(num_reps):  # Parallelize over households
         w = w0
         for t in range(T):
-            w = h(w)
+            w = update(w)
         obs[i] = w
-
     return np.median(obs)
 ```
 
@@ -343,17 +395,26 @@ def compute_long_run_median_parallel(w0=1, T=1000, num_reps=50_000):
 
 ```{code-cell} ipython3
 with qe.Timer():
+    # Warm up
+    compute_long_run_median_parallel()
+```
+
+```{code-cell} ipython3
+with qe.Timer():
+    # Second run
     compute_long_run_median_parallel()
 ```
 
 速度提升非常显著。
+
+注意，我们是跨家庭进行并行化，而非跨时间——单个家庭跨时期的更新本质上是顺序的。
 
 ## 练习
 
 ```{exercise}
 :label: speed_ex1
 
-{ref}`之前 <pbe_ex5>`我们考虑了如何用蒙特卡洛方法近似 $\pi$。
+{ref}`之前 <pbe_ex5>` 我们考虑了如何用蒙特卡洛方法近似 $\pi$。
 
 在这里使用相同的思路，但使用 Numba 使代码高效。
 
@@ -367,13 +428,11 @@ with qe.Timer():
 以下是一种解法：
 
 ```{code-cell} ipython3
-from random import uniform
-
 @jit
 def calculate_pi(n=1_000_000):
     count = 0
     for i in range(n):
-        u, v = uniform(0, 1), uniform(0, 1)
+        u, v = np.random.uniform(0, 1), np.random.uniform(0, 1)
         d = np.sqrt((u - 0.5)**2 + (v - 0.5)**2)
         if d < 0.5:
             count += 1
@@ -394,9 +453,9 @@ with qe.Timer():
     calculate_pi()
 ```
 
-如果我们通过删除 `@njit` 来关闭 JIT 编译，代码在我们的机器上大约需要慢 150 倍。
+如果我们通过删除 `@jit` 来关闭 JIT 编译，代码在我们的机器上大约需要慢 150 倍。
 
-因此，通过添加四个字符，我们获得了 2 个数量级的速度提升——这是巨大的。
+因此，通过添加四个字符，我们获得了 2 个数量级的速度提升。
 
 ```{solution-end}
 ```
@@ -438,7 +497,7 @@ with qe.Timer():
 :class: dropdown
 
 * 将低状态表示为 0，高状态表示为 1。
-* 如果您想在 NumPy 数组中存储整数，然后应用 JIT 编译，请使用 `x = np.empty(n, dtype=np.int_)`。
+* 如果您想在 NumPy 数组中存储整数，然后应用 JIT 编译，请使用 `x = np.empty(n, dtype=np.int64)`。
 
 ```
 
@@ -462,7 +521,7 @@ p, q = 0.1, 0.2  # 分别为离开低状态和高状态的概率
 
 ```{code-cell} ipython3
 def compute_series(n):
-    x = np.empty(n, dtype=np.int_)
+    x = np.empty(n, dtype=np.int64)
     x[0] = 1  # 从状态 1 开始
     U = np.random.uniform(0, 1, size=n)
     for t in range(1, n):
@@ -519,7 +578,7 @@ with qe.Timer():
 ```{exercise}
 :label: numba_ex3
 
-在{ref}`之前的练习 <speed_ex1>`中，我们使用 Numba 加速了通过蒙特卡洛方法计算常数 $\pi$ 的工作。
+在 {ref}`之前的练习 <speed_ex1>` 中，我们使用 Numba 加速了通过蒙特卡洛方法计算常数 $\pi$ 的工作。
 
 现在尝试添加并行化，看看是否能获得进一步的速度提升。
 
@@ -541,13 +600,11 @@ with qe.Timer():
 以下是一种解法：
 
 ```{code-cell} ipython3
-from random import uniform
-
-@njit(parallel=True)
+@jit(parallel=True)
 def calculate_pi(n=1_000_000):
     count = 0
     for i in prange(n):
-        u, v = uniform(0, 1), uniform(0, 1)
+        u, v = np.random.uniform(0, 1), np.random.uniform(0, 1)
         d = np.sqrt((u - 0.5)**2 + (v - 0.5)**2)
         if d < 0.5:
             count += 1
@@ -568,7 +625,7 @@ with qe.Timer():
     calculate_pi()
 ```
 
-通过打开和关闭并行化（在 `@njit` 注解中选择 `True` 或 `False`），我们可以测试多线程在 JIT 编译之上提供的速度增益。
+通过打开和关闭并行化（在 `@jit` 注解中选择 `True` 或 `False`），我们可以测试多线程在 JIT 编译之上提供的速度增益。
 
 在我们的工作站上，我们发现并行化将执行速度提高了 2 到 3 倍。
 
@@ -577,10 +634,11 @@ with qe.Timer():
 ```{solution-end}
 ```
 
+
 ```{exercise}
 :label: numba_ex4
 
-在{doc}`我们关于 SciPy 的讲座 <scipy>`中，我们讨论了在标的股票价格具有简单且众所周知的分布的情况下，如何为看涨期权定价。
+在 {doc}`我们关于 SciPy 的讲座 <scipy>` 中，我们讨论了在标的股票价格具有简单且众所周知的分布的情况下，如何为看涨期权定价。
 
 这里我们讨论一个更现实的情境。
 
@@ -634,9 +692,11 @@ $$
 
 ```
 
+
 ```{solution-start} numba_ex4
 :class: dropdown
 ```
+
 
 令 $s_t := \ln S_t$，价格动态变为
 
@@ -646,14 +706,14 @@ $$
 
 利用这一事实，解可以写成如下形式。
 
+
 ```{code-cell} ipython3
-from numpy.random import randn
 M = 10_000_000
 
 n, β, K = 20, 0.99, 100
 μ, ρ, ν, S0, h0 = 0.0001, 0.1, 0.001, 10, 0
 
-@njit(parallel=True)
+@jit(parallel=True)
 def compute_call_price_parallel(β=β,
                                 μ=μ,
                                 S0=S0,
@@ -670,10 +730,10 @@ def compute_call_price_parallel(β=β,
         h = h0
         # 向前模拟
         for t in range(n):
-            s = s + μ + np.exp(h) * randn()
-            h = ρ * h + ν * randn()
+            s = s + μ + np.exp(h) * np.random.randn()
+            h = ρ * h + ν * np.random.randn()
         # 将 max{S_n - K, 0} 的值累加到 current_sum
-        current_sum += np.maximum(np.exp(s) - K, 0)
+        current_sum += max(np.exp(s) - K, 0)
 
     return β**n * current_sum / M
 ```
