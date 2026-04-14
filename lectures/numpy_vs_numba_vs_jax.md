@@ -260,7 +260,9 @@ with qe.Timer():
 
 但两者之间也存在一些差异，我们在这里加以强调。
 
-让我们从函数开始，将 `np` 替换为 `jnp` 并添加 `jax.jit````{code-cell} ipython3
+让我们从函数开始，将 `np` 替换为 `jnp` 并添加 `jax.jit`
+
+```{code-cell} ipython3
 @jax.jit
 def f(x, y):
     return jnp.cos(x**2 + y**2) / (1 + x**2 + y**2)
