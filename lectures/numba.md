@@ -16,11 +16,9 @@ translation:
     Compiling Functions: 编译函数
     Compiling Functions::An Example: 示例
     Compiling Functions::How and When it Works: 工作原理与适用时机
-    Type Inference: 类型推断
-    Dangers and Limitations: 危险与局限
-    Dangers and Limitations::Limitations: 局限性
-    'Dangers and Limitations::A Gotcha: Global Variables': 一个陷阱：全局变量
-    Dangers and Limitations::Caching Compiled Code: 缓存编译代码
+    Sharp Bits: 注意事项
+    Sharp Bits::Typing: 类型推断
+    Sharp Bits::Global Variables: 全局变量
     Multithreaded Loops in Numba: Numba 中的多线程循环
     Exercises: 练习
 ---
@@ -185,7 +183,7 @@ timer1.elapsed /  timer3.elapsed
 
 让我们讨论一下这是如何工作的。
 
-### 工作原理与适用场景
+### 工作原理与适用时机
 
 Numba 尝试使用 [LLVM Project](https://llvm.org/) 提供的基础设施生成快速机器码。
 
@@ -420,6 +418,8 @@ with qe.Timer():
 速度提升非常显著。
 
 注意，我们是跨家庭进行并行化，而非跨时间——单个家庭跨时期的更新本质上是顺序的。
+
+关于基于 GPU 的并行化，请参阅我们{doc}`关于 JAX 的讲座 <jax_intro>`。
 
 ## 练习
 
