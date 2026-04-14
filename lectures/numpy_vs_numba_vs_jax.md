@@ -532,10 +532,6 @@ def qm_jax_scan(x0, n, α=4.0):
 
 这段代码不易阅读，但本质上，`lax.scan` 反复调用 `update` 并将返回值 `x_new` 累积到一个数组中。
 
-```{note}
-我们在 `jax.jit` 装饰器中指定了 `device=cpu`，因为该计算由许多小的顺序运算组成，几乎没有机会让 GPU 利用并行性。因此，GPU 上的内核启动开销往往占主导地位，使得 CPU 更适合这种工作负载。
-```
-
 让我们使用相同的参数计时：
 
 ```{code-cell} ipython3
@@ -555,8 +551,6 @@ with qe.Timer():
     # Hold interpreter
     x_jax.block_until_ready()
 ```
-
-JAX 对于这种顺序运算也相当高效。
 
 JAX 和 Numba 在编译后都能提供出色的性能。
 

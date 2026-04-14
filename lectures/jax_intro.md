@@ -25,7 +25,7 @@ translation:
     Functional Programming: 函数式编程
     Functional Programming::Pure functions: 纯函数
     Functional Programming::Examples: 示例
-    Functional Programming::Why Functional Programming?: 为什么使用函数式编程？
+    Functional Programming::Why Functional Programming?: 为什么要函数式编程？
     Random numbers: 随机数
     Random numbers::Random number generation: 随机数生成
     Random numbers::Why explicit random state?: 为什么要显式随机状态？
@@ -37,6 +37,10 @@ translation:
     JIT Compilation::Compiling the Whole Function: 编译整个函数
     JIT Compilation::How JIT compilation works: JIT 编译的工作原理
     JIT Compilation::Compiling non-pure functions: 编译非纯函数
+    Vectorization with vmap: 使用 vmap 进行向量化
+    Vectorization with vmap::A simple example: 一个简单的示例
+    Vectorization with vmap::Combining transformations: 组合变换
+    Automatic differentiation: a preview: 自动微分：预览
     Exercises: 练习
 ---
 
@@ -84,16 +88,6 @@ import quantecon as qe
 JAX 的一个吸引人之处在于，这个接口在尽可能的情况下遵循 NumPy API。
 
 因此，我们通常可以将 JAX 作为 NumPy 的直接替代品使用。
-
-## JAX 作为 NumPy 的替代品
-
-JAX 的一个吸引人之处在于，它的数组处理操作在尽可能的情况下遵循 NumPy API。
-
-这意味着在许多情况下，我们可以将 JAX 作为 NumPy 的直接替代品使用。
-
-让我们来看看 JAX 和 NumPy 之间的异同。
-
-### 相似之处
 
 以下是使用 `jnp` 进行的一些标准数组操作：
 
@@ -187,11 +181,8 @@ with qe.Timer():
 ```
 
 ```{note}
-这里，为了测量实际速度，我们使用 `block_until_ready` 方法来阻塞解释器，直到计算结果返回。
-
-这是必要的，因为 JAX 使用异步调度，允许 Python 解释器在数值计算之前运行。
-
-对于非计时代码，可以删除包含 `block_until_ready` 的那一行。
+上面的 `block_until_ready` 方法会阻塞解释器，直到计算结果返回。
+这对于计时是必要的，因为 JAX 使用异步调度，允许 Python 解释器在数值计算之前继续运行。
 ```
 
 再来计时一次。
@@ -868,6 +859,40 @@ fast_batch_mm_diff(X)
 ```
 
 `jit`、`vmap` 以及（我们接下来将看到的）`grad` 的这种组合方式是 JAX 设计的核心，使其在科学计算和机器学习领域尤为强大。
+
+
+## 自动微分：预览
+
+JAX 可以使用自动微分来计算梯度。
+
+这对于优化和求解非线性系统非常有用。
+
+以下是一个简单的示例，涉及函数 $f(x) = x^2 / 2$：
+
+```{code-cell} ipython3
+def f(x):
+    return (x**2) / 2
+
+f_prime = jax.grad(f)
+```
+
+```{code-cell} ipython3
+f_prime(10.0)
+```
+
+让我们绘制函数和导数，注意 $f'(x) = x$。
+
+```{code-cell} ipython3
+fig, ax = plt.subplots()
+x_grid = jnp.linspace(-4, 4, 200)
+ax.plot(x_grid, f(x_grid), label="$f$")
+ax.plot(x_grid, [f_prime(x) for x in x_grid], label="$f'$")
+ax.legend(loc='upper center')
+plt.show()
+```
+
+自动微分是一个有许多经济学和金融学应用的深层主题。我们在{doc}`自动微分讲座 <autodiff>`中提供了更深入的讨论。
+
 
 ## 练习
 
