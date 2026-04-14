@@ -132,7 +132,7 @@ n = 10_000_000
 
 with qe.Timer() as timer1:
     # Time Python base version
-    x = qm(0.1, int(n))
+    x = qm(0.1, n)
 
 ```
 
@@ -160,7 +160,7 @@ qm_numba = jit(qm)
 ```{code-cell} ipython3
 with qe.Timer() as timer2:
     # Time jitted version
-    x = qm_numba(0.1, int(n))
+    x = qm_numba(0.1, n)
 ```
 
 这已经是非常大的速度提升。
@@ -172,7 +172,7 @@ with qe.Timer() as timer2:
 ```{code-cell} ipython3
 with qe.Timer() as timer3:
     # Second run
-    x = qm_numba(0.1, int(n))
+    x = qm_numba(0.1, n)
 ```
 
 以下是速度提升
