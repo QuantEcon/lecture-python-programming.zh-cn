@@ -15,12 +15,12 @@ translation:
     Overview: 概述
     Compiling Functions: 编译函数
     Compiling Functions::An Example: 示例
-    Compiling Functions::An Example::Base Version: 基础版本
-    Compiling Functions::An Example::Acceleration via Numba: 通过 Numba 加速
-    Compiling Functions::How and When it Works: 工作原理与适用场景
-    Sharp Bits: 注意事项
-    Sharp Bits::Typing: 类型推断
-    Sharp Bits::Global Variables: 全局变量
+    Compiling Functions::How and When it Works: 工作原理与适用时机
+    Type Inference: 类型推断
+    Dangers and Limitations: 危险与局限
+    Dangers and Limitations::Limitations: 局限性
+    'Dangers and Limitations::A Gotcha: Global Variables': 一个陷阱：全局变量
+    Dangers and Limitations::Caching Compiled Code: 缓存编译代码
     Multithreaded Loops in Numba: Numba 中的多线程循环
     Exercises: 练习
 ---
@@ -163,6 +163,18 @@ with qe.Timer() as timer2:
     x = qm_numba(0.1, n)
 ```
 
+这已经是非常大的速度提升。
+
+事实上，下一次及之后的每次运行都会更快，因为函数已经被编译并保存在内存中：
+
+(qm_numba_result)=
+
+```{code-cell} ipython3
+with qe.Timer() as timer3:
+    # Second run
+    x = qm_numba(0.1, n)
+```
+
 以下是速度提升
 
 ```{code-cell} ipython3
@@ -226,18 +238,18 @@ def iterate(f, x0, n):
         x = f(x)
     return x
 
-# Not jitted
+# 未经 jit 编译
 def g(x):
     return np.cos(x) - 2 * np.sin(x)
 
-# This code throws an error
+# 这段代码会抛出错误
 try:
     iterate(g, 0.5, 100)
 except Exception as e:
     print(e)
 ```
 
-在当前情况下，我们可以通过编译 `g` 来轻松解决这个问题。
+我们可以通过编译 `g` 来轻松修复这个错误。
 
 ```{code-cell} ipython3
 @jit
