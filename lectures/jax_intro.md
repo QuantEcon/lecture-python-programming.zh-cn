@@ -25,21 +25,18 @@ translation:
     Functional Programming: 函数式编程
     Functional Programming::Pure functions: 纯函数
     Functional Programming::Examples: 示例
+    Functional Programming::Why Functional Programming?: 为什么使用函数式编程？
     Random numbers: 随机数
     Random numbers::Random number generation: 随机数生成
     Random numbers::Why explicit random state?: 为什么要显式随机状态？
     Random numbers::Why explicit random state?::NumPy's approach: NumPy 的方法
     Random numbers::Why explicit random state?::JAX's approach: JAX 的方法
     JIT Compilation: JIT 编译
-    JIT Compilation::With NumPy: 一个简单的示例
-    JIT Compilation::With JAX: 评估更复杂的函数
-    JIT Compilation::Compiling the Whole Function: JIT 编译的工作原理
-    JIT Compilation::How JIT compilation works: 编译整个函数
+    JIT Compilation::With NumPy: 使用 NumPy
+    JIT Compilation::With JAX: 使用 JAX
+    JIT Compilation::Compiling the Whole Function: 编译整个函数
+    JIT Compilation::How JIT compilation works: JIT 编译的工作原理
     JIT Compilation::Compiling non-pure functions: 编译非纯函数
-    Vectorization with `vmap`: 使用 `vmap` 进行向量化
-    Vectorization with `vmap`::A simple example: 一个简单的示例
-    Vectorization with `vmap`::Combining transformations: 组合变换
-    'Automatic differentiation: a preview': 自动微分：预览
     Exercises: 练习
 ---
 
@@ -87,6 +84,16 @@ import quantecon as qe
 JAX 的一个吸引人之处在于，这个接口在尽可能的情况下遵循 NumPy API。
 
 因此，我们通常可以将 JAX 作为 NumPy 的直接替代品使用。
+
+## JAX 作为 NumPy 的替代品
+
+JAX 的一个吸引人之处在于，它的数组处理操作在尽可能的情况下遵循 NumPy API。
+
+这意味着在许多情况下，我们可以将 JAX 作为 NumPy 的直接替代品使用。
+
+让我们来看看 JAX 和 NumPy 之间的异同。
+
+### 相似之处
 
 以下是使用 `jnp` 进行的一些标准数组操作：
 
@@ -140,7 +147,7 @@ x = np.linspace(0, 10, n)   # NumPy array
 
 ##### 使用 NumPy
 
-让我们用 NumPy 来试试。
+让我们用 NumPy 来试试
 
 ```{code-cell}
 with qe.Timer():
@@ -163,53 +170,55 @@ with qe.Timer():
 
 ##### 使用 JAX
 
-现在让我们用 JAX 来试试。
+现在让我们用 JAX 试试。
 
 ```{code-cell}
 x = jnp.linspace(0, 10, n)
 ```
 
-让我们对同样的过程计时。
+让我们对相同的过程计时。
 
 ```{code-cell}
 with qe.Timer():
     # First run
     y = jnp.cos(x)
     # Hold the interpreter until the array operation finishes
-    y.block_until_ready()
+    jax.block_until_ready(y);
 ```
 
 ```{note}
-上面，`block_until_ready` 方法会阻塞解释器，直到计算结果返回。
-这对于计时执行是必要的，因为 JAX 使用异步调度，
-允许 Python 解释器在数值计算之前运行。
+这里，为了测量实际速度，我们使用 `block_until_ready` 方法来阻塞解释器，直到计算结果返回。
+
+这是必要的，因为 JAX 使用异步调度，允许 Python 解释器在数值计算之前运行。
+
+对于非计时代码，可以删除包含 `block_until_ready` 的那一行。
 ```
 
-现在让我们再次计时。
+再来计时一次。
 
 ```{code-cell}
 with qe.Timer():
     # Second run
     y = jnp.cos(x)
     # Hold interpreter 
-    y.block_until_ready()
+    jax.block_until_ready(y);
 ```
 
-在 GPU 上，这段代码的运行速度远快于其 NumPy 等价代码。
+在 GPU 上，此代码的运行速度远快于其 NumPy 等效代码。
 
-另外，通常情况下，由于 JIT 编译，第二次运行比第一次更快。
+此外，通常第二次运行比第一次更快，这是由于 JIT 编译的缘故。
 
-这是因为即使是像 `jnp.cos` 这样的内置函数也会被 JIT 编译——第一次运行包含了编译时间。
+这是因为即使是像 `jnp.cos` 这样的内置函数也是经过 JIT 编译的——第一次运行包含了编译时间。
 
-为什么 JAX 要对 `jnp.cos` 这样的内置函数进行 JIT 编译，而不是像 NumPy 那样直接提供预编译版本呢？
+为什么 JAX 要对像 `jnp.cos` 这样的内置函数进行 JIT 编译，而不是像 NumPy 那样直接提供预编译版本？
 
 原因是 JIT 编译器希望针对所使用数组的*大小*（以及数据类型）进行专门优化。
 
-大小对于生成优化代码很重要，因为高效的并行化需要将任务大小与可用硬件匹配。
+大小对于生成优化代码很重要，因为高效的并行化需要将任务大小与可用硬件相匹配。
 
 #### 大小实验
 
-我们可以通过改变输入大小并观察运行时间来验证 JAX 针对数组大小进行专门优化的说法。
+我们可以通过更改输入大小并观察运行时间来验证 JAX 针对数组大小进行专门化的说法。
 
 ```{code-cell}
 x = jnp.linspace(0, 10, n + 1)
@@ -220,23 +229,22 @@ with qe.Timer():
     # First run
     y = jnp.cos(x)
     # Hold interpreter
-    y.block_until_ready()
+    jax.block_until_ready(y);
 ```
-
 
 ```{code-cell}
 with qe.Timer():
     # Second run
     y = jnp.cos(x)
     # Hold interpreter
-    y.block_until_ready()
+    jax.block_until_ready(y);
 ```
 
 运行时间先增加后减少（这在 GPU 上会更明显）。
 
-这与上面的讨论一致——改变数组大小后的第一次运行显示了编译开销。
+这与上面的讨论一致——更改数组大小后的第一次运行显示了编译开销。
 
-下面将进一步讨论 JIT 编译。
+关于 JIT 编译的进一步讨论见下文。
 
 #### 精度
 
@@ -335,7 +343,7 @@ a
 
 *当在意大利乡间漫步时，当地人会毫不犹豫地告诉你 JAX 有"una anima di pura programmazione funzionale"（纯函数式编程的灵魂）。*
 
-换句话说，JAX 假设采用函数式编程风格。
+换句话说，JAX 假设采用 [函数式编程](https://en.wikipedia.org/wiki/Functional_programming) 风格。
 
 ### 纯函数
 
@@ -391,15 +399,37 @@ def add_tax_pure(prices, tax_rate):
 
 这个纯版本通过函数参数使所有依赖关系变得明确，并且不修改任何外部状态。
 
-现在我们理解了什么是纯函数，让我们探索 JAX 处理随机数的方法如何维护这种纯粹性。
+### 为什么要函数式编程？
+
+在 QuantEcon，我们热爱纯函数，因为它们：
+
+* 有助于测试：每个函数可以独立运行
+* 促进确定性行为，从而提高可重复性
+* 防止由于修改共享状态而产生的错误
+
+JAX 编译器热爱纯函数和函数式编程，因为：
+
+* 数据依赖关系是显式的，有助于优化复杂计算
+* 纯函数更易于微分（自动微分）
+* 纯函数更易于并行化和优化（不依赖于共享的可变状态）
+
+另一种理解方式如下：
+
+JAX 将函数表示为计算图，然后对其进行编译或变换（例如，微分）。
+
+这些计算图描述了给定的一组输入如何被转换为输出。
+
+JAX 的计算图在构造上是纯粹的。
+
+JAX 使用函数式编程风格，以便用户构建的函数能够直接映射到 JAX 所支持的图论表示中。
 
 ## 随机数
 
-与 NumPy 或 Matlab 中的随机数相比，JAX 中的随机数有很大不同。
+JAX 中的随机数生成与 NumPy 或 MATLAB 中的模式有很大不同。
 
 起初，您可能会觉得语法相当冗长。
 
-但您很快就会意识到，为了维护我们刚刚讨论的函数式编程风格，这种语法和语义是必要的。
+但为了维护我们刚刚讨论的函数式编程风格，这种语法和语义是必要的。
 
 此外，对随机状态的完全控制对于并行编程至关重要，例如当我们想要沿多个线程运行独立实验时。
 
@@ -508,7 +538,7 @@ ax.text(0, 0.65, "split", ha='center', va='center', fontsize=9,
 
 ax.text(3, -0.5, "⋮", ha='center', va='center', fontsize=14)
 
-ax.set_title("PRNG Key Splitting Tree", fontsize=13, pad=10)
+ax.set_title("PRNG 密钥拆分树", fontsize=13, pad=10)
 plt.tight_layout()
 plt.show()
 ```
@@ -562,7 +592,7 @@ matrices = gen_random_matrices(key)
 
 #### NumPy 的方法
 
-在 NumPy 中，随机数生成通过维护隐藏的全局状态来工作。
+在 NumPy 的旧版随机数生成 API（模仿 MATLAB）中，生成通过维护隐藏的全局状态来工作。
 
 每次我们调用随机函数时，这个状态都会被更新：
 
@@ -624,111 +654,9 @@ JAX 的显式性带来了显著的好处：
 
 JAX 的即时（JIT）编译器通过生成随任务大小和硬件变化的高效机器码来加速执行。
 
-### 一个简单的示例
+我们在 {ref}`上文 <jax_speed>` 中已经看到了 JAX 的 JIT 编译器结合并行硬件的强大之处，当时我们对一个大数组应用了 `cos` 函数。
 
-假设我们想在许多点上求余弦函数的值。
-
-```{code-cell}
-n = 50_000_000
-x = np.linspace(0, 10, n)
-```
-
-#### 使用 NumPy
-
-让我们先用 NumPy 试试：
-
-```{code-cell}
-with qe.Timer():
-    y = np.cos(x)
-```
-
-再试一次。
-
-```{code-cell}
-with qe.Timer():
-    y = np.cos(x)
-```
-
-这里 NumPy 使用预先构建的二进制文件，该文件由精心编写的低级代码编译而成，用于对浮点数数组应用余弦函数。
-
-这个二进制文件随 NumPy 一起发布。
-
-#### 使用 JAX
-
-现在让我们用 JAX 试试。
-
-```{code-cell}
-x = jnp.linspace(0, 10, n)
-```
-
-让我们对相同的过程计时。
-
-```{code-cell}
-with qe.Timer():
-    y = jnp.cos(x)
-    jax.block_until_ready(y);
-```
-
-```{note}
-这里，为了测量实际速度，我们使用 `block_until_ready` 方法让解释器等待，直到计算结果返回。
-
-这是必要的，因为 JAX 使用异步调度，允许 Python 解释器领先于数值计算。
-
-对于非计时代码，您可以删除包含 `block_until_ready` 的那一行。
-```
-
-
-再次计时。
-
-
-```{code-cell}
-with qe.Timer():
-    y = jnp.cos(x)
-    jax.block_until_ready(y);
-```
-
-在 GPU 上，这段代码的运行速度远快于其 NumPy 等价代码。
-
-此外，通常第二次运行比第一次快，这是由于 JIT 编译的原因。
-
-这是因为即使是像 `jnp.cos` 这样的内置函数也经过了 JIT 编译——第一次运行包含了编译时间。
-
-为什么 JAX 要对像 `jnp.cos` 这样的内置函数进行 JIT 编译，而不是像 NumPy 那样提供预编译版本？
-
-原因是 JIT 编译器希望针对正在使用的数组的*大小*（以及数据类型）进行专门优化。
-
-大小对于生成优化代码很重要，因为高效的并行化需要将任务大小与可用硬件相匹配。
-
-这就是为什么 JAX 要等到看到数组大小后再进行编译——这需要 JIT 编译方法，而不是提供预编译的二进制文件。
-
-#### 更改数组大小
-
-这里我们更改输入大小并观察运行时间。
-
-```{code-cell}
-x = jnp.linspace(0, 10, n + 1)
-```
-
-```{code-cell}
-with qe.Timer():
-    y = jnp.cos(x)
-    jax.block_until_ready(y);
-```
-
-
-```{code-cell}
-with qe.Timer():
-    y = jnp.cos(x)
-    jax.block_until_ready(y);
-```
-
-通常，运行时间会先增加然后再减少（这在 GPU 上会更加明显）。
-
-这是因为 JIT 编译器针对数组大小进行专门优化以利用并行化——因此当数组大小改变时会生成新的编译代码。
-
-### 评估更复杂的函数
-
-让我们用一个更复杂的函数尝试同样的操作。
+让我们用一个更复杂的函数尝试同样的操作：
 
 ```{code-cell}
 def f(x):
@@ -736,7 +664,7 @@ def f(x):
     return y
 ```
 
-#### 使用 NumPy
+### 使用 NumPy
 
 我们先用 NumPy 试试：
 
@@ -747,10 +675,11 @@ x = np.linspace(0, 10, n)
 
 ```{code-cell}
 with qe.Timer():
+    # Time NumPy code
     y = f(x)
 ```
 
-#### 使用 JAX
+### 使用 JAX
 
 现在让我们用 JAX 再试一次。
 
@@ -760,86 +689,36 @@ with qe.Timer():
 def f(x):
     y = jnp.cos(2 * x**2) + jnp.sqrt(jnp.abs(x)) + 2 * jnp.sin(x**4) - x**2
     return y
+
+
+x = jnp.linspace(0, 10, n)
 ```
 
 现在让我们计时。
 
 ```{code-cell}
-x = jnp.linspace(0, 10, n)
-```
-
-```{code-cell}
 with qe.Timer():
+    # First call
     y = f(x)
+    # Hold interpreter
     jax.block_until_ready(y);
 ```
 
 ```{code-cell}
 with qe.Timer():
+    # Second call
     y = f(x)
+    # Hold interpreter
     jax.block_until_ready(y);
 ```
 
 结果与 `cos` 示例类似——JAX 更快，尤其是在 JIT 编译后的第二次运行中。
 
-此外，使用 JAX，我们还有另一个技巧——我们可以对*整个*函数进行 JIT 编译，而不仅仅是单个操作。
-
-### JIT 编译的工作原理
-
-当我们对一个函数应用 `jax.jit` 时，JAX 会对其进行*追踪*：它不会立即执行操作，而是将操作序列记录为计算图，并将该计算图交给 [XLA](https://openxla.org/xla) 编译器。
-
-XLA 随后将这些操作融合并优化为针对可用硬件（CPU、GPU 或 TPU）定制的单个编译内核。
-
-下图展示了一个简单函数的编译流程：
-
-```{code-cell} ipython3
-:tags: [hide-input]
-
-fig, ax = plt.subplots(figsize=(7, 2))
-ax.set_xlim(-0.2, 7.2)
-ax.set_ylim(0.2, 2.2)
-ax.axis('off')
-
-# Boxes for pipeline stages
-stages = [
-    (0.7, 1.2, "Python\nfunction"),
-    (2.6, 1.2, "computational\ngraph"),
-    (4.5, 1.2, "optimized\nkernel"),
-    (6.4, 1.2, "fast\nexecution"),
-]
-
-colors = ["#e3f2fd", "#fff9c4", "#f3e5f5", "#d4edda"]
-
-for (x, y, label), color in zip(stages, colors):
-    box = mpatches.FancyBboxPatch(
-        (x - 0.7, y - 0.5), 1.4, 1.0,
-        boxstyle="round,pad=0.15",
-        facecolor=color, edgecolor="black", linewidth=1.5)
-    ax.add_patch(box)
-    ax.text(x, y, label, ha='center', va='center', fontsize=9)
-
-# Arrows with labels
-arrows = [
-    (1.4, 1.9, "trace"),
-    (3.3, 3.8, "XLA"),
-    (5.2, 5.7, "run"),
-]
-
-for x_start, x_end, label in arrows:
-    ax.annotate("", xy=(x_end, 1.2), xytext=(x_start, 1.2),
-                arrowprops=dict(arrowstyle="->", lw=1.5, color="gray"))
-    ax.text((x_start + x_end) / 2, 1.55, label,
-            ha='center', fontsize=8, color='gray')
-
-plt.tight_layout()
-plt.show()
-```
-
-对 JIT 编译函数的第一次调用会产生编译开销，但后续使用相同输入形状和类型的调用将复用缓存的编译代码，以全速运行。
+然而，使用 JAX，我们还有另一个技巧——我们可以对整个函数进行 JIT 编译，而不仅仅是单个操作。
 
 ### 编译整个函数
 
-JAX 即时（JIT）编译器可以通过将线性代数运算融合到单个优化内核中来加速函数内部的执行。
+JAX 即时（JIT）编译器可以通过将数组运算融合到单个优化内核中来加速函数内部的执行。
 
 让我们用函数 `f` 来试试这个：
 
@@ -849,20 +728,23 @@ f_jax = jax.jit(f)
 
 ```{code-cell}
 with qe.Timer():
+    # First run
     y = f_jax(x)
+    # Hold interpreter
     jax.block_until_ready(y);
 ```
 
 ```{code-cell}
 with qe.Timer():
+    # Second run
     y = f_jax(x)
+    # Hold interpreter
     jax.block_until_ready(y);
 ```
 
 运行时间再次改善——现在是因为我们融合了所有操作，使编译器能够更积极地进行优化。
 
 例如，编译器可以消除对硬件加速器的多次调用以及许多中间数组的创建。
-
 
 顺便提一下，当针对 JIT 编译器的函数时，更常见的语法是：
 
@@ -871,6 +753,14 @@ with qe.Timer():
 def f(x):
     pass # put function body here
 ```
+
+### JIT 编译的工作原理
+
+当我们对一个函数应用 `jax.jit` 时，JAX 会对其进行*追踪*：它不会立即执行操作，而是将操作序列记录为计算图，并将该图交给 [XLA](https://openxla.org/xla) 编译器。
+
+XLA 随后将这些操作融合并优化为针对可用硬件（CPU、GPU 或 TPU）定制的单个编译内核。
+
+对 JIT 编译函数的第一次调用会产生编译开销，但对于具有相同输入形状和类型的后续调用，将重用缓存的编译代码并以全速运行。
 
 ### 编译非纯函数
 
@@ -920,47 +810,31 @@ f(x)
 
 这个故事的寓意：使用 JAX 时请编写纯函数！
 
-### 总结
-
-现在我们可以理解为什么开发者和编译器都受益于纯函数。
-
-我们喜欢纯函数，因为它们：
-
-* 有助于测试：每个函数可以独立运行
-* 促进确定性行为，从而实现可复现性
-* 防止由于修改共享状态而产生的错误
-
-编译器喜欢纯函数和函数式编程，因为：
-
-* 数据依赖关系是显式的，有助于优化复杂计算
-* 纯函数更容易进行微分（自动微分）
-* 纯函数更容易并行化和优化（不依赖于共享可变状态）
-
 ## 使用 `vmap` 进行向量化
 
-另一个强大的 JAX 变换是 `jax.vmap`，它能自动将针对单个输入编写的函数 向量化，使其可以在批量数据上运行。
+JAX 的另一个强大变换是 `jax.vmap`，它能自动将一个针对单个输入编写的函数向量化，使其可以在批量数据上运行。
 
 这避免了手动编写向量化代码或使用显式循环的需要。
 
 ### 一个简单的示例
 
-假设我们有一个函数，用于计算单个数组的汇总统计量：
+假设我们有一个函数，用于计算一组数字的均值与中位数之差。
 
 ```{code-cell} ipython3
-def summary(x):
-    return jnp.mean(x), jnp.median(x)
+def mm_diff(x):
+    return jnp.mean(x) - jnp.median(x)
 ```
 
 我们可以将其应用于单个向量：
 
 ```{code-cell} ipython3
 x = jnp.array([1.0, 2.0, 5.0])
-summary(x)
+mm_diff(x)
 ```
 
-现在假设我们有一个矩阵，并希望对每一行计算这些统计量。
+现在假设我们有一个矩阵，想要对每一行计算这些统计量。
 
-不使用 `vmap` 时，我们需要一个显式循环：
+不使用 `vmap` 时，我们需要显式循环：
 
 ```{code-cell} ipython3
 X = jnp.array([[1.0, 2.0, 5.0],
@@ -968,64 +842,32 @@ X = jnp.array([[1.0, 2.0, 5.0],
                [1.0, 8.0, 9.0]])
 
 for row in X:
-    print(summary(row))
+    print(mm_diff(row))
 ```
 
 然而，Python 循环速度较慢，无法被 JAX 高效编译或并行化。
 
-使用 `vmap` 可以让计算保留在加速器上，并与其他 JAX 变换（如 `jit` 和 `grad`）组合使用：
+使用 `vmap` 可以将计算保留在加速器上，并与其他 JAX 变换（如 `jit` 和 `grad`）组合使用：
 
 ```{code-cell} ipython3
-batch_summary = jax.vmap(summary)
-batch_summary(X)
+batch_mm_diff = jax.vmap(mm_diff)
+batch_mm_diff(X)
 ```
 
-函数 `summary` 是针对单个数组编写的，而 `vmap` 自动将其提升为按行作用于矩阵——无需循环，无需重塑。
+函数 `mm_diff` 是针对单个数组编写的，而 `vmap` 自动将其提升为按行作用于矩阵的函数——无需循环，无需重新塑形。
 
 ### 组合变换
 
-JAX 的一大优势在于变换可以自然地组合。
+JAX 的优势之一在于各变换可以自然地组合使用。
 
 例如，我们可以对向量化函数进行 JIT 编译：
 
 ```{code-cell} ipython3
-fast_batch_summary = jax.jit(jax.vmap(summary))
-fast_batch_summary(X)
+fast_batch_mm_diff = jax.jit(jax.vmap(mm_diff))
+fast_batch_mm_diff(X)
 ```
 
-`jit`、`vmap` 以及（我们接下来将看到的）`grad` 的这种组合是 JAX 设计的核心，使其在科学计算和机器学习中尤为强大。
-
-## 自动微分：预览
-
-JAX 可以使用自动微分来计算梯度。
-
-这对于优化和求解非线性系统非常有用。
-
-以下是一个涉及函数 $f(x) = x^2 / 2$ 的简单示例：
-
-```{code-cell} ipython3
-def f(x):
-    return (x**2) / 2
-
-f_prime = jax.grad(f)
-```
-
-```{code-cell} ipython3
-f_prime(10.0)
-```
-
-让我们绘制函数及其导数，注意 $f'(x) = x$。
-
-```{code-cell} ipython3
-fig, ax = plt.subplots()
-x_grid = jnp.linspace(-4, 4, 200)
-ax.plot(x_grid, f(x_grid), label="$f$")
-ax.plot(x_grid, [f_prime(x) for x in x_grid], label="$f'$")
-ax.legend(loc='upper center')
-plt.show()
-```
-
-自动微分是一个深刻的话题，在经济学和金融领域有许多应用。我们在 {doc}`关于自动微分的讲座 <autodiff>` 中提供了更为深入的介绍。
+`jit`、`vmap` 以及（我们接下来将看到的）`grad` 的这种组合方式是 JAX 设计的核心，使其在科学计算和机器学习领域尤为强大。
 
 ## 练习
 
