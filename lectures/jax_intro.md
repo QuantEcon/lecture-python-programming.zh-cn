@@ -21,11 +21,11 @@ translation:
     JAX as a NumPy Replacement::Differences::Size Experiment: 大小实验
     JAX as a NumPy Replacement::Differences::Precision: 精度
     JAX as a NumPy Replacement::Differences::Immutability: 不可变性
-    JAX as a NumPy Replacement::Differences::A Workaround: 变通方法
+    JAX as a NumPy Replacement::Differences::A workaround: 变通方法
     Functional Programming: 函数式编程
     Functional Programming::Pure functions: 纯函数
     Functional Programming::Examples: 示例
-    Functional Programming::Why Functional Programming?: 为什么要函数式编程？
+    Functional Programming::Why Functional Programming?: 为什么使用函数式编程？
     Random numbers: 随机数
     Random numbers::Random number generation: 随机数生成
     Random numbers::Why explicit random state?: 为什么要显式随机状态？
@@ -37,10 +37,6 @@ translation:
     JIT Compilation::Compiling the Whole Function: 编译整个函数
     JIT Compilation::How JIT compilation works: JIT 编译的工作原理
     JIT Compilation::Compiling non-pure functions: 编译非纯函数
-    Vectorization with vmap: 使用 vmap 进行向量化
-    Vectorization with vmap::A simple example: 一个简单的示例
-    Vectorization with vmap::Combining transformations: 组合变换
-    Automatic differentiation: a preview: 自动微分：预览
     Exercises: 练习
 ---
 
@@ -77,17 +73,17 @@ import numpy as np
 import quantecon as qe
 ```
 
+注意我们导入了 `jax.numpy as jnp`，它提供了类似 NumPy 的接口。
+
 ## JAX 作为 NumPy 的替代品
+
+JAX 的一个吸引人之处在于，它的数组处理操作在尽可能的情况下遵循 NumPy API。
+
+这意味着在许多情况下，我们可以将 JAX 作为 NumPy 的直接替代品使用。
 
 让我们来看看 JAX 和 NumPy 之间的异同。
 
 ### 相似之处
-
-上面我们导入了 `jax.numpy as jnp`，它提供了类似 NumPy 的数组操作接口。
-
-JAX 的一个吸引人之处在于，这个接口在尽可能的情况下遵循 NumPy API。
-
-因此，我们通常可以将 JAX 作为 NumPy 的直接替代品使用。
 
 以下是使用 `jnp` 进行的一些标准数组操作：
 
@@ -107,7 +103,7 @@ print(jnp.sum(a))
 print(jnp.dot(a, a))
 ```
 
-但需要注意的是，数组对象 `a` 并不是 NumPy 数组：
+然而，数组对象 `a` 并不是 NumPy 数组：
 
 ```{code-cell} ipython3
 a
@@ -117,7 +113,7 @@ a
 type(a)
 ```
 
-即使是数组上的标量值映射也会返回 JAX 数组而非标量！
+即使是数组上的标量值映射也会返回 JAX 数组，而不是标量！
 
 ```{code-cell} ipython3
 jnp.sum(a)
@@ -130,18 +126,16 @@ jnp.sum(a)
 (jax_speed)=
 #### 速度！
 
-一个主要差异是 JAX 更快——有时快得多。
-
-为了说明这一点，假设我们想在许多点处计算余弦函数。
+假设我们想在许多点上计算余弦函数。
 
 ```{code-cell}
 n = 50_000_000
-x = np.linspace(0, 10, n)   # NumPy array
+x = np.linspace(0, 10, n)
 ```
 
 ##### 使用 NumPy
 
-让我们用 NumPy 来试试
+让我们先用 NumPy 试试：
 
 ```{code-cell}
 with qe.Timer():
@@ -159,7 +153,7 @@ with qe.Timer():
 
 这里
 
-* NumPy 使用预编译的二进制文件将余弦函数应用于浮点数数组
+* NumPy 使用预编译的二进制文件对浮点数数组应用余弦函数
 * 该二进制文件在本地机器的 CPU 上运行
 
 ##### 使用 JAX
@@ -181,8 +175,11 @@ with qe.Timer():
 ```
 
 ```{note}
-上面的 `block_until_ready` 方法会阻塞解释器，直到计算结果返回。
-这对于计时是必要的，因为 JAX 使用异步调度，允许 Python 解释器在数值计算之前继续运行。
+这里，为了测量实际速度，我们使用 `block_until_ready` 方法来阻塞解释器，直到计算结果返回。
+
+这是必要的，因为 JAX 使用异步调度，允许 Python 解释器在数值计算之前运行。
+
+对于非计时代码，可以删除包含 `block_until_ready` 的那一行。
 ```
 
 再来计时一次。
@@ -277,8 +274,7 @@ a[0] = 1
 a
 ```
 
-在 JAX 中，这会失败 😱。
-
+在 JAX 中，这会失败！
 
 ```{code-cell} ipython3
 a = jnp.linspace(0, 1, 3)
@@ -290,21 +286,13 @@ try:
     a[0] = 1
 except Exception as e:
     print(e)
-
 ```
 
-JAX 的设计者选择将数组设为不可变的，因为
+JAX 的设计者选择将数组设为不可变的，因为 JAX 使用函数式编程风格，我们将在下面讨论这一点。
 
-1. JAX 使用*函数式编程风格*，并且
-2. 函数式编程通常避免可变数据
-
-我们将在 {ref}`下面 <jax_func>` 讨论这些思想。
-
-
-(jax_at_workaround)=
 #### 变通方法
 
-JAX 确实通过 [`at` 方法](https://docs.jax.dev/en/latest/_autosummary/jax.numpy.ndarray.at.html) 提供了原地数组修改的直接替代方案。
+我们注意到 JAX 确实提供了一种替代原地数组修改的方式，使用 [`at` 方法](https://docs.jax.dev/en/latest/_autosummary/jax.numpy.ndarray.at.html)。
 
 ```{code-cell} ipython3
 a = jnp.linspace(0, 1, 3)
@@ -326,8 +314,6 @@ a
 
 （尽管它在 JIT 编译的函数中实际上可以很高效——但现在先把这个放在一边。）
 
-
-(jax_func)=
 ## 函数式编程
 
 来自 JAX 的文档：
@@ -859,40 +845,6 @@ fast_batch_mm_diff(X)
 ```
 
 `jit`、`vmap` 以及（我们接下来将看到的）`grad` 的这种组合方式是 JAX 设计的核心，使其在科学计算和机器学习领域尤为强大。
-
-
-## 自动微分：预览
-
-JAX 可以使用自动微分来计算梯度。
-
-这对于优化和求解非线性系统非常有用。
-
-以下是一个简单的示例，涉及函数 $f(x) = x^2 / 2$：
-
-```{code-cell} ipython3
-def f(x):
-    return (x**2) / 2
-
-f_prime = jax.grad(f)
-```
-
-```{code-cell} ipython3
-f_prime(10.0)
-```
-
-让我们绘制函数和导数，注意 $f'(x) = x$。
-
-```{code-cell} ipython3
-fig, ax = plt.subplots()
-x_grid = jnp.linspace(-4, 4, 200)
-ax.plot(x_grid, f(x_grid), label="$f$")
-ax.plot(x_grid, [f_prime(x) for x in x_grid], label="$f'$")
-ax.legend(loc='upper center')
-plt.show()
-```
-
-自动微分是一个有许多经济学和金融学应用的深层主题。我们在{doc}`自动微分讲座 <autodiff>`中提供了更深入的讨论。
-
 
 ## 练习
 
