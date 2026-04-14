@@ -18,6 +18,7 @@ translation:
     JAX as a NumPy Replacement::Differences::Speed!: 速度！
     JAX as a NumPy Replacement::Differences::Speed!::With NumPy: 使用 NumPy
     JAX as a NumPy Replacement::Differences::Speed!::With JAX: 使用 JAX
+    JAX as a NumPy Replacement::Differences::Size Experiment: 大小实验
     JAX as a NumPy Replacement::Differences::Precision: 精度
     JAX as a NumPy Replacement::Differences::Immutability: 不可变性
     JAX as a NumPy Replacement::Differences::A workaround: 变通方法
@@ -203,6 +204,8 @@ with qe.Timer():
 
 大小对于生成优化代码很重要，因为高效的并行化需要将任务大小与可用硬件相匹配。
 
+#### 大小实验
+
 我们可以通过更改输入大小并观察运行时间来验证 JAX 针对数组大小进行专门化的说法。
 
 ```{code-cell}
@@ -228,104 +231,6 @@ with qe.Timer():
 运行时间先增加后减少（这在 GPU 上会更明显）。
 
 这与上面的讨论一致——更改数组大小后的第一次运行显示了编译开销。
-
-关于 JIT 编译的进一步讨论见下文。
-
-#### 速度！
-
-假设我们想在许多点上求余弦函数的值。
-
-```{code-cell}
-n = 50_000_000
-x = np.linspace(0, 10, n)
-```
-
-##### 使用 NumPy
-
-让我们先用 NumPy 试试：
-
-```{code-cell}
-with qe.Timer():
-    y = np.cos(x)
-```
-
-再来一次。
-
-```{code-cell}
-with qe.Timer():
-    y = np.cos(x)
-```
-
-这里：
-
-* NumPy 使用预编译的二进制文件对浮点数组应用余弦函数
-* 该二进制文件在本地机器的 CPU 上运行
-
-##### 使用 JAX
-
-现在让我们用 JAX 试试。
-
-```{code-cell}
-x = jnp.linspace(0, 10, n)
-```
-
-对相同的过程计时。
-
-```{code-cell}
-with qe.Timer():
-    y = jnp.cos(x)
-    jax.block_until_ready(y);
-```
-
-```{note}
-这里，为了测量实际速度，我们使用 `block_until_ready` 方法让解释器等待，直到计算结果返回。
-
-这是必要的，因为 JAX 使用异步调度，允许 Python 解释器在数值计算之前运行。
-
-对于非计时代码，可以省略包含 `block_until_ready` 的那行。
-```
-
-再计时一次。
-
-```{code-cell}
-with qe.Timer():
-    y = jnp.cos(x)
-    jax.block_until_ready(y);
-```
-
-在 GPU 上，这段代码的运行速度远快于等效的 NumPy 代码。
-
-此外，通常第二次运行比第一次更快，这是由于 JIT 编译的原因。
-
-这是因为即使是 `jnp.cos` 这样的内置函数也会被 JIT 编译——第一次运行包含了编译时间。
-
-为什么 JAX 要对 `jnp.cos` 这样的内置函数进行 JIT 编译，而不是像 NumPy 那样直接提供预编译版本？
-
-原因是 JIT 编译器希望针对所使用数组的*大小*（以及数据类型）进行专门优化。
-
-大小对于生成优化代码很重要，因为高效并行化需要将任务大小与可用硬件相匹配。
-
-我们可以通过改变输入大小并观察运行时间来验证 JAX 针对数组大小进行专门优化的说法。
-
-```{code-cell}
-x = jnp.linspace(0, 10, n + 1)
-```
-
-```{code-cell}
-with qe.Timer():
-    y = jnp.cos(x)
-    jax.block_until_ready(y);
-```
-
-```{code-cell}
-with qe.Timer():
-    y = jnp.cos(x)
-    jax.block_until_ready(y);
-```
-
-运行时间先增加后再次下降（在 GPU 上这一现象会更明显）。
-
-这与上面的讨论一致——改变数组大小后的第一次运行显示了编译开销。
 
 关于 JIT 编译的进一步讨论见下文。
 
