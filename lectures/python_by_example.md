@@ -55,7 +55,6 @@ translation:
 
 在开始本讲座之前，您应该已经阅读过关于 Python 入门的{doc}`讲座 <getting_started>`。
 
-
 ## 任务：绘制白噪声过程
 
 假设我们想要模拟并绘制白噪声过程 $\epsilon_0, \epsilon_1, \ldots, \epsilon_T$，其中每个抽取值 $\epsilon_t$ 是独立的标准正态分布。
@@ -84,7 +83,8 @@ FONTPATH = "_fonts/SourceHanSerifSC-SemiBold.otf"  # i18n
 mpl.font_manager.fontManager.addfont(FONTPATH)  # i18n
 mpl.rcParams['font.family'] = ['Source Han Serif SC']  # i18n
 
-ϵ_values = np.random.randn(100)
+rng = np.random.default_rng()
+ϵ_values = rng.standard_normal(100)
 plt.plot(ϵ_values)
 plt.show()
 ```
@@ -115,7 +115,6 @@ np.sqrt(4)
 np.log(4)
 ```
 
-
 #### 为什么需要这么多导入语句？
 
 Python 程序通常需要多条导入语句。
@@ -123,7 +122,6 @@ Python 程序通常需要多条导入语句。
 原因是核心语言被刻意保持精简，以便于学习、维护和改进。
 
 当您想用 Python 做一些有趣的事情时，几乎总是需要导入额外的功能。
-
 
 #### 包
 
@@ -155,7 +153,7 @@ print(np.__file__)
 ```{index} single: Python; Subpackages
 ```
 
-考虑这行代码 `ϵ_values = np.random.randn(100)`。
+考虑这行代码 `rng = np.random.default_rng()`。
 
 这里 `np` 指的是 NumPy 包，而 `random` 是 NumPy 的一个**子包**。
 
@@ -194,7 +192,7 @@ sqrt(4)
 回到我们绘制白噪声的程序，导入语句之后的剩余三行是
 
 ```{code-cell} ipython
-ϵ_values = np.random.randn(100)
+ϵ_values = rng.standard_normal(100)
 plt.plot(ϵ_values)
 plt.show()
 ```
@@ -223,7 +221,7 @@ ts_length = 100
 ϵ_values = []   # 空列表
 
 for i in range(ts_length):
-    e = np.random.randn()
+    e = rng.standard_normal()
     ϵ_values.append(e)
 
 plt.plot(ϵ_values)
@@ -312,7 +310,7 @@ x[1]   # x 的第二个元素
 
 ```{code-cell} python3
 for i in range(ts_length):
-    e = np.random.randn()
+    e = rng.standard_normal()
     ϵ_values.append(e)
 ```
 
@@ -344,7 +342,6 @@ for variable_name in sequence:
 Python 解释器执行以下操作：
 
 * 对于 `sequence` 的每个元素，它将名称 `variable_name` "绑定"到该元素，然后执行代码块。
-
 
 ### 关于缩进的说明
 
@@ -387,7 +384,7 @@ ts_length = 100
 ϵ_values = []
 i = 0
 while i < ts_length:
-    e = np.random.randn()
+    e = rng.standard_normal()
     ϵ_values.append(e)
     i = i + 1
 plt.plot(ϵ_values)
@@ -487,9 +484,10 @@ import matplotlib.pyplot as plt
 T = 200
 x = np.empty(T+1)
 x[0] = 0
+rng = np.random.default_rng()
 
 for t in range(T):
-    x[t+1] = α * x[t] + np.random.randn()
+    x[t+1] = α * x[t] + rng.standard_normal()
 
 plt.plot(x)
 plt.show()
@@ -527,11 +525,12 @@ plt.show()
 α_values = [0.0, 0.8, 0.98]
 T = 200
 x = np.empty(T+1)
+rng = np.random.default_rng()
 
 for α in α_values:
     x[0] = 0
     for t in range(T):
-        x[t+1] = α * x[t] + np.random.randn()
+        x[t+1] = α * x[t] + rng.standard_normal()
     plt.plot(x, label=f'$\\alpha = {α}$')
 
 plt.legend()
@@ -579,9 +578,10 @@ $$
 T = 200
 x = np.empty(T+1)
 x[0] = 0
+rng = np.random.default_rng()
 
 for t in range(T):
-    x[t+1] = α * np.abs(x[t]) + np.random.randn()
+    x[t+1] = α * np.abs(x[t]) + rng.standard_normal()
 
 plt.plot(x)
 plt.show()
@@ -631,13 +631,14 @@ for x in numbers:
 T = 200
 x = np.empty(T+1)
 x[0] = 0
+rng = np.random.default_rng()
 
 for t in range(T):
     if x[t] < 0:
         abs_x = - x[t]
     else:
         abs_x = x[t]
-    x[t+1] = α * abs_x + np.random.randn()
+    x[t+1] = α * abs_x + rng.standard_normal()
 
 plt.plot(x)
 plt.show()
@@ -650,10 +651,11 @@ plt.show()
 T = 200
 x = np.empty(T+1)
 x[0] = 0
+rng = np.random.default_rng()
 
 for t in range(T):
     abs_x = - x[t] if x[t] < 0 else x[t]
-    x[t+1] = α * abs_x + np.random.randn()
+    x[t+1] = α * abs_x + rng.standard_normal()
 
 plt.plot(x)
 plt.show()
@@ -670,7 +672,7 @@ plt.show()
 
 这是一个需要一些思考和规划的较难练习。
 
-任务是使用[蒙特卡洛](https://en.wikipedia.org/wiki/Monte_Carlo_method)方法计算 $\pi$ 的近似值。
+任务是使用 [蒙特卡洛](https://en.wikipedia.org/wiki/Monte_Carlo_method) 方法计算 $\pi$ 的近似值。
 
 除以下内容外不使用其他导入语句
 
@@ -710,12 +712,13 @@ import numpy as np
 
 ```{code-cell} python3
 n = 1000000 # 蒙特卡洛模拟的样本量
+rng = np.random.default_rng()
 
 count = 0
 for i in range(n):
 
     # 在正方形上随机抽取位置
-    u, v = np.random.uniform(), np.random.uniform()
+    u, v = rng.uniform(), rng.uniform()
 
     # 检查该点是否落在以 (0.5,0.5) 为圆心的
     # 单位圆的边界内
