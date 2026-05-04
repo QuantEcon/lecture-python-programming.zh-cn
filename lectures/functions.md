@@ -100,7 +100,6 @@ type(22)
 
 Python 内置函数的完整列表在[这里](https://docs.python.org/3/library/functions.html)。
 
-
 ### 第三方函数
 
 如果内置函数不能满足我们的需求，我们要么需要导入函数，要么创建自己的函数。
@@ -280,7 +279,6 @@ quad(lambda x: x**3, 0, 2)
 
 这里由 `lambda` 创建的函数被称为*匿名*函数，因为它从未被赋予名称。
 
-
 ### 为什么要编写函数？
 
 用户自定义函数对于提高代码的清晰度非常重要，通过
@@ -294,16 +292,19 @@ quad(lambda x: x**3, 0, 2)
 
 ## 应用
 
+
 ### 随机抽取
 
-再次考虑{doc}`前一讲 <python_by_example>`中的以下代码
+再次考虑 {doc}`前一讲 <python_by_example>` 中的以下代码
 
 ```{code-cell} python3
+rng = np.random.default_rng()
+
 ts_length = 100
 ϵ_values = []   # 空列表
 
 for i in range(ts_length):
-    e = np.random.randn()
+    e = rng.standard_normal()
     ϵ_values.append(e)
 
 plt.plot(ϵ_values)
@@ -324,7 +325,7 @@ plt.show()
 def generate_data(n):
     ϵ_values = []
     for i in range(n):
-        e = np.random.randn()
+        e = rng.standard_normal()
         ϵ_values.append(e)
     return ϵ_values
 
@@ -354,9 +355,9 @@ def generate_data(n, generator_type):
     ϵ_values = []
     for i in range(n):
         if generator_type == 'U':
-            e = np.random.uniform(0, 1)
+            e = rng.uniform(0, 1)
         else:
-            e = np.random.randn()
+            e = rng.standard_normal()
         ϵ_values.append(e)
     return ϵ_values
 
@@ -376,7 +377,7 @@ plt.show()
 
 现在，有几种方法可以简化上面的代码。
 
-例如，我们可以完全去掉条件判断，只需将所需的生成器类型*作为函数*传递。
+例如，我们可以完全去掉条件判断，只需将所需的生成器类型作为函数、方法或其他 [可调用](https://typing.python.org/en/latest/spec/callables.html) 对象传递。
 
 要理解这一点，请考虑以下版本。
 
@@ -389,18 +390,18 @@ def generate_data(n, generator_type):
         ϵ_values.append(e)
     return ϵ_values
 
-data = generate_data(100, np.random.uniform)
+data = generate_data(100, rng.uniform)
 plt.plot(data)
 plt.show()
 ```
 
-现在，当我们调用函数 `generate_data()` 时，我们将 `np.random.uniform` 作为第二个参数传递。
+现在，当我们调用函数 `generate_data()` 时，我们将 `rng.uniform` 作为第二个参数传递。
 
-这个对象是一个*函数*。
+这个对象是一个*可调用对象*——即可以使用括号调用的对象。
 
-当函数调用 `generate_data(100, np.random.uniform)` 被执行时，Python 以 `n` 等于 100 和名称 `generator_type` "绑定"到函数 `np.random.uniform` 来运行函数代码块。
+当函数调用 `generate_data(100, rng.uniform)` 被执行时，Python 以 `n` 等于 100 和名称 `generator_type` "绑定"到可调用对象 `rng.uniform` 来运行函数代码块。
 
-* 在这些行被执行时，名称 `generator_type` 和 `np.random.uniform` 是"同义词"，可以以相同的方式使用。
+* 在这些行被执行时，名称 `generator_type` 和 `rng.uniform` 是"同义词"，可以以相同的方式使用。
 
 这个原则更普遍地适用——例如，考虑以下代码
 
@@ -415,7 +416,7 @@ m(7, 2, 4)
 
 这里我们为内置函数 `max()` 创建了另一个名称，然后可以以相同的方式使用它。
 
-在我们程序的背景下，将新名称绑定到函数的能力意味着*将函数作为参数传递给另一个函数*没有任何问题——正如我们上面所做的那样。
+在我们程序的背景下，将名称绑定到函数或更一般地绑定到可调用对象的能力，意味着将一个可调用对象作为参数传递给另一个可调用对象没有任何问题——正如我们上面使用 `rng.uniform` 所做的那样。
 
 
 (recursive_functions)=
@@ -518,7 +519,7 @@ factorial(4)
 
 [二项随机变量](https://en.wikipedia.org/wiki/Binomial_distribution) $Y \sim Bin(n, p)$ 表示 $n$ 次二元试验中的成功次数，其中每次试验以概率 $p$ 成功。
 
-除了 `from numpy.random import uniform` 之外不使用任何其他导入，编写一个函数
+使用 `rng = np.random.default_rng()`，编写一个函数
 `binomial_rv`，使得 `binomial_rv(n, p)` 生成 $Y$ 的一次抽取。
 
 ```{hint}
@@ -538,12 +539,12 @@ factorial(4)
 这是一种解法：
 
 ```{code-cell} python3
-from numpy.random import uniform
+rng = np.random.default_rng()
 
 def binomial_rv(n, p):
     count = 0
     for i in range(n):
-        U = uniform()
+        U = rng.uniform()
         if U < p:
             count = count + 1    # 或者 count += 1
     return count
@@ -569,7 +570,7 @@ binomial_rv(10, 0.5)
 
 - 如果在此序列中正面出现 `k` 次或更多次，支付一美元。
 
-除了 `from numpy.random import uniform` 之外不使用任何其他导入。
+使用 `rng = np.random.default_rng()` 来生成随机数。
 
 ```{exercise-end}
 ```
@@ -584,7 +585,7 @@ binomial_rv(10, 0.5)
 
 
 ```{code-cell} python3
-from numpy.random import uniform
+rng = np.random.default_rng()
 
 def draw(k):  # 如果序列中连续成功 k 次则支付
 
@@ -592,7 +593,7 @@ def draw(k):  # 如果序列中连续成功 k 次则支付
     count = 0
 
     for i in range(10):
-        U = uniform()
+        U = rng.uniform()
         count = count + 1 if U < 0.5 else 0
         print(count)    # 打印计数以便清楚
         if count == k:
@@ -612,7 +613,7 @@ def draw_new(k):  # 如果序列中成功 k 次则支付
     count = 0
 
     for i in range(10):
-        U = uniform()
+        U = rng.uniform()
         count = count + ( 1 if U < 0.5 else 0 )
         print(count)
         if count == k:
@@ -625,7 +626,6 @@ draw_new(3)
 
 ```{solution-end}
 ```
-
 
 ## 进阶练习
 
