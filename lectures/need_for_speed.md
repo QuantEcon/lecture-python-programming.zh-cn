@@ -336,8 +336,9 @@ with qe.Timer():
 以下向量化代码使用 NumPy（我们将很快深入研究）来实现同样的功能：
 
 ```{code-cell} ipython
+rng = np.random.default_rng()
 with qe.Timer():
-    x = np.random.uniform(0, 1, n)
+    x = rng.uniform(0, 1, n)
     y = np.sum(x**2)
 ```
 
