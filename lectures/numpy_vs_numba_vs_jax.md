@@ -21,6 +21,8 @@ translation:
     Sequential operations: 顺序运算
     Sequential operations::Numba Version: Numba 版本
     Sequential operations::JAX Version: JAX 版本
+    Sequential operations::JAX Version::First Attempt: 第一种尝试
+    Sequential operations::JAX Version::Second Attempt: 第二种尝试
     Sequential operations::Summary: 总结
     Overall recommendations: 总体建议
 ---
@@ -143,33 +145,34 @@ m = -np.inf
 for x in grid:
     for y in grid:
         z = f(x, y)
-        if z > m:
-            m = z
+        m = max(m, z)
 ```
 
 ### NumPy 向量化
 
-如果我们切换到 NumPy 风格的向量化，就可以使用更大的网格，并且代码执行速度相对较快。
+让我们切换到 NumPy 并使用更大的网格。
 
 这里我们使用 `np.meshgrid` 来创建二维输入网格 `x` 和 `y`，使得 `f(x, y)` 能生成乘积网格上的所有计算结果。
 
-（这一策略可以追溯到 MATLAB。）
-
 ```{code-cell} ipython3
+# Large grid
 grid = np.linspace(-3, 3, 3_000)
-x, y = np.meshgrid(grid, grid)
+
+x, y = np.meshgrid(grid, grid)    # MATLAB style meshgrid
 
 with qe.Timer():
     z_max_numpy = np.max(f(x, y))
-
-print(f"NumPy result: {z_max_numpy:.6f}")
 ```
 
 在向量化版本中，所有循环都在编译后的代码中执行。
 
-此外，NumPy 使用隐式多线程，因此至少会发生一定程度的并行化。
+使用 `meshgrid` 可以复现嵌套的 for 循环。
 
-（并行化效率不高，因为二进制文件在看到数组 `x` 和 `y` 的大小之前就已经被编译了。）
+输出结果应接近于 1：
+
+```{code-cell} ipython3
+print(f"NumPy result: {z_max_numpy:.6f}")
+```
 
 ### 与 Numba 的比较
 
@@ -194,8 +197,6 @@ grid = np.linspace(-3, 3, 3_000)
 with qe.Timer():
     # First run
     z_max_numba = compute_max_numba(grid)
-
-print(f"Numba result: {z_max_numba:.6f}")
 ```
 
 让我们再次运行以消除编译时间。
@@ -238,8 +239,6 @@ def compute_max_numba_parallel(grid):
 with qe.Timer():
     # First run
     z_max_parallel = compute_max_numba_parallel(grid)
-
-print(f"Numba result: {z_max_parallel:.6f}")
 ```
 
 以下是预编译版本的计时结果。
@@ -250,15 +249,19 @@ with qe.Timer():
     compute_max_numba_parallel(grid)
 ```
 
-如果您有多个核心，您应该能在此处看到并行化带来的一定收益。
+如果您有多个核心，您应该能在此处看到并行化带来的收益。
 
-对于更强大的机器和更大的网格尺寸，即使在 CPU 上，并行化也能带来显著的速度提升。
+让我们确认结果仍然正确（接近于 1）：
+
+```{code-cell} ipython3
+print(f"Numba result: {z_max_parallel:.6f}")
+```
+
+对于强大的机器和更大的网格尺寸，即使在 CPU 上，并行化也能带来有用的速度提升。
 
 ### 使用 JAX 的向量化代码
 
-表面上，JAX 中的向量化代码与 NumPy 代码类似。
-
-但两者之间也存在一些差异，我们在这里加以强调。
+让我们尝试用 JAX 复现 NumPy 的向量化方法。
 
 让我们从函数开始，将 `np` 替换为 `jnp` 并添加 `jax.jit`
 
@@ -269,7 +272,7 @@ def f(x, y):
 
 ```
 
-与 NumPy 一样，为了获得正确的形状和正确的嵌套 `for` 循环计算，我们可以使用专为此目的设计的 `meshgrid` 操作：
+我们使用 NumPy 风格的 meshgrid 方法：
 
 ```{code-cell} ipython3
 grid = jnp.linspace(-3, 3, 3_000)
@@ -327,59 +330,23 @@ x_mesh.nbytes + y_mesh.nbytes
 以下是我们将其应用于当前问题的方式。
 
 ```{code-cell} ipython3
-# 设置 f，使其在给定任意 y 时，对所有 x 计算 f(x, y)
-f_vec_x = lambda y: f(grid, y)
-# 创建第二个函数，将此操作在所有 y 上向量化
-f_vec = jax.vmap(f_vec_x)
-```
-
-现在，当以扁平数组 `grid` 调用时，`f_vec` 将在每个 `x,y` 处计算 `f(x,y)`。
-
-让我们看看计时结果：
-
-```{code-cell} ipython3
-with qe.Timer():
-    z_max = jnp.max(f_vec(grid))
-    z_max.block_until_ready()
-
-print(f"JAX vmap v1 result: {z_max:.6f}")
-```
-
-```{code-cell} ipython3
-with qe.Timer():
-    z_max = jnp.max(f_vec(grid))
-    z_max.block_until_ready()
-```
-
-通过避免使用大型输入数组 `x_mesh` 和 `y_mesh`，这个 `vmap` 版本使用的内存少得多，运行时间变化不大。
-
-这很好——但我们还有进一步提升速度的空间！
-
-首先请注意，上面的代码计算了完整的二维数组 `f(x,y)`，这会产生开销，然后再取最大值。
-
-其次，`jnp.max` 调用位于 JIT 编译函数 `f` 之外，因此编译器无法将这些操作融合为单个内核。
-
-我们可以通过将最大值操作移到内部并将所有内容包装在一个 `@jax.jit` 中来解决这两个问题：
-
-```{code-cell} ipython3
 @jax.jit
 def compute_max_vmap(grid):
-    # 构建一个沿每行取最大值的函数
+    # 构建一个对给定 y，在所有 x 上取最大值的函数
     f_vec_x_max = lambda y: jnp.max(f(grid, y))
-    # 向量化该函数，以便我们可以同时对所有行调用
+    # 向量化该函数，以便我们可以同时对所有 y 调用
     f_vec_max = jax.vmap(f_vec_x_max)
-    # 调用向量化函数并取最大值
-    return jnp.max(f_vec_max(grid))
+    # 在每个 y 处计算所有 x 上的最大值
+    maxes = f_vec_max(grid)
+    # 计算最大值的最大值并返回
+    return jnp.max(maxes)
 ```
 
-其中
+注意我们从不创建
 
-* `f_vec_x_max` 计算任意给定行的最大值
-* `f_vec_max` 是一个向量化版本，可以并行计算所有行的最大值。
-
-我们将此函数应用于所有行，然后取各行最大值中的最大值。
-
-由于将最大值操作移到内部，我们永远不会构建完整的二维数组 `f(x,y)`，从而节省了更多内存。
+* 二维网格 `x_mesh`
+* 二维网格 `y_mesh` 或
+* 二维数组 `f(x,y)`
 
 并且由于所有内容都在单个 `@jax.jit` 下，编译器可以将所有操作融合为一个优化的内核。
 
@@ -461,21 +428,70 @@ with qe.Timer():
 
 Numba 非常高效地处理了这个顺序运算。
 
-注意，JIT 编译完成后，第二次运行明显更快。
-
-Numba 的编译通常相当快，对于像这样的顺序运算，生成的代码性能非常出色。
-
 ### JAX 版本
 
-现在让我们使用 `lax.scan` 创建一个 JAX 版本：
+我们不能直接用 `jax.jit` 替换 `numba.jit`，因为 JAX 数组是不可变的。
 
-（我们将 `n` 设为静态，因为它影响数组大小，JAX 希望在编译代码中针对其值进行特化处理。）
+但我们仍然可以实现这一运算。
+
+#### 第一种尝试
+
+以下是使用 `at[t].set` 语法的变通方案，我们在 {ref}`JAX 讲座中讨论过 <jax_at_workaround>`。
+
+我们将应用 `lax.fori_loop`，这是一种可以被 XLA 编译的 for 循环版本。
 
 ```{code-cell} ipython3
 cpu = jax.devices("cpu")[0]
 
-@partial(jax.jit, static_argnames=('n',), device=cpu)
-def qm_jax(x0, n, α=4.0):
+@partial(jax.jit, static_argnames=("n",), device=cpu)
+def qm_jax_fori(x0, n, α=4.0):
+
+    x = jnp.empty(n + 1).at[0].set(x0)
+
+    def update(t, x):
+        return x.at[t + 1].set(α * x[t] * (1 - x[t]))
+
+    x = lax.fori_loop(0, n, update, x)
+    return x
+
+```
+
+* 我们将 `n` 设为静态，因为它影响数组大小，JAX 希望在编译代码中针对其值进行特化处理。
+* 我们通过 `device=cpu` 将计算固定到 CPU，因为这种顺序工作负载由许多小型运算组成，几乎没有机会利用 GPU 并行性。
+
+重要提示：虽然 `at[t].set` 看起来在每一步都创建了一个新数组，但在 JIT 编译的函数内部，编译器会检测到旧数组不再需要，并就地执行更新！
+
+让我们使用相同的参数计时：
+
+```{code-cell} ipython3
+with qe.Timer():
+    # First run
+    x_jax = qm_jax_fori(0.1, n)
+    # Hold interpreter
+    x_jax.block_until_ready()
+```
+
+让我们再次运行以消除编译开销：
+
+```{code-cell} ipython3
+with qe.Timer():
+    # Second run
+    x_jax = qm_jax_fori(0.1, n)
+    # Hold interpreter
+    x_jax.block_until_ready()
+```
+
+JAX 对于这种顺序运算也相当高效！
+
+#### 第二种尝试
+
+还有另一种使用 `lax.scan` 实现该循环的方式。
+
+这种替代方案可以说更符合 JAX 的函数式风格——尽管语法难以记忆。
+
+```{code-cell} ipython3
+@partial(jax.jit, static_argnames=("n",), device=cpu)
+def qm_jax_scan(x0, n, α=4.0):
     def update(x, t):
         x_new = α * x * (1 - x)
         return x_new, x_new
@@ -486,16 +502,12 @@ def qm_jax(x0, n, α=4.0):
 
 这段代码不易阅读，但本质上，`lax.scan` 反复调用 `update` 并将返回值 `x_new` 累积到一个数组中。
 
-```{note}
-我们在 `jax.jit` 装饰器中指定了 `device=cpu`，因为该计算由许多小的顺序运算组成，几乎没有机会让 GPU 利用并行性。因此，GPU 上的内核启动开销往往占主导地位，使得 CPU 更适合这种工作负载。
-```
-
 让我们使用相同的参数计时：
 
 ```{code-cell} ipython3
 with qe.Timer():
     # First run
-    x_jax = qm_jax(0.1, n)
+    x_jax = qm_jax_scan(0.1, n)
     # Hold interpreter
     x_jax.block_until_ready()
 ```
@@ -505,26 +517,24 @@ with qe.Timer():
 ```{code-cell} ipython3
 with qe.Timer():
     # Second run
-    x_jax = qm_jax(0.1, n)
+    x_jax = qm_jax_scan(0.1, n)
     # Hold interpreter
     x_jax.block_until_ready()
 ```
 
-JAX 对于这种顺序运算也相当高效。
-
-JAX 和 Numba 在编译后都能提供出色的性能。
+令人惊讶的是，JAX 在编译后也能提供出色的性能。
 
 ### 总结
 
-虽然 Numba 和 JAX 在顺序运算中都能提供出色的性能，*在代码可读性和易用性方面存在显著差异*。
+虽然 Numba 和 JAX 在顺序运算中都能提供出色的性能，但在代码可读性和易用性方面存在差异。
 
 Numba 版本简单直观，易于阅读：我们只需分配一个数组，然后使用标准 Python 循环逐元素填充它。
 
 这正是大多数程序员思考该算法的方式。
 
-另一方面，JAX 版本需要使用 `lax.scan`，这明显不够直观。
+另一方面，JAX 版本需要使用 `lax.fori_loop` 或 `lax.scan`，这两者都不如标准 Python 循环直观。
 
-此外，JAX 的不可变数组意味着我们无法简单地就地更新数组元素，这使得直接复制 Numba 使用的算法变得困难。
+虽然 JAX 的 `at[t].set` 语法确实允许逐元素更新，但整体代码仍然比 Numba 等价版本更难阅读。
 
 对于这类顺序运算，在代码清晰度和实现便利性方面，Numba 是明显的赢家。
 
