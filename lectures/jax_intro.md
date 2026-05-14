@@ -24,7 +24,7 @@ translation:
     JAX as a NumPy Replacement::Differences::A Workaround: 变通方法
     Functional Programming: 函数式编程
     Functional Programming::Pure functions: 纯函数
-    Functional Programming::Examples: 示例
+    Functional Programming::Examples -- Pure and Impure: 示例——纯函数与非纯函数
     Functional Programming::Why Functional Programming?: 为什么要函数式编程？
     Random numbers: 随机数
     Random numbers::NumPy / MATLAB Approach: NumPy / MATLAB 方法
@@ -346,19 +346,20 @@ a
 * 不会改变全局状态
 * 不会修改传递给函数的数据（不可变数据）
 
-### 示例
+### 示例——纯函数与非纯函数
 
 以下是一个*非纯*函数的示例：
 
 ```{code-cell} ipython3
 tax_rate = 0.1
-prices = [10.0, 20.0]
 
 def add_tax(prices):
     for i, price in enumerate(prices):
         prices[i] = price * (1 + tax_rate)
-    print('Post-tax prices: ', prices)
-    return prices
+
+prices = [10.0, 20.0]
+add_tax(prices)
+prices
 ```
 
 这个函数不是纯函数，因为：
@@ -369,15 +370,21 @@ def add_tax(prices):
 以下是一个*纯*版本：
 
 ```{code-cell} ipython3
-tax_rate = 0.1
-prices = (10.0, 20.0)
 
 def add_tax_pure(prices, tax_rate):
     new_prices = [price * (1 + tax_rate) for price in prices]
     return new_prices
+
+tax_rate = 0.1
+prices = (10.0, 20.0)
+after_tax_prices = add_tax_pure(prices, tax_rate)
+after_tax_prices
 ```
 
-这个纯版本通过函数参数使所有依赖关系变得明确，并且不修改任何外部状态。
+这是纯函数，因为：
+
+* 所有依赖关系通过函数参数显式传递
+* 并且不修改任何外部状态
 
 ### 为什么要函数式编程？
 
@@ -427,7 +434,7 @@ print(np.random.randn(2))
 * 它是非确定性的：相同的输入，不同的输出
 * 它有副作用：它修改了全局随机数生成器状态
 
-在并行化下很危险——必须仔细控制每个线程中发生的事情！
+在并行化下很危险——必须仔细控制每个线程中发生的事情。
 
 ### JAX
 
@@ -544,7 +551,11 @@ plt.show()
 下面的函数使用 `split` 生成 `k` 个（准）独立的随机 `n x n` 矩阵。
 
 ```{code-cell} ipython3
-def gen_random_matrices(key, n=2, k=3):
+def gen_random_matrices(
+        key,   # JAX key for random numbers
+        n=2,   # Matrices will be n x n
+        k=3    # Number of matrices to generate
+    ):
     matrices = []
     for _ in range(k):
         key, subkey = jax.random.split(key)
@@ -566,7 +577,7 @@ gen_random_matrices(key)
 
 ### 好处
 
-JAX 的显式性带来了显著的好处：
+如上所述，这种显式性是很有价值的：
 
 * 可复现性：通过重用密钥轻松重现结果
 * 并行化：控制各个线程上发生的事情
@@ -647,7 +658,14 @@ with qe.Timer():
 
 结果与 `cos` 示例类似——JAX 更快，尤其是在 JIT 编译后的第二次运行中。
 
-但我们仍在使用即时执行——大量内存和读写开销。
+这是因为单个数组操作在 GPU 上并行化了。
+
+但我们仍在使用即时执行：
+
+* 由于中间数组导致大量内存占用
+* 大量内存读写
+
+此外，GPU 上还会启动许多独立的内核。
 
 ### 编译整个函数
 
@@ -681,7 +699,8 @@ with qe.Timer():
 
 * 基于整个计算序列的积极优化
 * 消除对硬件加速器的多次调用
-* 不创建中间数组
+
+内存占用也大大降低——不再创建中间数组。
 
 顺便提一下，当针对 JIT 编译器的函数时，更常见的语法是：
 
