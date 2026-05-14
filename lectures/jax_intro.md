@@ -292,6 +292,7 @@ except Exception as e:
 
 JAX 的设计者选择将数组设为不可变的，因为 JAX 使用函数式编程风格，我们将在下面讨论这一点。
 
+(jax_at_workaround)=
 #### 变通方法
 
 我们注意到 JAX 确实提供了一种替代原地数组修改的方式，使用 [`at` 方法](https://docs.jax.dev/en/latest/_autosummary/jax.numpy.ndarray.at.html)。
