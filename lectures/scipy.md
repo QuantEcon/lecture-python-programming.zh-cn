@@ -124,10 +124,11 @@ SciPy 中有用的部分是其子包中的功能
 
 ### 随机变量与分布
 
-回想一下，`numpy.random` 提供了生成随机变量的函数
+回想一下，`numpy.random` 提供了生成随机变量的工具
 
 ```{code-cell} python3
-np.random.beta(5, 5, size=3)
+rng = np.random.default_rng()
+rng.beta(5, 5, size=3)
 ```
 
 当 `a, b = 5, 5` 时，这从具有以下密度函数的分布中生成一个样本
@@ -212,13 +213,13 @@ plt.show()
 ```{code-cell} python3
 from scipy.stats import linregress
 
-x = np.random.randn(200)
-y = 2 * x + 0.1 * np.random.randn(200)
+x = rng.standard_normal(200)
+y = 2 * x + 0.1 * rng.standard_normal(200)
 gradient, intercept, r_value, p_value, std_err = linregress(x, y)
 gradient, intercept
 ```
 
-要查看完整列表，请参阅[文档](https://docs.scipy.org/doc/scipy/reference/stats.html#statistical-functions-scipy-stats)。
+要查看完整列表，请参阅 [文档](https://docs.scipy.org/doc/scipy/reference/stats.html#statistical-functions-scipy-stats)。
 
 ## 根与不动点
 
@@ -591,8 +592,9 @@ $$ \mathbb E \max\{ S_n - K, 0 \}
 以下是一种解答：
 
 ```{code-cell} ipython3
+rng = np.random.default_rng()
 M = 10_000_000
-S = np.exp(μ + σ * np.random.randn(M))
+S = np.exp(μ + σ * rng.standard_normal(M))
 return_draws = np.maximum(S - K, 0)
 P = β**n * np.mean(return_draws) 
 print(f"The Monte Carlo option price is {P:3f}")
@@ -607,9 +609,9 @@ print(f"The Monte Carlo option price is {P:3f}")
 ```{exercise}
 :label: sp_ex1
 
-在{ref}`本讲座 <functions>`中，我们讨论了{ref}`递归函数调用 <recursive_functions>`的概念。
+在 {ref}`本讲座 <functions>` 中，我们讨论了 {ref}`递归函数调用 <recursive_functions>` 的概念。
 
-尝试编写上面{ref}`描述的 <bisect_func>`自制二分函数的递归实现。
+尝试编写上面 {ref}`描述的 <bisect_func>` 自制二分函数的递归实现。
 
 用函数 {eq}`root_f` 对其进行测试。
 ```
