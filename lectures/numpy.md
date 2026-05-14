@@ -240,8 +240,6 @@ z
 
 要从包含数值数据的文本文件中读取数组数据，使用 `np.loadtxt`——详情请参阅[文档](https://numpy.org/doc/stable/reference/routines.io.html)。
 
-
-
 ### 数组索引
 
 ```{index} single: NumPy; Arrays (Indexing)
@@ -401,7 +399,6 @@ z
 z.searchsorted(2.2)
 ```
 
-
 ## 算术运算
 
 ```{index} single: NumPy; Arithmetic Operations
@@ -449,7 +446,6 @@ A * B
 
 (numpy_matrix_multiplication)=
 特别地，`A * B` *不是*矩阵乘积，而是逐元素乘积。
-
 
 ## 矩阵乘法
 
@@ -852,8 +848,6 @@ ax.text(11, 7.0, '?', size=16, ha='center', va='center');
     - 通过*第二步*，`b` 将被扩展为 `b -> (2, 2, 2)`；
     - 我们可以看到经过前两步后它们仍然不匹配。因此，将引发 `ValueError`
 
-
-
 ## 可变性与数组复制
 
 NumPy 数组是可变数据类型，类似于 Python 列表。
@@ -863,7 +857,6 @@ NumPy 数组是可变数据类型，类似于 Python 列表。
 这很方便，但与 Python 的命名和引用模型结合时，可能会导致 NumPy 初学者犯错误。
 
 在本节中，我们回顾一些关键问题。
-
 
 ### 可变性
 
@@ -884,7 +877,8 @@ a
 可变性导致以下行为（这可能会让 MATLAB 程序员感到震惊……）
 
 ```{code-cell} python3
-a = np.random.randn(3)
+rng = np.random.default_rng()
+a = rng.standard_normal(3)
 a
 ```
 
@@ -896,7 +890,7 @@ a
 
 发生的情况是我们通过修改 `b` 改变了 `a`。
 
-名称 `b` 绑定到 `a`，成为该数组的另一个引用（Python 赋值模型在{doc}`课程后面 <python_advanced_features>`有更详细的描述）。
+名称 `b` 绑定到 `a`，成为该数组的另一个引用（Python 赋值模型在 {doc}`课程后面 <python_advanced_features>` 有更详细的描述）。
 
 因此，它有同等权利对该数组进行更改。
 
@@ -913,7 +907,7 @@ a
 这可以使用 `np.copy` 来完成
 
 ```{code-cell} python3
-a = np.random.randn(3)
+a = rng.standard_normal(3)
 a
 ```
 
@@ -935,13 +929,9 @@ a
 
 注意对 `b` 的更改没有影响 `a`。
 
-
-
-
 ## 其他功能
 
 让我们来看看 NumPy 的其他一些有用功能。
-
 
 ### 通用函数
 
@@ -990,7 +980,7 @@ def f(x):
 NumPy 函数 `np.where` 提供了一个向量化的替代方案：
 
 ```{code-cell} python3
-x = np.random.randn(4)
+x = rng.standard_normal(4)
 x
 ```
 
@@ -1008,7 +998,6 @@ f(x)                # 传递与前一个例子中相同的向量 x
 但是，这种方法并不总能获得与精心设计的向量化函数相同的速度。
 
 （稍后我们将看到 JAX 有一个强大的 `np.vectorize` 版本，通常确实可以生成高效的代码。）
-
 
 ### 比较
 
@@ -1066,11 +1055,11 @@ z[z > 3]
 
 NumPy 通过其子包提供了一些与科学编程相关的附加功能。
 
-我们已经看到了如何使用 np.random 生成随机变量
+我们已经看到了如何使用 NumPy 的 [随机 `Generator`](https://numpy.org/doc/stable/reference/random/generator.html#random-generator) 生成随机变量。
 
 ```{code-cell} python3
-z = np.random.randn(10000)  # 生成标准正态随机数
-y = np.random.binomial(10, 0.5, size=1000)    # 从 Bin(10, 0.5) 中抽取 1000 个样本
+z = rng.standard_normal(10000)  # 生成标准正态随机数
+y = rng.binomial(10, 0.5, size=1000)    # 从 Bin(10, 0.5) 中抽取 1000 个样本
 y.mean()
 ```
 
@@ -1094,10 +1083,9 @@ np.linalg.inv(A)           # 计算逆矩阵
 
 这些功能的大部分也可在 [SciPy](https://scipy.org/) 中找到，SciPy 是建立在 NumPy 之上的模块集合。
 
-我们将在{doc}`不久后 <scipy>`更详细地介绍 SciPy 版本。
+我们将在 {doc}`不久后 <scipy>` 更详细地介绍 SciPy 版本。
 
-有关 NumPy 中可用内容的完整列表，请参阅[此文档](https://numpy.org/doc/stable/reference/routines.html)。
-
+有关 NumPy 中可用内容的完整列表，请参阅 [此文档](https://numpy.org/doc/stable/reference/routines.html)。
 
 ### 隐式多线程
 
@@ -1115,7 +1103,7 @@ NumPy 在其大部分编译代码中尝试实现多线程。
 n = 20
 m = 1000
 for i in range(n):
-    X = np.random.randn(m, m)
+    X = rng.standard_normal((m, m))
     λ = np.linalg.eigvals(X)
 ```
 
@@ -1128,7 +1116,6 @@ for i in range(n):
 我们可以看到 8 个 CPU 中有 4 个在全速运行。
 
 这是因为 NumPy 的 `eigvals` 例程巧妙地将任务分割并分发到不同的线程。
-
 
 ## 练习
 
@@ -1251,25 +1238,25 @@ def sample(q):
 
 ```{code-cell} python3
 from numpy import cumsum
-from numpy.random import uniform
 
 class DiscreteRV:
     """
     根据给定概率向量 q 生成离散随机变量的抽样数组。
     """
 
-    def __init__(self, q):
+    def __init__(self, q, seed=None):
         """
         参数 q 是一个 NumPy 数组或类似数组，非负且和为 1
         """
         self.q = q
         self.Q = cumsum(q)
+        self.rng = np.random.default_rng(seed)
 
     def draw(self, k=1):
         """
         从 q 中返回 k 个样本。对于每次抽样，值 i 以概率 q[i] 返回。
         """
-        return self.Q.searchsorted(uniform(0, 1, size=k))
+        return self.Q.searchsorted(self.rng.uniform(0, 1, size=k))
 ```
 
 逻辑不是很直观，但如果你慢慢阅读，就会理解。
@@ -1389,7 +1376,8 @@ class ECDF:
 
 ```{code-cell} python3
 fig, ax = plt.subplots()
-X = np.random.randn(1000)
+rng = np.random.default_rng()
+X = rng.standard_normal(1000)
 F = ECDF(X)
 F.plot(ax)
 ```
@@ -1410,9 +1398,9 @@ F.plot(ax)
 
 ```{code-cell} python3
 
-np.random.seed(123)
-x = np.random.randn(4, 4)
-y = np.random.randn(4)
+rng = np.random.default_rng(123)
+x = rng.standard_normal((4, 4))
+y = rng.standard_normal(4)
 A = x / y
 ```
 
@@ -1440,9 +1428,9 @@ print(A)
 
 ```{code-cell} python3
 
-np.random.seed(123)
-x = np.random.randn(1000, 100, 100)
-y = np.random.randn(100)
+rng = np.random.default_rng(123)
+x = rng.standard_normal((1000, 100, 100))
+y = rng.standard_normal(100)
 
 with qe.Timer("广播操作"):
     B = x / y
@@ -1468,9 +1456,9 @@ print(B)
 **第一部分解答**
 
 ```{code-cell} python3
-np.random.seed(123)
-x = np.random.randn(4, 4)
-y = np.random.randn(4)
+rng = np.random.default_rng(123)
+x = rng.standard_normal((4, 4))
+y = rng.standard_normal(4)
 
 C = np.empty_like(x)
 n = len(x)
@@ -1499,9 +1487,9 @@ print(np.array_equal(A, C))
 
 ```{code-cell} python3
 
-np.random.seed(123)
-x = np.random.randn(1000, 100, 100)
-y = np.random.randn(100)
+rng = np.random.default_rng(123)
+x = rng.standard_normal((1000, 100, 100))
+y = rng.standard_normal(100)
 
 with qe.Timer("For 循环操作"):
     D = np.empty_like(x)
