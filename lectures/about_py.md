@@ -61,7 +61,6 @@ translation:
 
 您**不需要**理解本讲座中看到的所有内容——我们将在后续讲座系列中逐步深入讲解细节。
 
-
 ### 我就不能直接使用大语言模型吗？
 
 不行！
@@ -78,7 +77,6 @@ translation:
 
 话虽如此，一个好的大语言模型是学习本系列讲座的有用伴侣——试着把本系列中的一些代码复制粘贴过去，并请求它进行解释。
 
-
 ### MATLAB 不是更好吗？
 
 不，不，绝对不是。
@@ -93,8 +91,6 @@ Nirvana 很伟大（而 Soundgarden [更胜一筹](https://www.youtube.com/watch
 
 我们将在本系列讲座中以及后续关于 [JAX](https://jax.quantecon.org/intro.html) 的系列中讨论 Python 库的相对优势。
 
-
-
 ## Python 简介
 
 [Python](https://www.python.org) 是一种通用编程语言，由 [Guido van Rossum](https://en.wikipedia.org/wiki/Guido_van_Rossum) 于 1989 年构想创建。
@@ -106,7 +102,6 @@ Python 是免费且[开源](https://en.wikipedia.org/wiki/Open_source)的，其�
 * 为我们节省了费用，
 * 意味着 Python 由用户社区而非营利性企业控制，以及
 * 鼓励可重复性研究和[开放科学](https://en.wikipedia.org/wiki/Open_science)。
-
 
 ### 常见用途
 
@@ -132,7 +127,6 @@ Python 是免费且[开源](https://en.wikipedia.org/wiki/Open_source)的，其�
 * [Reddit](https://www.reddit.com/)
 * 等等
 
-
 ### 相对流行度
 
 Python 是[最流行的编程语言](https://www.tiobe.com/tiobe-index/)之一——如果不是最流行的话。
@@ -148,8 +142,6 @@ Python 库，如 [pandas](https://pandas.pydata.org/) 和 [Polars](https://pola.
 ```
 PyTorch 只是 Python 众多深度学习和人工智能库之一。
 
-
-
 ### 特性
 
 Python 是一种[高级语言](https://en.wikipedia.org/wiki/High-level_programming_language)，这意味着它相对容易阅读、编写和调试。
@@ -159,7 +151,6 @@ Python 是一种[高级语言](https://en.wikipedia.org/wiki/High-level_programm
 该核心由许多库支持，可根据需要进行学习。
 
 Python 灵活而务实，支持多种编程风格（过程式、面向对象、函数式等）。
-
 
 ### 语法与设计
 
@@ -251,8 +242,6 @@ print(f"Average: {total / count if count else 'No valid data'}")
 
 ```
 
-
-
 ### 与人工智能的关联
 
 人工智能正在接管许多目前由人类执行的任务，就像过去几个世纪其他形式的机械所做的那样。
@@ -264,7 +253,6 @@ print(f"Average: {total / count if count else 'No valid data'}")
 即使您不打算从事人工智能和机器学习方向，您也可以从学习使用这些库中受益，将其应用于经济学、金融学和其他科学领域的项目中。
 
 本系列讲座将解释如何做到这一点。
-
 
 ## 使用 Python 进行科学编程
 
@@ -285,7 +273,6 @@ Python 也是以下领域的主导力量之一：
 Python 在经济学、金融学以及运筹学等相邻领域的应用也在不断增长——这些领域此前主要由 MATLAB／Excel／STATA／C／Fortran 主导。
 
 本节将简要展示一些 Python 用于通用科学编程的示例。
-
 
 ### NumPy
 
@@ -346,7 +333,6 @@ b @ c
 
 我们将在后续讲座中深入介绍 NumPy 的详细内容。
 
-
 ### NumPy 的替代方案
 
 虽然 NumPy 仍然是 Python 中数组处理的王者，但现在出现了一些重要的竞争者。
@@ -391,7 +377,6 @@ SciPy 包含许多标准例程，用于
 
 稍后我们将更详细地讨论 SciPy。
 
-
 ### 图形可视化
 
 ```{index} single: Matplotlib
@@ -433,7 +418,6 @@ Python 的一大优势是数据可视化。
 
 您可以访问 [Python Graph Gallery](https://python-graph-gallery.com/) 查看使用各种库绘制的更多示例图表。
 
-
 ### 网络与图
 
 [网络](https://networks.quantecon.org/)研究正在成为经济学、金融学和其他领域科学工作的重要组成部分。
@@ -462,10 +446,10 @@ Python 拥有许多用于研究网络和图的库。
 ```{code-cell} ipython
 import networkx as nx
 import matplotlib.pyplot as plt
-np.random.seed(1234)
+rng = np.random.default_rng(1234)
 
 # 生成随机图
-p = dict((i, (np.random.uniform(0, 1), np.random.uniform(0, 1)))
+p = dict((i, (rng.uniform(0, 1), rng.uniform(0, 1)))
          for i in range(200))
 g = nx.random_geometric_graph(200, 0.12, pos=p)
 pos = nx.get_node_attributes(g, 'pos')
@@ -486,7 +470,6 @@ nx.draw_networkx_nodes(g,
                        cmap=plt.cm.jet_r)
 plt.show()
 ```
-
 
 ### 其他科学库
 
