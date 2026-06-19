@@ -152,13 +152,13 @@ realwage['United States'].head()
 `.stack()` 将列 `MultiIndex` 的最低层级旋转到行索引（`.unstack()` 方向相反——可以尝试一下）
 
 ```{code-cell} ipython3
-realwage.stack(future_stack=True).head()
+realwage.stack().head()
 ```
 
 我们也可以传入参数来选择要堆叠的层级
 
 ```{code-cell} ipython3
-realwage.stack(level='Country', future_stack=True).head()  # pandas>3.0 之前需要 future_stack=True
+realwage.stack(level='Country').head()
 ```
 
 使用 `DatetimeIndex` 可以方便地选择特定时间段。
@@ -166,7 +166,7 @@ realwage.stack(level='Country', future_stack=True).head()  # pandas>3.0 之前�
 选择某一年并堆叠 `MultiIndex` 的两个较低层级，可以创建面板数据的横截面
 
 ```{code-cell} ipython3
-realwage.loc['2015'].stack(level=(1, 2), future_stack=True).transpose().head() # pandas>3.0 之前需要 future_stack=True
+realwage.loc['2015'].stack(level=(1, 2)).transpose().head()
 ```
 
 在本讲座的其余部分，我们将使用一个包含各国和各时间段每小时实际最低工资的数据框，以 2015 年美元计价。
@@ -363,7 +363,7 @@ plt.show()
 
 我们还可以指定 `MultiIndex` 的某个层级（在列轴上）进行聚合。
 
-对于 `groupby`，由于 pandas 已弃用在 `groupby` 方法中使用 `axis=1`，我们需要使用 `.T` 将列转置为行。
+对于 `groupby`，由于 `pandas` 已移除在 `groupby` 方法中使用 `axis=1` 的支持，我们需要使用 `.T` 将列转置为行。
 
 ```{code-cell} ipython3
 merged.T.groupby(level='Continent').mean().head()
@@ -393,7 +393,7 @@ plt.show()
 `.describe()` 可用于快速检索多个常用汇总统计量
 
 ```{code-cell} ipython3
-merged.stack(future_stack=True).describe()
+merged.stack().describe()
 ```
 
 这是使用 `groupby` 的一种简化方式。
