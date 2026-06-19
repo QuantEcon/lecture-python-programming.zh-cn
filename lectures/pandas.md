@@ -282,7 +282,7 @@ df.loc[(df.cc + df.cg >= 80) & (df.POP <= 20000), ['country', 'year', 'POP']]
 
 **应用：对数据框进行子集化**
 
-现实世界的数据集可能[非常庞大](https://developers.google.com/machine-learning/crash-course/overfitting)。
+现实世界的数据集可能 [非常庞大](https://developers.google.com/machine-learning/crash-course/overfitting)。
 
 有时需要使用数据的子集来提高计算效率并减少冗余。
 
@@ -360,10 +360,10 @@ df.loc[complexCondition]
 
 修改数据框的能力对于生成用于未来分析的干净数据集非常重要。
 
-**1.** 我们可以方便地使用 `df.where()` 来"保留"我们已选择的行，并用任何其他值替换其余行：
+**1.** 我们可以方便地使用 `df.where()` 来"保留"我们已选择的行，并将其余行替换为 `NaN`：
 
 ```{code-cell} ipython3
-df.where(df.POP >= 20000, False)
+df.where(df.POP >= 20000)
 ```
 
 **2.** 我们可以简单地使用 `.loc[]` 来指定我们想要修改的列，并赋值：
@@ -433,7 +433,7 @@ df
 
 缺失值插补是数据科学中的一个大领域，涉及各种机器学习技术。
 
-Python 中还有更多[高级工具](https://scikit-learn.org/stable/modules/impute.html)可用于插补缺失值。
+Python 中还有更多 [高级工具](https://scikit-learn.org/stable/modules/impute.html) 可用于插补缺失值。
 
 ### 标准化与可视化
 
