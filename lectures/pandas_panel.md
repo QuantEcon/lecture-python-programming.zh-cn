@@ -86,7 +86,7 @@ sns.set_theme()
 可通过以下链接访问该数据集：
 
 ```{code-cell} ipython3
-url1 = 'https://github.com/QuantEcon/data-lectures/raw/main/lectures/realwage.csv'
+url1 = 'https://raw.githubusercontent.com/QuantEcon/lecture-python-programming/main/lectures/_static/lecture_specific/pandas_panel/realwage.csv'
 ```
 
 ```{code-cell} ipython3
@@ -188,7 +188,7 @@ realwage_f.head()
 可通过以下链接访问该数据集：
 
 ```{code-cell} ipython3
-url2 = 'https://github.com/QuantEcon/data-lectures/raw/main/lectures/countries.csv'
+url2 = 'https://raw.githubusercontent.com/QuantEcon/lecture-python-programming/main/lectures/_static/lecture_specific/pandas_panel/countries.csv'
 ```
 
 ```{code-cell} ipython3
@@ -456,7 +456,7 @@ plt.show()
 可通过以下链接访问该数据集：
 
 ```{code-cell} ipython3
-url3 = 'https://github.com/QuantEcon/data-lectures/raw/main/lectures/employ.csv'
+url3 = 'https://raw.githubusercontent.com/QuantEcon/lecture-python-programming/main/lectures/_static/lecture_specific/pandas_panel/employ.csv'
 ```
 
 读入 CSV 文件会返回长格式的面板数据集。使用 `.pivot_table()` 构建列中带有 `MultiIndex` 的宽格式数据框。
