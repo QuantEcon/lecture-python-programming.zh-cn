@@ -15,6 +15,8 @@ translation:
     Overview: 概述
     Compiling Functions: 编译函数
     Compiling Functions::An Example: 示例
+    Compiling Functions::An Example::Base Version: 基础版本
+    Compiling Functions::An Example::Acceleration via Numba: 通过 Numba 加速
     Compiling Functions::How and When it Works: 工作原理与适用时机
     Sharp Bits: 注意事项
     Sharp Bits::Typing: 类型推断
@@ -423,6 +425,17 @@ with qe.Timer():
 
 ## 练习
 
+{ref}`speed_ex1` 和 {ref}`numba_ex3` 都是从单位正方形中的随机样本通过蒙特卡洛方法估计 $\pi$。
+
+我们在这里生成这些随机数，并将它们存储在 `u_draws` 和 `v_draws` 中，以便我们可以在这两个练习中使用它们并比较结果。
+
+```{code-cell} ipython3
+n = 1_000_000
+rng = np.random.default_rng()
+u_draws = rng.uniform(size=n)
+v_draws = rng.uniform(size=n)
+```
+
 ```{exercise}
 :label: speed_ex1
 
@@ -441,10 +454,11 @@ with qe.Timer():
 
 ```{code-cell} ipython3
 @jit
-def calculate_pi(n=1_000_000):
+def calculate_pi(u_draws, v_draws):
+    n = len(u_draws)
     count = 0
     for i in range(n):
-        u, v = np.random.uniform(0, 1), np.random.uniform(0, 1)
+        u, v = u_draws[i], v_draws[i]
         d = np.sqrt((u - 0.5)**2 + (v - 0.5)**2)
         if d < 0.5:
             count += 1
@@ -457,17 +471,66 @@ def calculate_pi(n=1_000_000):
 
 ```{code-cell} ipython3
 with qe.Timer():
-    calculate_pi()
+    calculate_pi(u_draws, v_draws)
 ```
 
 ```{code-cell} ipython3
 with qe.Timer():
-    calculate_pi()
+    calculate_pi(u_draws, v_draws)
 ```
 
-如果我们通过删除 `@jit` 来关闭 JIT 编译，代码在我们的机器上大约需要慢 150 倍。
+如果我们通过删除 `@jit` 来关闭 JIT 编译，代码在我们的机器上会耗时长得多。
 
-因此，通过添加四个字符，我们获得了 2 个数量级的速度提升。
+因此，通过添加四个字符，我们获得了很大的速度提升。
+
+上面的解法采用了两种自然方法中的一种：它*首先抽取所有随机点*，将它们存储在 `u_draws` 和 `v_draws` 中，然后让被 JIT 编译的函数对它们进行循环。
+
+另一种方法是*在循环内部抽取每个点*。
+
+要使用 NumPy 的 `Generator` 实现这一点，我们将 `rng` 作为参数传入，并在循环体内调用 `rng.uniform()`
+
+```{code-cell} ipython3
+@jit
+def calculate_pi_in_loop(rng, n):
+    count = 0
+    for i in range(n):
+        u, v = rng.uniform(), rng.uniform()
+        d = np.sqrt((u - 0.5)**2 + (v - 0.5)**2)
+        if d < 0.5:
+            count += 1
+    return (count / n) * 4
+```
+
+```{code-cell} ipython3
+with qe.Timer():
+    calculate_pi_in_loop(rng, n)
+```
+
+```{code-cell} ipython3
+with qe.Timer():
+    calculate_pi_in_loop(rng, n)
+```
+
+计时第一种方法的两个单元只测量了循环本身——它的随机点在上面的共享设置代码块中只抽取一次，从未被计时，而第二种方法则要在被计时的函数内部为其抽取的随机数付出代价。
+
+为了公平地比较这两种方法，我们从头到尾为第一种方法计时，包括生成数组的开销：
+
+```{code-cell} ipython3
+with qe.Timer():
+    u2 = rng.uniform(size=n)
+    v2 = rng.uniform(size=n)
+    calculate_pi(u2, v2)
+```
+
+在这种串行设置下，两种方法给出的估计同样好，运行速度也相近，但它们在*内存使用*上并不等价。
+
+第一种方法必须同时在内存中保存全部 $2n$ 个抽样值——两个包含 `n` 个浮点数的数组，约占 `16n` 字节（当 `n = 100_000_000` 时约为 $1.6$ GB）。
+
+第二种方法则按需抽取每个点并随即丢弃，因此其内存占用不会随 `n` 的增大而增长。
+
+这可能表明在循环内部抽取才是更好的默认做法。
+
+但正如我们将在 {ref}`numba_ex_race` 中看到的，在循环内部抽取会与并行化产生不良的交互作用。
 
 ```{solution-end}
 ```
@@ -532,10 +595,13 @@ p, q = 0.1, 0.2  # 分别为离开低状态和高状态的概率
 以下是函数的纯 Python 版本
 
 ```{code-cell} ipython3
-def compute_series(n):
+n = 1_000_000
+rng = np.random.default_rng()
+U = rng.uniform(0, 1, size=n)
+
+def compute_series(n, U):
     x = np.empty(n, dtype=np.int64)
     x[0] = 1  # 从状态 1 开始
-    U = np.random.uniform(0, 1, size=n)
     for t in range(1, n):
         current_x = x[t-1]
         if current_x == 0:
@@ -548,8 +614,7 @@ def compute_series(n):
 让我们运行这段代码，并检查处于低状态的时间比例约为 0.666
 
 ```{code-cell} ipython3
-n = 1_000_000
-x = compute_series(n)
+x = compute_series(n, U)
 print(np.mean(x == 0))  # x 处于状态 0 的时间比例
 ```
 
@@ -559,7 +624,7 @@ print(np.mean(x == 0))  # x 处于状态 0 的时间比例
 
 ```{code-cell} ipython3
 with qe.Timer():
-    compute_series(n)
+    compute_series(n, U)
 ```
 
 接下来，让我们实现一个 Numba 版本，这很容易
@@ -571,7 +636,7 @@ compute_series_numba = jit(compute_series)
 让我们检查是否仍然得到正确的数字
 
 ```{code-cell} ipython3
-x = compute_series_numba(n)
+x = compute_series_numba(n, U)
 print(np.mean(x == 0))
 ```
 
@@ -579,7 +644,7 @@ print(np.mean(x == 0))
 
 ```{code-cell} ipython3
 with qe.Timer():
-    compute_series_numba(n)
+    compute_series_numba(n, U)
 ```
 
 对于一行代码来说，这是一个不错的速度提升！
@@ -613,10 +678,11 @@ with qe.Timer():
 
 ```{code-cell} ipython3
 @jit(parallel=True)
-def calculate_pi(n=1_000_000):
+def calculate_pi_parallel(u_draws, v_draws):
+    n = len(u_draws)
     count = 0
     for i in prange(n):
-        u, v = np.random.uniform(0, 1), np.random.uniform(0, 1)
+        u, v = u_draws[i], v_draws[i]
         d = np.sqrt((u - 0.5)**2 + (v - 0.5)**2)
         if d < 0.5:
             count += 1
@@ -629,19 +695,196 @@ def calculate_pi(n=1_000_000):
 
 ```{code-cell} ipython3
 with qe.Timer():
-    calculate_pi()
+    calculate_pi_parallel(u_draws, v_draws)
 ```
 
 ```{code-cell} ipython3
 with qe.Timer():
-    calculate_pi()
+    calculate_pi_parallel(u_draws, v_draws)
 ```
 
 通过打开和关闭并行化（在 `@jit` 注解中选择 `True` 或 `False`），我们可以测试多线程在 JIT 编译之上提供的速度增益。
 
-在我们的工作站上，我们发现并行化将执行速度提高了 2 到 3 倍。
+在我们的工作站上，我们发现并行化在这里带来了适度但值得的速度提升。
 
-（如果您在本地执行，您将得到不同的数字，主要取决于您机器上的 CPU 数量。）
+（如果您在本地执行，您将得到不同的结果，主要取决于您机器上的 CPU 数量。）
+
+请注意，我们是在循环*之前*抽取所有随机点，并将它们作为数组传入的，因此并行循环只需*读取*内存。
+
+而在并行循环*内部*抽取随机点则出人意料地棘手。
+
+我们将在 {ref}`numba_ex_race` 中研究其原因，以及如何安全地做到这一点。
+
+```{solution-end}
+```
+
+
+```{exercise}
+:label: numba_ex_race
+
+在 {ref}`numba_ex3` 中，我们是在并行循环*之前*抽取所有随机点。
+
+人们很容易想到改为在 `prange` 循环*内部*抽取每个点，方法是将生成器 `rng` 作为参数传入，并在循环体内调用 `rng.uniform()`。
+
+试一试：这段代码应该能够运行并返回一个接近 $\pi$ 的数值，然而这种方法中存在一个微妙的 bug。
+
+按以下方式进行调查：
+
+1. 使用*相同*的种子多次调用您的函数，并检查结果是否可重现。
+2. 在一系列样本量上多次重复该估计，并将其离散程度与正确的并行版本进行比较。
+
+然后解释问题所在，并给出一种在并行循环内正确抽取随机数的方法。
+
+提示：尝试使用旧式随机函数（如 `np.random.uniform()`）而不是 `Generator`，看看会发生什么。
+```
+
+```{solution-start} numba_ex_race
+:class: dropdown
+```
+
+这里是那个看似合理的版本。
+
+我们将 `rng` 作为参数传入，并在 `prange` 循环内部调用它。
+
+```{code-cell} ipython3
+n = 1_000_000
+rng = np.random.default_rng()
+
+@jit(parallel=True)
+def calculate_pi_in_loop_parallel(rng, n):
+    count = 0
+    for i in prange(n):
+        u, v = rng.uniform(), rng.uniform()
+        d = np.sqrt((u - 0.5)**2 + (v - 0.5)**2)
+        if d < 0.5:
+            count += 1
+    return (count / n) * 4
+
+calculate_pi_in_loop_parallel(rng, n)
+```
+
+代码运行没有错误，并返回接近 $\pi$ 的值。
+
+但结果中存在一个悄无声息的问题。
+
+在这里，每个线程都从*同一个*生成器 `rng` 中抽取。
+
+生成器通过更新其内部状态来产生每个数字。
+
+在 `prange` 下，许多线程同时读取和更新这个单一状态，彼此之间没有任何协调。
+
+这就是所谓的[**数据竞争**](https://docs.oracle.com/cd/E19205-01/820-0619/geojs/index.html)。
+
+这会在各个抽样值之间产生相关性，甚至可能导致某些抽样值以不可预测的方式被重复抽取。
+
+有两个症状揭示了这个问题。
+
+*症状 1：结果不再可重现。*
+
+正确的生成器在给定相同种子时，每次都应返回相同的答案。
+
+由于数据竞争的存在，各线程恰好接触共享状态的顺序会影响抽样值序列，因此即使固定种子，答案也不可重现。
+
+```{code-cell} ipython3
+for seed in (1, 1, 1):
+    print(calculate_pi_in_loop_parallel(np.random.default_rng(seed), n))
+```
+
+每次调用都使用相同的种子，但答案却不同。
+
+*症状 2：估计量的噪声远大于应有水平。*
+
+被重复和相关的抽样值所携带的信息比 $n$ 个独立抽样值要少，因此*有效*样本量远小于 $n$。
+
+解决办法是让每个线程拥有自己的随机状态，NumPy 的旧式函数（如 `np.random.uniform()`）在 Numba 下会自动做到这一点。
+
+```{code-cell} ipython3
+@jit(parallel=True)
+def calculate_pi_legacy(n):
+    count = 0
+    for i in prange(n):
+        u, v = np.random.uniform(0, 1), np.random.uniform(0, 1)
+        d = np.sqrt((u - 0.5)**2 + (v - 0.5)**2)
+        if d < 0.5:
+            count += 1
+    return (count / n) * 4
+```
+
+为了看清数据竞争的代价，我们对每种估计重复多次，并将其离散程度与正确版本随样本量增长的情况进行对比作图。
+
+```{code-cell} ipython3
+sample_sizes = np.logspace(3, 6, 10).astype(int)
+num_reps = 20
+
+methods = [("每线程独立状态（正确）",
+            lambda n: calculate_pi_legacy(n), 'C0'),
+           ("prange 中共享生成器（数据竞争）",
+            lambda n: calculate_pi_in_loop_parallel(np.random.default_rng(), n), 'C1')]
+
+fig, ax = plt.subplots()
+for label, estimate, color in methods:
+    draws = np.array([[estimate(int(m)) for _ in range(num_reps)]
+                      for m in sample_sizes])
+    means, stds = draws.mean(axis=1), draws.std(axis=1)
+    ax.plot(sample_sizes, means, color=color, marker='o', ms=3, label=label)
+    ax.fill_between(sample_sizes, means - 2 * stds, means + 2 * stds,
+                    color=color, alpha=0.2)
+ax.axhline(np.pi, color='k', lw=0.8, ls='--', label=r'$\pi$')
+ax.set_xscale('log')
+ax.set_xlabel('样本数量')
+ax.set_ylabel(r'$\pi$ 的估计值')
+ax.legend()
+plt.show()
+```
+
+两条带都以 $\pi$ 为中心，但与数据竞争相关的带比另一条更宽，并且随着样本量的增长收窄得更缓慢。
+
+另一种安全的选择是 {ref}`numba_ex3` 中的那种方法：在循环之前抽取所有点，使并行循环只需从内存中读取。
+
+```{solution-end}
+```
+
+
+```{exercise}
+:label: numba_ex_draw_speed
+
+现在我们已经有了两种在并行环境下估计 $\pi$ 的正确方法。
+
+一种是在循环*之前*抽取所有点，如 {ref}`numba_ex3` 所示。
+
+另一种是使用旧式函数在循环*内部*抽取点，如 {ref}`numba_ex_race` 所示。
+
+在 `n = 100_000_000` 时比较它们的速度，包括生成随机点所花费的时间。
+```
+
+```{solution-start} numba_ex_draw_speed
+:class: dropdown
+```
+
+我们对每种方法从头到尾计时，因此预先抽取版本要为构建其数组付出代价。
+
+```{code-cell} ipython3
+n = 100_000_000
+rng = np.random.default_rng()
+
+with qe.Timer():
+    u_draws = rng.uniform(size=n)
+    v_draws = rng.uniform(size=n)
+    calculate_pi_parallel(u_draws, v_draws)
+```
+
+```{code-cell} ipython3
+with qe.Timer():
+    calculate_pi_legacy(n)
+```
+
+在循环内部抽取要快得多。
+
+预先抽取版本在循环开始之前在单个线程上生成其两个数组。
+
+而循环内抽取版本则将随机数生成分散到所有线程上进行。
+
+它还避免了分配两个包含 `n` 个数字的数组，因此既节省了时间又节省了内存。
 
 ```{solution-end}
 ```
@@ -664,8 +907,8 @@ $$
 
 1. $\beta$ 是贴现因子，
 2. $n$ 是到期日，
-2. $K$ 是行权价，以及
-3. $\{S_t\}$ 是标的资产在每个时刻 $t$ 的价格。
+3. $K$ 是行权价，以及
+4. $\{S_t\}$ 是标的资产在每个时刻 $t$ 的价格。
 
 假设 `n, β, K = 20, 0.99, 100`。
 
@@ -717,6 +960,15 @@ s_{t+1} = s_t + \mu + \exp(h_t) \xi_{t+1}
 $$
 
 利用这一事实，解可以写成如下形式。
+
+```{note}
+在这里，我们将随机抽取保留在内循环内部，并使用旧式 API `np.random.randn()`，而不是使用 `Generator`。
+
+这是因为在并行执行（`@jit(parallel=True)`）下，Numba 对 `Generator` 对象的支持并非
+[线程安全的](https://numba.readthedocs.io/en/stable/reference/numpysupported.html#generator-objects)。
+
+预先将随机扰动抽取到形状为 `(M, n)` 的数组中可以避免这个问题，但在这里并不实际，因为 `M = 10_000_000` 会需要几个 GB 的内存。
+```
 
 
 ```{code-cell} ipython3
