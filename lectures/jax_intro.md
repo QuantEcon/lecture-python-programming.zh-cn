@@ -71,6 +71,11 @@ JAX 也在日益维护和提供 [更多专业化的科学计算例程](https://d
 import jax
 import jax.numpy as jnp
 import matplotlib.pyplot as plt
+import matplotlib as mpl  # i18n
+import matplotlib.font_manager  # i18n
+FONTPATH = "_fonts/SourceHanSerifSC-SemiBold.otf"  # i18n
+mpl.font_manager.fontManager.addfont(FONTPATH)  # i18n
+mpl.rcParams['font.family'] = ['Source Han Serif SC', 'DejaVu Sans']  # i18n
 import numpy as np
 import quantecon as qe
 ```
