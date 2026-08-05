@@ -238,7 +238,7 @@ z
 
 另请参阅 `np.asarray`，它执行类似的功能，但不会对已在 NumPy 数组中的数据进行独立复制。
 
-要从包含数值数据的文本文件中读取数组数据，使用 `np.loadtxt`——详情请参阅[文档](https://numpy.org/doc/stable/reference/routines.io.html)。
+要从包含数值数据的文本文件中读取数组数据，使用 `np.loadtxt` ——详情请参阅[文档](https://numpy.org/doc/stable/reference/routines.io.html)。
 
 ### 数组索引
 
@@ -1263,7 +1263,7 @@ class DiscreteRV:
 
 然而，这里有一个问题。
 
-假设在创建 `discreteRV` 实例后修改了 `q`，例如
+假设在创建 `DiscreteRV` 实例后修改了 `q`，例如
 
 ```{code-cell} python3
 q = (0.1, 0.9)
@@ -1394,7 +1394,7 @@ F.plot(ax)
 
 在本练习中，尝试使用 `for` 循环来复现以下广播操作的结果。
 
-**第一部分**：尝试使用 `for` 循环复现以下简单示例，并将你的结果与下面的广播操作进行比较。
+**第 1 部分**：尝试使用 `for` 循环复现以下简单示例，并将你的结果与下面的广播操作进行比较。
 
 ```{code-cell} python3
 
@@ -1413,7 +1413,7 @@ tags: [hide-output]
 print(A)
 ```
 
-**第二部分**：继续复现以下广播操作的结果。同时，比较广播和你实现的 `for` 循环的速度。
+**第 2 部分**：继续复现以下广播操作的结果。同时，比较广播和你实现的 `for` 循环的速度。
 
 对于本练习的这一部分，你可以使用 `quantecon` 库中的 `tic`/`toc` 函数来计时执行。
 
@@ -1453,7 +1453,7 @@ print(B)
 :class: dropdown
 ```
 
-**第一部分解答**
+**第 1 部分解答**
 
 ```{code-cell} python3
 rng = np.random.default_rng(123)
@@ -1483,7 +1483,7 @@ print(np.array_equal(A, C))
 ```
 
 
-**第二部分解答**
+**第 2 部分解答**
 
 ```{code-cell} python3
 
