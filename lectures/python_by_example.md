@@ -391,9 +391,9 @@ plt.plot(ϵ_values)
 plt.show()
 ```
 
-while 循环将持续执行由缩进分隔的代码块，直到条件（```i < ts_length```）被满足。
+while 循环将持续执行由缩进分隔的代码块，只要条件（`i < ts_length`）被满足。
 
-在本例中，程序将持续向列表 ```ϵ_values``` 添加值，直到 ```i``` 等于 ```ts_length```：
+在本例中，程序将持续向列表 `ϵ_values` 添加值，直到 `i` 等于 `ts_length`：
 
 ```{code-cell} python3
 i == ts_length # while 循环的终止条件
