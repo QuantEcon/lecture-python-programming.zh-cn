@@ -52,7 +52,7 @@ FONTPATH = "_fonts/SourceHanSerifSC-SemiBold.otf"  # i18n
 mpl.font_manager.fontManager.addfont(FONTPATH)  # i18n
 mpl.rcParams['font.family'] = ['Source Han Serif SC']  # i18n
 import seaborn as sns
-sns.set_theme()
+sns.set_theme(rc={'font.family': ['Source Han Serif SC', 'DejaVu Sans']})  # i18n：set_theme 会重置字体，用 rc 覆盖保留中文字体
 ```
 
 ## 概述

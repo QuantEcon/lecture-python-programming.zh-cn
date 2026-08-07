@@ -305,6 +305,7 @@ def draw_graphs(style='default'):
 
     # 设置样式表
     plt.style.use(style)
+    plt.rcParams['font.family'] = ['Source Han Serif SC', 'DejaVu Sans']  # i18n：样式表会重置 font.family，须在 style.use 之后重新应用
 
     fig, axes = plt.subplots(nrows=1, ncols=4, figsize=(10, 3))
     x = np.linspace(-13, 13, 150)
