@@ -68,7 +68,7 @@ Polars 在设计时充分考虑了性能和内存效率，主要利用了以下�
 
 * **内存**：pandas 通常需要相当于数据集大小 5--10 倍的内存；Polars 只需 2--4 倍
 * **速度**：对于许多常见操作，Polars 的速度快 10--100 倍
-* **参见**：[Polars TPC-H 基准测试](https://www.pola.rs/benchmarks/)，可查看最新的性能对比结果
+* **参见**：[Polars TPC-H 基准测试](https://pola.rs/benchmarks/)，可查看最新的性能对比结果
 ```
 
 在整个讲座中，我们假设已经执行了以下导入语句
