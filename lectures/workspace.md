@@ -385,7 +385,7 @@ git clone https://github.com/QuantEcon/QuantEcon.py
 1. 了解"分叉"GitHub 仓库的方法（分叉意味着创建一个存储在 GitHub 上的 GitHub 仓库的自己的副本）。
 1. 分叉 [QuantEcon.py](https://github.com/QuantEcon/QuantEcon.py)。
 1. 将您的分叉克隆到某个本地目录，进行编辑，提交更改，并将其推送回您分叉的 GitHub 仓库。
-1. 如果您做出了有价值的改进，请向我们发送[拉取请求](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)！
+1. 如果您做出了有价值的改进，请向我们发送[拉取请求](https://docs.github.com/en/pull-requests/reference/pull-requests)！
 
 有关这些及其他主题的阅读资料，请参阅：
 
