@@ -238,7 +238,7 @@ z
 
 另请参阅 `np.asarray`，它执行类似的功能，但不会对已在 NumPy 数组中的数据进行独立复制。
 
-要从包含数值数据的文本文件中读取数组数据，使用 `np.loadtxt` ——详情请参阅[文档](https://numpy.org/doc/stable/reference/routines.io.html)。
+要从包含数值数据的文本文件中读取数组数据，使用 `np.loadtxt`——详情请参阅[文档](https://numpy.org/doc/stable/reference/routines.io.html)。
 
 ### 数组索引
 
