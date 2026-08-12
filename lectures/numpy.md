@@ -1246,7 +1246,10 @@ class DiscreteRV:
 
     def __init__(self, q, seed=None):
         """
-        参数 q 是一个 NumPy 数组或类似数组，非负且和为 1
+        参数 q 是一个 NumPy 数组或类似数组，非负且和为 1。
+
+        参数 seed 为底层随机数生成器设置种子；默认 seed=None 时，
+        每次运行的抽样结果不可重现。
         """
         self.q = q
         self.Q = cumsum(q)
@@ -1415,7 +1418,7 @@ print(A)
 
 **第 2 部分**：继续复现以下广播操作的结果。同时，比较广播和你实现的 `for` 循环的速度。
 
-对于本练习的这一部分，你可以使用 `quantecon` 库中的 `tic`/`toc` 函数来计时执行。
+对于本练习的这一部分，你可以使用 `quantecon` 库中的 `qe.Timer()` 上下文管理器来计时执行。
 
 让我们确保已安装该库。
 
