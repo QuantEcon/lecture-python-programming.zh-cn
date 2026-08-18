@@ -95,7 +95,8 @@ import matplotlib.pyplot as plt
 首先创建一个由四个随机观测值组成的 series
 
 ```{code-cell} ipython3
-s = pl.Series(name='daily returns', values=np.random.randn(4))
+rng = np.random.default_rng()
+s = pl.Series(name='daily returns', values=rng.standard_normal(4))
 s
 ```
 
@@ -130,7 +131,7 @@ s.describe()
 ```{code-cell} ipython3
 df = pl.DataFrame({
     'company': ['AMZN', 'AAPL', 'MSFT', 'GOOG'],
-    'daily returns': np.random.randn(4)
+    'daily returns': rng.standard_normal(4)
 })
 df
 ```
@@ -476,13 +477,13 @@ print(f"Small data  --  pandas: {pd_small:.4f}s | Polars eager: {pl_small:.4f}s"
 
 ```{code-cell} ipython3
 n = 5_000_000
-np.random.seed(42)
+rng = np.random.default_rng(42)
 
-groups = np.random.choice(['A', 'B', 'C', 'D'], n)
-values = np.random.randn(n)
-weights = np.random.rand(n)
-extra1 = np.random.randn(n)
-extra2 = np.random.randn(n)
+groups = rng.choice(['A', 'B', 'C', 'D'], n)
+values = rng.standard_normal(n)
+weights = rng.random(n)
+extra1 = rng.standard_normal(n)
+extra2 = rng.standard_normal(n)
 
 big_pd = pd.DataFrame({
     'group': groups, 'value': values,
@@ -696,7 +697,7 @@ Polars 的连接（join）操作不保证输出行的顺序——
 
 ```{code-cell} ipython3
 price_change = ticker.select([
-    ((pl.col(tick).last() / pl.col(tick).first() - 1) * 100)
+    ((pl.col(tick).drop_nulls().last() / pl.col(tick).drop_nulls().first() - 1) * 100)
     .alias(tick)
     for tick in ticker_list.keys()
 ]).transpose(

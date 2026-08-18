@@ -337,7 +337,7 @@ b @ c
 
 虽然 NumPy 仍然是 Python 中数组处理的王者，但现在出现了一些重要的竞争者。
 
-[JAX](https://github.com/jax-ml/jax)、[Pytorch](https://pytorch.org/) 和 [CuPy](https://cupy.dev/) 等库也拥有内置的数组类型和数组操作，速度非常快且效率极高。
+[JAX](https://github.com/jax-ml/jax)、[PyTorch](https://pytorch.org/) 和 [CuPy](https://cupy.dev/) 等库也拥有内置的数组类型和数组操作，速度非常快且效率极高。
 
 事实上，这些库在利用并行化和快速硬件方面更具优势，我们将在本系列后续内容中加以说明。
 

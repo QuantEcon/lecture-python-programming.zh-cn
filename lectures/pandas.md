@@ -105,7 +105,8 @@ pandas 定义的两种重要数据类型是 `Series` 和 `DataFrame`。
 我们首先创建一个包含四个随机观测值的 Series：
 
 ```{code-cell} ipython3
-s = pd.Series(np.random.randn(4), name='每日收益')
+rng = np.random.default_rng()
+s = pd.Series(rng.standard_normal(4), name='每日收益')
 s
 ```
 
