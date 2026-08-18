@@ -174,9 +174,7 @@ df
 我们使用 `pl.read_csv` 来读取数据
 
 ```{code-cell} ipython3
-url = ('https://raw.githubusercontent.com/QuantEcon/'
-       'lecture-python-programming/main/lectures/_static/'
-       'lecture_specific/pandas/data/test_pwt.csv')
+url = 'https://github.com/QuantEcon/data-lectures/raw/main/lectures/test_pwt.csv'
 df = pl.read_csv(url)
 df
 ```
@@ -359,9 +357,7 @@ Polars 最强大的特性之一是**惰性求值（lazy evaluation）**。
 
 ```{code-cell} ipython3
 # 重新加载数据集
-url = ('https://raw.githubusercontent.com/QuantEcon/'
-       'lecture-python-programming/main/lectures/_static/'
-       'lecture_specific/pandas/data/test_pwt.csv')
+url = 'https://github.com/QuantEcon/data-lectures/raw/main/lectures/test_pwt.csv'
 df_full = pl.read_csv(url)
 ```
 
@@ -436,9 +432,7 @@ import pandas as pd
 import time
 
 # 小数据集 -- Penn World Tables（约 8 行）
-url = ('https://raw.githubusercontent.com/QuantEcon/'
-       'lecture-python-programming/main/lectures/_static/'
-       'lecture_specific/pandas/data/test_pwt.csv')
+url = 'https://github.com/QuantEcon/data-lectures/raw/main/lectures/test_pwt.csv'
 small_pd = pd.read_csv(url)
 small_pl = pl.read_csv(url)
 ```

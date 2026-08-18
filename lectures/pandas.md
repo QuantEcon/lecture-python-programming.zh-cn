@@ -165,7 +165,7 @@ s
 
 因此，它是表示和分析自然组织成行和列的数据的强大工具，通常具有用于单个行和单个列的描述性索引。
 
-让我们看一个从 CSV 文件 `pandas/data/test_pwt.csv` 读取数据的示例，该文件取自 [Penn World Tables](https://www.rug.nl/ggdc/productivity/pwt/pwt-releases/pwt-7.0)。
+让我们看一个从 CSV 文件 `test_pwt.csv` 读取数据的示例，该文件取自 [Penn World Tables](https://www.rug.nl/ggdc/productivity/pwt/pwt-releases/pwt-7.0)。
 
 该数据集包含以下指标：
 
@@ -181,7 +181,7 @@ s
 我们将使用 `pandas` 函数 `read_csv` 从 URL 读取数据。
 
 ```{code-cell} ipython3
-df = pd.read_csv('https://raw.githubusercontent.com/QuantEcon/lecture-python-programming/main/lectures/_static/lecture_specific/pandas/data/test_pwt.csv')
+df = pd.read_csv('https://github.com/QuantEcon/data-lectures/raw/main/lectures/test_pwt.csv')
 type(df)
 ```
 
