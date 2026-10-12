@@ -280,7 +280,7 @@ merged[merged['Country'] == 'Korea']
 
 我们还将把美洲合并为单一大洲——这将使后续可视化效果更好。
 
-为此，我们将使用 `.replace()` 并遍历要替换的大洲值列表
+为此，我们将使用 `.replace()`，并传入要替换的大洲值列表。
 
 ```{code-cell} ipython3
 replace = ['Central America', 'North America', 'South America']
