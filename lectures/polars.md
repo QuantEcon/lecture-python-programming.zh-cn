@@ -555,7 +555,8 @@ print(f"Polars lazy:  {lazy_time:.4f}s")
 
 对经济学家而言，一个重要的数据库是 [FRED](https://fred.stlouisfed.org/)——由圣路易斯联储维护的庞大时间序列数据集。
 
-Polars 的 `read_csv` 可以直接从 URL 获取数据。
+我们使用 [requests](https://requests.readthedocs.io/en/latest/) 下载 CSV 文件，
+并将其内容传递给 Polars 的 `read_csv`。
 
 我们使用 `try_parse_dates=True` 来自动解析日期列
 
@@ -575,7 +576,10 @@ fred_url = ('https://fred.stlouisfed.org/graph/fredgraph.csv?'
             'fgst=lin&fgsnd=2020-02-01&line_index=1&'
             'transformation=lin&vintage_date=2024-07-29&'
             'revision_date=2024-07-29&nd=1948-01-01')
-data = pl.read_csv(fred_url, try_parse_dates=True)
+import requests
+
+r = requests.get(fred_url)
+data = pl.read_csv(r.content, try_parse_dates=True)
 ```
 
 让我们查看前几行
