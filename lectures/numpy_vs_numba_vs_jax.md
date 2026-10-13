@@ -81,6 +81,8 @@ import matplotlib as mpl  # i18n
 import matplotlib.font_manager  # i18n
 FONTPATH = "_fonts/SourceHanSerifSC-SemiBold.otf"  # i18n
 mpl.font_manager.fontManager.addfont(FONTPATH)  # i18n
+import logging  # i18n
+logging.getLogger('matplotlib.font_manager').setLevel(logging.ERROR)  # i18n
 mpl.rcParams['font.family'] = ['Source Han Serif SC']  # i18n
 from mpl_toolkits.mplot3d.axes3d import Axes3D
 from matplotlib import cm
