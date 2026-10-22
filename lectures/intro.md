@@ -15,7 +15,7 @@ translation:
 
 这些讲座是QuantEcon提供的[系列讲座](https://quantecon.org/lectures/)中的第一部分。
 
-它们专注于学习Python编程，并以经济学和金融学中的应用为目标。
+这些讲座侧重于学习 Python 编程，并着眼于其在经济学和金融学中的应用。
 
 ```{tableofcontents}
 ```
