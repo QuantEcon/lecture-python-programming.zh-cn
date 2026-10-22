@@ -81,7 +81,7 @@ translation:
 
 不，不，绝对不是。
 
-Nirvana 很伟大（而 Soundgarden [更胜一筹](https://www.youtube.com/watch?v=3mbBbFH9fAg&list=RD3mbBbFH9fAg)），但是是时候告别 90 年代了。
+Nirvana 曾经很棒（而 Soundgarden [更胜一筹](https://www.youtube.com/watch?v=3mbBbFH9fAg&list=RD3mbBbFH9fAg)），不过现在该告别 90 年代了。
 
 对于大多数现代问题，Python 的科学库现在已经远远超过了 MATLAB 的能力。
 
