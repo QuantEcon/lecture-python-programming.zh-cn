@@ -46,7 +46,7 @@ translation:
 
 当计算机程序规模较小时，代码写得不好并不会造成太大的损失。
 
-但随着数据量的增加、模型的日益复杂以及计算能力的提升，我们正在应对需要编写更长程序的更具挑战性的问题。
+随着数据量增加、模型日益复杂、计算能力不断提升，我们也开始着手解决更具挑战性的问题，而这些问题往往需要编写更长的程序。
 
 对于此类程序，投资于良好的编码实践将带来丰厚回报。
 
@@ -71,7 +71,7 @@ k_{t+1} = s k_t^{\alpha} + (1 - \delta) k_t,
 
 这里
 
-* $k_t$ 是时间 $t$ 时的资本，
+* $k_t$ 是 $t$ 时期的资本存量，
 * $s, \alpha, \delta$ 是参数（储蓄率、生产率参数和折旧率）
 
 对于每组参数化，代码
@@ -82,7 +82,7 @@ k_{t+1} = s k_t^{\alpha} + (1 - \delta) k_t,
 
 图形将被分成三个子图。
 
-在每个子图中，两个参数保持固定，另一个参数变化
+在每个子图中，两个参数保持不变，另一个参数则变化
 
 ```{code-cell} ipython
 import numpy as np
@@ -197,7 +197,7 @@ plt.show()
 
 上述代码片段中的另一个致命错误是重复。
 
-逻辑块（例如生成时间序列的循环）以细微变化被一再重复。
+逻辑块（例如生成时间序列的循环）只作了些微改动，却被反复写了多遍。
 
 这违反了编程的基本原则：不要重复自己（DRY）。
 
@@ -224,11 +224,11 @@ plt.show()
 * 它们可以影响程序任何部分发生的事情
 * 它们可以被任何函数更改
 
-这使得要确定某段给定代码的某个小部分实际命令了什么变得更加困难。
+这使得我们更难判断给定代码片段中的某个局部究竟会执行什么。
 
 这里有一个[关于该主题的有用讨论](https://wiki.c2.com/?GlobalVariablesAreBad)。
 
-虽然在小脚本中偶尔使用全局变量没什么大碍，但我们建议你训练自己避免使用它们。
+虽然在小脚本中偶尔使用全局变量没什么大碍，但我们建议你逐步养成避免使用它们的习惯。
 
 （我们将在下面讨论具体方法）。
 
@@ -360,8 +360,8 @@ def h(p):
 p_star = brentq(h, 2, 4)
 q_star = np.exp(0.1 * p_star) - 1
 
-print(f'Equilibrium price is {p_star: .2f}')
-print(f'Equilibrium quantity is {q_star: .2f}')
+print(f'均衡价格为 {p_star: .2f}')
+print(f'均衡数量为 {q_star: .2f}')
 ```
 
 我们也来绘制结果。
@@ -397,8 +397,8 @@ def h(p):
 p_star = brentq(h, 2, 4)
 q_star = np.exp(0.1 * p_star) - 1
 
-print(f'Equilibrium price is {p_star: .2f}')
-print(f'Equilibrium quantity is {q_star: .2f}')
+print(f'均衡价格为 {p_star: .2f}')
+print(f'均衡数量为 {q_star: .2f}')
 ```
 
 ```{code-cell} ipython3
@@ -451,8 +451,8 @@ class Equilibrium:
         p_star = brentq(h, 2, 4)
         q_star = np.exp(self.α * p_star) - self.β
 
-        print(f'Equilibrium price is {p_star: .2f}')
-        print(f'Equilibrium quantity is {q_star: .2f}')
+        print(f'均衡价格为 {p_star: .2f}')
+        print(f'均衡数量为 {q_star: .2f}')
 
     def plot_equilibrium(self):
         # 现在绘图
