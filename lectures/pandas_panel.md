@@ -208,7 +208,7 @@ worlddata.head()
 
 我们希望将新的数据框 `worlddata` 与 `realwage_f` 合并。
 
-pandas 的 `merge` 函数允许按行连接数据框。
+pandas 的 `merge` 函数可以根据指定的键，将两个数据框中相匹配的行合并起来。
 
 我们的数据框将通过国家名称进行合并，因此需要对 `realwage_f` 进行转置，使两个数据框中的行均对应国家名称
 
