@@ -72,7 +72,7 @@ import quantecon as qe
 
 与 NumPy 一样，SciPy 稳定、成熟且被广泛使用。
 
-许多 SciPy 程序是对工业标准 Fortran 库（如 [LAPACK](https://en.wikipedia.org/wiki/LAPACK)、[BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) 等）的薄封装。
+许多 SciPy 例程是对行业标准 Fortran 库（如 [LAPACK](https://en.wikipedia.org/wiki/LAPACK)、[BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) 等）的薄封装。
 
 实际上没有必要将 SciPy 作为一个整体来"学习"。
 
@@ -105,7 +105,7 @@ a = np.identity(3)
 较新版本的 SciPy（1.15+）不再自动导入 NumPy 符号。
 ````
 
-SciPy 中有用的部分是其子包中的功能
+SciPy 的实用功能主要由各个子包提供，例如
 
 * `scipy.optimize`、`scipy.integrate`、`scipy.stats` 等。
 
@@ -406,7 +406,7 @@ fixed_point(lambda x: x**2, 10.0)  # 10.0 是初始猜测值
 
 大多数数值包只提供*最小化*函数。
 
-最大化可以通过以下方式实现：域 $D$ 上函数 $f$ 的最大化点等同于 $-f$ 在 $D$ 上的最小化点。
+最大化问题可以转化为最小化问题：函数 $f$ 在定义域 $D$ 上的最大点，就是函数 $-f$ 在 $D$ 上的最小点。
 
 最小化与求根密切相关：对于光滑函数，内部最优点对应于一阶导数的根。
 
@@ -440,7 +440,7 @@ fminbound(lambda x: x**2, -1, 2)  # 在 [-1, 2] 中搜索
 
 大多数数值积分方法通过计算近似多项式的积分来工作。
 
-所产生的误差取决于多项式对被积函数的拟合程度，而这又取决于被积函数的"规则程度"。
+所产生的误差取决于多项式对被积函数的拟合程度，而这又取决于被积函数的光滑程度。
 
 在 SciPy 中，数值积分的相关模块是 `scipy.integrate`。
 
