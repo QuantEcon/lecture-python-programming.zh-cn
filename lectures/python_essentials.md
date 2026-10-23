@@ -477,7 +477,7 @@ dallas: 1223229
 data_file = open('us_cities.txt', 'r')
 for line in data_file:
     city, population = line.split(':')         # 元组解包
-    city = city.title()                        # 城市名称首字母大写
+    city = city.title()                        # 将城市名称中每个单词的首字母大写
     population = f'{int(population):,}'        # 为数字添加逗号
     print(city.ljust(15) + population)
 data_file.close()
@@ -721,7 +721,7 @@ any([1 <= 2 <= 3, "a" in "letter"])
 ```{index} single: Python; Docstrings
 ```
 
-Python 有一个为模块、类、函数等添加注释的系统，称为*文档字符串*。
+Python 提供了一种为模块、类、函数等编写说明文档的机制，称为*文档字符串*。
 
 文档字符串的优点在于它们在运行时可用。
 
