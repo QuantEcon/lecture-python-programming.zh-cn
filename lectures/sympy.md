@@ -467,7 +467,7 @@ moment(X, 1)
 E(X**t)
 ```
 
-使用 `integrate` 函数，我们可以推导出 $\lambda = 0.5$ 时指数分布的累积密度函数
+使用 `integrate` 函数，我们可以推导出 $\lambda = 0.5$ 时指数分布的累积分布函数
 
 ```{code-cell} ipython3
 λ_pdf = pdf.subs(λ, 1/2)
