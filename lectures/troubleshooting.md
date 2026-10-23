@@ -31,8 +31,8 @@ translation:
 
 本系列讲座的基本假设是：满足以下条件时，讲座中的代码都应能正常运行：
 
-1. 在 Jupyter notebook 中运行，且
-1. notebook 运行在安装了最新版本 Anaconda Python 的机器上。
+1. 在 Jupyter Notebook 中运行；并且
+1. Notebook 运行在安装了最新版 Anaconda Python 的机器上。
 
 您已经按照{doc}`本讲座 <getting_started>`中的说明安装了 Anaconda，对吗？
 
