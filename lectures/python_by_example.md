@@ -57,7 +57,7 @@ translation:
 
 ## 任务：绘制白噪声过程
 
-假设我们想要模拟并绘制白噪声过程 $\epsilon_0, \epsilon_1, \ldots, \epsilon_T$，其中每个抽取值 $\epsilon_t$ 是独立的标准正态分布。
+假设我们想要模拟并绘制白噪声过程 $\epsilon_0, \epsilon_1, \ldots, \epsilon_T$，其中每个 $\epsilon_t$ 都服从标准正态分布，且这些抽取值彼此独立。
 
 换句话说，我们想要生成如下所示的图形：
 
