@@ -508,7 +508,7 @@ def loss(params, data):
 k = 4
 p0 = jnp.zeros(k)
 p_hat = grad_descent(loss, data, p0)
-print('Estimated parameter vector:')
+print('估计的参数向量：')
 print(p_hat)
 print('\n\n')
 
