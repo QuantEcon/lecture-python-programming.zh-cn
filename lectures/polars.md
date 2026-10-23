@@ -54,7 +54,7 @@ translation:
 
 [Polars](https://pola.rs/) 是一个用 Rust 编写的快速 Python 数据处理库。
 
-由于其性能优势，它作为 {doc}`pandas <pandas>` 的现代替代品已经获得了广泛的关注。
+凭借性能优势，Polars 已作为 {doc}`pandas <pandas>` 的现代替代方案而广受关注。
 
 Polars 在设计时充分考虑了性能和内存效率，主要利用了以下技术：
 
