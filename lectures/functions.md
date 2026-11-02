@@ -681,7 +681,7 @@ print([x(i) for i in range(10)])
 :label: func_ex5
 ```
 
-使用递归重写[练习 1](factorial_exercise) 中的函数 `factorial()`。
+使用递归重写来自 [练习 1](factorial_exercise) 的函数 `factorial()`。
 
 ```{exercise-end}
 ```
