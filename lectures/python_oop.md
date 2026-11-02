@@ -179,7 +179,7 @@ x.__class__
 
 ```{code-cell} python3
 def earn(w,y):
-    "Consumer with inital wealth w earns y"
+    "Consumer with initial wealth w earns y"
     return w+y
 
 def spend(w,x):
@@ -210,7 +210,7 @@ print("w0,w1,w2,w3,w4 = ", w0,w1,w2,w3,w4)
 
 *类*将与特定*实例*绑定的一组数据与一组对数据进行操作的函数捆绑在一起。
 
-在我们的示例中，*实例*将是特定*人*的名字，其*实例数据*仅由其财富组成。
+在我们的示例中，*实例*将是某个特定*人*的名字，其*实例数据*仅由其财富组成。
 
 （在其他示例中，*实例数据*将由一组数据向量组成。）
 
@@ -230,7 +230,7 @@ print("w0,w1,w2,w3,w4 = ", w0,w1,w2,w3,w4)
 
 尽管有些刻意，这个类的示例帮助我们内化一些特殊的语法。
 
-以下是我们如何设置消费者类。
+以下是我们如何设置消费者类的方法。
 
 ```{code-cell} python3
 class Consumer:
@@ -247,7 +247,7 @@ class Consumer:
         "The consumer spends x dollars if feasible"
         new_wealth = self.wealth - x
         if new_wealth < 0:
-            print("Insufficent funds")
+            print("Insufficient funds")
         else:
             self.wealth = new_wealth
 ```
