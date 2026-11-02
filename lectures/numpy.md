@@ -454,9 +454,6 @@ A * B
 ```{index} single: NumPy; Matrix Multiplication
 ```
 
-```{index} single: NumPy; Matrix Multiplication
-```
-
 我们使用 `@` 符号进行矩阵乘法，如下所示：
 
 ```{code-cell} python3
