@@ -515,7 +515,7 @@ plt.show()
 :class: dropdown
 
 * 如果在调用 `show()` 之前多次调用 `plot()` 函数，您生成的所有线条都会出现在同一张图上。
-* 对于图例，注意假设 `var = 42`，表达式 `f'foo{var}'` 的求值结果为 `'foo42'`。
+* 对于图例，注意如果 `var = 42`，表达式 `f'foo{var}'` 的求值结果为 `'foo42'`。
 ```
 
 ```{exercise-end}
