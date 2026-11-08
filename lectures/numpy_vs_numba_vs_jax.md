@@ -70,7 +70,6 @@ tags: [hide-output]
 我们将使用以下导入。
 
 ```{code-cell} ipython3
-import random
 from functools import partial
 
 import numpy as np
