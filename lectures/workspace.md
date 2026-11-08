@@ -245,13 +245,13 @@ Visual Studio Code（VS Code）是一个代码编辑器和开发工作空间，�
 :figclass: auto
 ```
 
-通过引导式演练探索如何按照您的喜好自定义 VS Code。
+跟随引导式教程，了解如何按自己的偏好自定义 VS Code。
 
 ```{figure} /_static/lecture_specific/workspace/vs_code_walkthrough.png
 :figclass: auto
 ```
 
-出现以下提示时，继续安装所有推荐的扩展。
+出现以下提示时，请安装所有推荐的扩展。
 
 ```{figure} /_static/lecture_specific/workspace/vs_code_install_ext.png
 :figclass: auto
