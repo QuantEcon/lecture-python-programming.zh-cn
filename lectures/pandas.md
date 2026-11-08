@@ -465,7 +465,7 @@ df.columns = 'population', 'total GDP'
 df
 ```
 
-`population` 变量以千为单位，让我们恢复为单个单位：
+`population` 变量以千人为单位，下面将其换算为人数：
 
 ```{code-cell} ipython3
 df['population'] = df['population'] * 1e3
