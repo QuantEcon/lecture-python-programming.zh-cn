@@ -44,12 +44,12 @@ translation:
 
 在这些讲座中，我们已经使用 [Matplotlib](https://matplotlib.org/) 生成了相当多的图形。
 
-Matplotlib 是一个出色的图形库，专为科学计算设计，具有以下特点：
+Matplotlib 是一个出色的绘图库，专为科学计算设计，具有以下特点：
 
 * 高质量的二维和三维图形
-* 支持所有常见格式（PDF、PNG 等）的输出
+* 可输出为所有常见格式（如 PDF、PNG 等）
 * LaTeX 集成
-* 对演示效果各方面的精细控制
+* 可精细控制图表呈现的各个方面
 * 动画等功能
 
 ### Matplotlib 的双重性格
