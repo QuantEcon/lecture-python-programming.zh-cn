@@ -78,13 +78,13 @@ translation:
 
 ## 云端 Python
 
-开始使用 Python 编程的最简便方式是在云端运行它。
+开始编写 Python 程序最简单的方式，是在云端运行 Python。
 
 （即使用已安装 Python 的远程服务器。）
 
 一个既免费又可靠的选择是 [Google Colab](https://colab.research.google.com/)。
 
-Colab 还有提供 GPU 的优势，我们将在更高级的讲座中加以利用。
+Colab 还提供 GPU；我们会在进阶讲座中使用这一功能。
 
 有关 Google Colab 入门的教程可以通过网络和视频搜索找到。
 
@@ -97,24 +97,24 @@ Colab 还有提供 GPU 的优势，我们将在更高级的讲座中加以利用
 
 同时，本地安装比 Colab 等云端选项需要更多工作。
 
-本讲座的其余部分将带您了解与本地安装相关的一些细节。
+本讲座的其余部分将介绍本地安装的相关细节。
 
 
 ### Anaconda 发行版
 
 [Python 核心包](https://www.python.org/downloads/) 易于安装，但*不是*您在这些讲座中应该选择的版本。
 
-这些讲座需要完整的科学编程生态系统，而
+这些讲座需要完整的科学计算环境，原因是：
 
-* 核心安装并不提供这些
-* 逐个安装各组件非常繁琐。
+* 核心 Python 安装并不包含所需的科学计算库；
+* 逐个安装这些库也很繁琐。
 
 因此，对于我们的目的而言，最佳方法是安装一个包含以下内容的 Python 发行版：
 
 1. Python 核心语言 **以及**
 1. 最流行的科学库的兼容版本。
 
-最好的此类发行版是 [Anaconda Python](https://www.anaconda.com/)。
+最适合本讲座的此类发行版是 [Anaconda Python](https://www.anaconda.com/)。
 
 Anaconda
 
@@ -169,9 +169,9 @@ Anaconda 提供了一个名为 `conda` 的工具来管理和升级您的 Anacond
 
 它们使用*基于浏览器*的 Python 交互界面，具有以下特点：
 
-* 能够编写和执行 Python 命令。
-* 在浏览器中格式化输出，包括表格、图形、动画等。
-* 可以混入格式化文本和数学表达式。
+* 编写并运行 Python 命令；
+* 在浏览器中显示格式化的输出，包括表格、图形和动画等；
+* 在笔记本中穿插格式化文本和数学表达式。
 
 由于这些特性，Jupyter 现已成为科学计算生态系统中的重要角色。
 
@@ -214,7 +214,7 @@ Anaconda 提供了一个名为 `conda` 的工具来管理和升级您的 Anacond
 * `localhost` 是本地计算机的名称
 * `8888` 指的是您计算机上的[端口号](https://en.wikipedia.org/wiki/Port_%28computer_networking%29) 8888
 
-因此，Jupyter 内核正在监听本地计算机 8888 端口上的 Python 命令。
+因此，Jupyter 内核正在本地计算机的 8888 端口监听 Python 命令。
 
 希望您的默认浏览器也已打开一个看起来类似以下内容的网页：
 
@@ -234,7 +234,7 @@ Anaconda 提供了一个名为 `conda` 的工具来管理和升级您的 Anacond
 :figclass: auto
 ```
 
-笔记本显示一个*活动单元格*，您可以在其中输入 Python 命令。
+笔记本中会显示一个*当前单元格*，您可以在其中输入 Python 命令。
 
 ### 笔记本基础
 
@@ -297,7 +297,7 @@ Python 支持 [unicode](https://docs.python.org/3/howto/unicode.html)，允许�
 
 这是一个我们可以使用的任意程序：[https://matplotlib.org/stable/gallery/pie_and_polar_charts/polar_bar.html](https://matplotlib.org/stable/gallery/pie_and_polar_charts/polar_bar.html)。
 
-在该页面上，您将看到以下代码：
+在该页面上，您会看到以下代码：
 
 ```{code-cell} ipython
 import numpy as np
@@ -319,7 +319,7 @@ ax.bar(θ, radii, width=width, bottom=0.0, color=colors, alpha=0.5)
 plt.show()
 ```
 
-现在不必担心细节——让我们直接运行它，看看会发生什么。
+现在先不必担心细节，直接运行这段代码，看看会发生什么。
 
 运行此代码的最简单方法是将其复制粘贴到笔记本的单元格中。
 
@@ -357,7 +357,7 @@ Jupyter 为您提供了几个可供选择的补全项。
 ```{index} single: Jupyter Notebook; Help
 ```
 
-要获取 `np.random.randn` 的帮助，我们可以执行 `np.random.randn?`。
+要查看 `np.random.randn` 的帮助信息，可以运行 `np.random.randn?`。
 
 文档会出现在浏览器的分割窗口中，如下所示：
 
@@ -365,7 +365,7 @@ Jupyter 为您提供了几个可供选择的补全项。
 :figclass: auto
 ```
 
-点击下方分割窗口的右上角可关闭在线帮助。
+点击下方分栏窗口右上角的按钮即可关闭在线帮助。
 
 我们将在{ref}`后续内容 <Docstrings>`中学习更多关于如何创建此类文档的知识！
 
@@ -394,7 +394,7 @@ Jupyter 为您提供了几个可供选择的补全项。
 ```{index} single: Jupyter Notebook; Debugging
 ```
 
-调试是识别和消除程序错误的过程。
+调试是发现并消除程序错误的过程。
 
 您将花费大量时间调试代码，因此学会[如何有效地进行调试](https://www.freecodecamp.org/news/what-is-debugging-how-to-debug-code/)非常重要。
 
@@ -416,7 +416,7 @@ Jupyter 为您提供了几个可供选择的补全项。
 
 运行单元格时，调试器将在断点处停止。
 
-然后，您可以使用 CALLSTACK 工具栏（位于右侧窗口）上的"下一步"按钮逐行执行代码。
+然后，您可以点击右侧窗口中 CALLSTACK 工具栏上的“下一步”按钮，逐行执行代码。
 
 <!-- IDEA: add a red square around the area of interest in the image -->
 ```{figure} /_static/lecture_specific/getting_started/debugger_breakpoint.png
@@ -437,7 +437,7 @@ Jupyter 为您提供了几个可供选择的补全项。
 
 您可以用通常共享文件的方式共享它们——或者使用 [nbviewer](https://nbviewer.org/) 等网络服务。
 
-您在该网站上看到的笔记本是**静态** html 表示。
+该网站上显示的是笔记本的**静态 HTML** 表示。
 
 要运行某个笔记本，请点击右上角的下载图标，将其下载为 `ipynb` 文件。
 
@@ -513,9 +513,9 @@ conda upgrade quantecon
 
 到目前为止，我们专注于执行输入到 Jupyter 笔记本单元格中的 Python 代码。
 
-传统上，大多数 Python 代码以不同的方式运行。
+传统上，大多数 Python 代码以另一种方式运行。
 
-代码首先保存在本地计算机的文本文件中。
+首先将代码保存在本地计算机的文本文件中。
 
 按照惯例，这些文本文件具有 `.py` 扩展名。
 
@@ -566,7 +566,7 @@ print("foobar")
 * 高效的文本编辑命令（例如，复制、粘贴、查找和替换）
 * 语法高亮等
 
-目前，用于编码的极为流行的文本编辑器是 [VS Code](https://code.visualstudio.com/)。
+目前，广受欢迎的代码编辑器之一是 [VS Code](https://code.visualstudio.com/)。
 
 VS Code 开箱即用，且拥有许多高质量的扩展。
 
