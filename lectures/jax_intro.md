@@ -828,6 +828,39 @@ fast_batch_mm_diff(X)
 
 `jit`、`vmap` 以及（我们接下来将看到的）`grad` 的这种组合是 JAX 设计的核心，使其在科学计算和机器学习领域尤为强大。
 
+## 自动微分：预览
+
+JAX 可以使用自动微分来计算梯度。
+
+这对于优化和求解非线性方程组非常有用。
+
+下面用函数 $f(x) = x^2 / 2$ 作一个简单示例：
+
+```{code-cell} ipython3
+def f(x):
+    return (x**2) / 2
+
+f_prime = jax.grad(f)
+```
+
+```{code-cell} ipython3
+f_prime(10.0)
+```
+
+绘制函数及其导数。注意，$f'(x) = x$。
+
+```{code-cell} ipython3
+fig, ax = plt.subplots()
+x_grid = jnp.linspace(-4, 4, 200)
+ax.plot(x_grid, f(x_grid), label="$f$")
+ax.plot(x_grid, [f_prime(x) for x in x_grid], label="$f'$")
+ax.legend(loc='upper center')
+plt.show()
+```
+
+自动微分是一个内容丰富且在经济学和金融学中有诸多应用的主题。我们会在 {doc}`自动微分讲义 <autodiff>` 中作更全面的介绍。
+
+
 ## 练习
 
 
