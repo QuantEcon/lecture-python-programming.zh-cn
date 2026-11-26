@@ -13,7 +13,7 @@ translation:
     Overview: 概述
     Objects: 对象
     Objects::Type: 类型
-    Objects::Identity: 标识符
+    Objects::Identity: 对象标识
     'Objects::Object Content: Data and Attributes': 对象内容：数据与属性
     Objects::Methods: 方法
     Inspection Using Rich: 使用 Rich 进行检查
@@ -84,7 +84,7 @@ translation:
 在 Python 中，*对象*是存储在计算机内存中的数据和指令的集合，包含：
 
 1. 类型
-1. 唯一标识符
+1. 唯一标识
 1. 数据（即内容）
 1. 方法
 
@@ -106,7 +106,7 @@ type(s)
 ```
 
 ```{code-cell} python3
-x = 42   # Now let's create an integer
+x = 42   # 现在创建一个整数
 type(x)
 ```
 
@@ -148,18 +148,18 @@ tags: [raises-exception]
 例如：
 
 ```{code-cell} python3
-int('300') + 400   # To add as numbers, change the string to an integer
+int('300') + 400   # 若要按数值相加，先将字符串转换为整数
 ```
 
 (identity)=
-### 标识符
+### 对象标识
 
 ```{index} single: Python; Identity
 ```
 
-在 Python 中，每个对象都有一个唯一标识符，帮助 Python（和我们）跟踪该对象。
+在 Python 中，每个对象都有唯一的对象标识，帮助 Python（以及我们）跟踪该对象。
 
-可以通过 `id()` 函数获取对象的标识符：
+可以通过 `id()` 函数获取对象标识：
 
 ```{code-cell} python3
 y = 2.5
@@ -171,9 +171,9 @@ id(y)
 id(z)
 ```
 
-在这个例子中，`y` 和 `z` 恰好具有相同的值（即 `2.5`），但它们不是同一个对象。
+在这个例子中，`y` 和 `z` 恰好具有相同的值（即 `2.5`），但它们并不是同一个对象。
 
-对象的标识符实际上就是该对象在内存中的地址。
+对象标识实际上就是该对象在内存中的地址。
 
 ### 对象内容：数据与属性
 
@@ -251,7 +251,7 @@ Python 的大量功能都是围绕方法调用组织的。
 
 ```{code-cell} python3
 x = ['a', 'b']
-x[0] = 'aa'  # Item assignment using square bracket notation
+x[0] = 'aa'  # 使用方括号表示法赋值给元素
 x
 ```
 
@@ -261,7 +261,7 @@ x
 
 ```{code-cell} python3
 x = ['a', 'b']
-x.__setitem__(0, 'aa')  # Equivalent to x[0] = 'aa'
+x.__setitem__(0, 'aa')  # 等价于 x[0] = 'aa'
 x
 ```
 
